@@ -12,6 +12,9 @@ using Microsoft.Extensions.Options;
 
 namespace Vinance.Api
 {
+    using Contracts.Interfaces;
+    using Logic.Services;
+
     public class Startup
     {
         public IConfiguration Configuration { get; }
@@ -24,6 +27,7 @@ namespace Vinance.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddTransient<ITransactionService, TransactionService>();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)

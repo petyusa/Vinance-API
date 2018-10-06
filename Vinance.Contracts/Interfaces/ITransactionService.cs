@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Vinance.Contracts.Interfaces
 {
@@ -6,6 +7,6 @@ namespace Vinance.Contracts.Interfaces
 
     public interface ITransactionService
     {
-        IEnumerable<Payment> GetPayments();
+        Task<IEnumerable<Payment>> GetPayments();
     }
 }

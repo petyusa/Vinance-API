@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using Vinance.Contracts.Models;
-using Vinance.Contracts.Models.Categories;
+using System.Threading.Tasks;
 
 namespace Vinance.Logic.Services
 {
     using Contracts.Interfaces;
+    using Contracts.Models;
+    using Contracts.Models.Categories;
 
     public class TransactionService : ITransactionService
     {
-        public IEnumerable<Payment> GetPayments()
+        public async Task<IEnumerable<Payment>> GetPayments()
         {
             return new List<Payment>
             {
