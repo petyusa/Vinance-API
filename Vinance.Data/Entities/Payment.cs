@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Vinance.Data.Entities
@@ -12,7 +11,7 @@ namespace Vinance.Data.Entities
     {
         [Required]
         [ForeignKey("From")]
-        public Guid FromId { get; set; }
+        public int FromId { get; set; }
 
         [Required]
         [ForeignKey("PaymentCategory")]

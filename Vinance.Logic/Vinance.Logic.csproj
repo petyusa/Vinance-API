@@ -5,7 +5,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="7.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Vinance.Contracts\Vinance.Contracts.csproj" />
+    <ProjectReference Include="..\Vinance.Data\Vinance.Data.csproj" />
   </ItemGroup>
 
 </Project>

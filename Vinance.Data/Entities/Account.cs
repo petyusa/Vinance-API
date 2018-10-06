@@ -7,10 +7,8 @@ namespace Vinance.Data.Entities
 
     public class Account : BaseEntity
     {
-
         [Required]
-        [Column(TypeName = "NVARCHAR")]
-        [StringLength(50)]
+        [Column(TypeName = "NVARCHAR(50)")]
         public string Name { get; set; }
 
         [Required]
@@ -18,7 +16,6 @@ namespace Vinance.Data.Entities
         [Range(1, int.MaxValue)]
         public int Balance { get; set; }
 
-        [Required]
         public int UserId { get; set; }
     }
 }

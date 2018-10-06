@@ -6,8 +6,7 @@ namespace Vinance.Data.Entities.Base
     public class Category : BaseEntity
     {
         [Required]
-        [Column(TypeName = "NVARCHAR")]
-        [StringLength(100)]
+        [Column(TypeName = "NVARCHAR(50)")]
         public string Name { get; set; }
     }
 }

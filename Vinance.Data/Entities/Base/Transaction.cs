@@ -15,8 +15,7 @@ namespace Vinance.Data.Entities.Base
         [Range(1, int.MaxValue)]
         public int Amount { get; set; }
 
-        [Column(TypeName = "NVARCHAR")]
-        [StringLength(256)]
+        [Column(TypeName = "NVARCHAR(256)")]
         public string Comment { get; set; }
     }
 }
