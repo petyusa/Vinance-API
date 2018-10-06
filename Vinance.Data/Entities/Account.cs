@@ -5,6 +5,7 @@ namespace Vinance.Data.Entities
 {
     using Base;
 
+    [Table("Accounts", Schema = "Vinance")]
     public class Account : BaseEntity
     {
         [Required]

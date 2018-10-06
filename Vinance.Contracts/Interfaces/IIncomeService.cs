@@ -5,8 +5,8 @@ namespace Vinance.Contracts.Interfaces
 {
     using Models;
 
-    public interface ITransactionService
+    public interface IIncomeService
     {
-        Task<IEnumerable<Payment>> GetPayments();
+        Task<IEnumerable<Income>> GetAll();
     }
 }

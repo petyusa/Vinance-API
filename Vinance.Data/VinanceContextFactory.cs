@@ -1,11 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
 namespace Vinance.Data
 {
     using Contracts.Interfaces;
 
-    public class VinanceContextFactory : IFactory<VinanceContext>
+    public class VinanceContextFactory<TContext> : IFactory<TContext> where TContext : DbContext
     {
         private readonly IConfiguration _config;
 
@@ -14,12 +15,13 @@ namespace Vinance.Data
             _config = config;
         }
 
-        public VinanceContext Create()
+        public TContext Create()
         {
-            var optionsBuilder = new DbContextOptionsBuilder<VinanceContext>();
+            var optionsBuilder = new DbContextOptionsBuilder<TContext>();
             optionsBuilder.UseSqlServer(_config.GetConnectionString("VinanceConnection"));
 
-            return new VinanceContext(optionsBuilder.Options);
+            var context = (TContext)Activator.CreateInstance(typeof(TContext), optionsBuilder.Options);
+            return context;
         }
     }
 }

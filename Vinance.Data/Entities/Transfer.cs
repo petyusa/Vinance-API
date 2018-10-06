@@ -6,6 +6,7 @@ namespace Vinance.Data.Entities
     using Base;
     using Categories;
 
+    [Table("Transfers", Schema = "Vinance")]
     public class Transfer : Transaction
     {
         [Required]

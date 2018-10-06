@@ -4,7 +4,7 @@ namespace Vinance.Data.Entities.Categories
 {
     using Base;
 
-    [Table("IncomeCategories")]
+    [Table("IncomeCategories", Schema = "Vinance")]
     public class IncomeCategory : Category
     {
     }

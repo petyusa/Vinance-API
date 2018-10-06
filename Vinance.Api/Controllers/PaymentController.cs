@@ -9,17 +9,27 @@ namespace Vinance.Api.Controllers
     [ApiController]
     public class PaymentController : ControllerBase
     {
-        private readonly ITransactionService _transactionService;
+        private readonly IPaymentService _paymentService;
 
-        public PaymentController(ITransactionService transactionService)
+        public PaymentController(IPaymentService paymentService)
         {
-            _transactionService = transactionService;
+            _paymentService = paymentService;
         }
 
+        [HttpGet]
         [Route("payments")]
         public async Task<ActionResult> GetPayments()
         {
-            var payments = await _transactionService.GetPayments();
+            var payments = await _paymentService.GetPayments();
+
+            return Ok(payments);
+        }
+
+        [HttpGet]
+        [Route("payments/{id}")]
+        public async Task<ActionResult> GetPayment(int paymentId)
+        {
+            var payments = await _paymentService.GetPayments();
 
             return Ok(payments);
         }

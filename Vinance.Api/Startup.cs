@@ -9,7 +9,8 @@ namespace Vinance.Api
 {
     using Contracts.Interfaces;
     using Data;
-    using Logic.Services;
+    using Data.Contexts;
+    using Logic;
 
     public class Startup
     {
@@ -24,9 +25,9 @@ namespace Vinance.Api
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddAutoMapper();
+            services.AddVinanceServices();
 
-            services.AddTransient<ITransactionService, TransactionService>();
-            services.AddTransient<IFactory<VinanceContext>, VinanceContextFactory>();
+            services.AddTransient<IFactory<VinanceContext>, VinanceContextFactory<VinanceContext>>();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)

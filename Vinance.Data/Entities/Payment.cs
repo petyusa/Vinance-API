@@ -6,7 +6,7 @@ namespace Vinance.Data.Entities
     using Base;
     using Categories;
 
-    [Table("Payments")]
+    [Table("Payments", Schema = "Vinance")]
     public class Payment : Transaction
     {
         [Required]
