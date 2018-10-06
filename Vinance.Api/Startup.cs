@@ -37,7 +37,13 @@ namespace Vinance.Api
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseMvc();
+            app.UseMvc(routes =>
+            {
+                routes.MapRoute(
+                    name: "default",
+                    template: "{controller=payment}/{action=get}/{id?}");
+            });
+
         }
     }
 }

@@ -5,7 +5,7 @@ namespace Vinance.Api.Controllers
 {
     using Contracts.Interfaces;
 
-    [Route("api/payments")]
+    [Route("api/payment")]
     [ApiController]
     public class PaymentController : ControllerBase
     {
@@ -16,7 +16,7 @@ namespace Vinance.Api.Controllers
             _transactionService = transactionService;
         }
 
-        [Route("")]
+        [Route("payments")]
         public async Task<ActionResult> GetPayments()
         {
             var payments = await _transactionService.GetPayments();
