@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Vinance.Api.Exceptions;
 
 namespace Vinance.Api.ActionFilters
 {
@@ -12,7 +13,7 @@ namespace Vinance.Api.ActionFilters
             {
                 if (context.HttpContext.Request.ContentType != "application/json")
                 {
-                     throw new Exception("wrong content-type");
+                    throw new HeaderContentTypeException("Content-type must be 'application/json'");
                 }
 
             }
@@ -20,7 +21,6 @@ namespace Vinance.Api.ActionFilters
 
         public void OnResourceExecuted(ResourceExecutedContext context)
         {
-            return;
         }
     }
 }

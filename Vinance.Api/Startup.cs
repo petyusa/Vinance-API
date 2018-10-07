@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Vinance.Api.ActionFilters;
+using Vinance.Api.Middlewares;
 
 namespace Vinance.Api
 {
@@ -40,6 +41,8 @@ namespace Vinance.Api
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
 
             app.UseMvc(routes =>
             {
