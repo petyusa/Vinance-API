@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Vinance.Api.ActionFilters;
 
 namespace Vinance.Api
 {
@@ -24,10 +25,13 @@ namespace Vinance.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddScoped<HeaderValidationFilterAttribute>();
             services.AddAutoMapper();
             services.AddVinanceServices();
 
+
             services.AddTransient<IFactory<VinanceContext>, VinanceContextFactory<VinanceContext>>();
+
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
