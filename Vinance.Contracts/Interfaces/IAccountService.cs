@@ -7,6 +7,10 @@ namespace Vinance.Contracts.Interfaces
 
     public interface IAccountService
     {
+        Task<Account> Create(Account account);
+        Task<Account> Get(int accountId);
         Task<IEnumerable<Account>> GetAll();
+        Task<Account> Update(Account account);
+        Task<bool> Delete(int account);
     }
 }
