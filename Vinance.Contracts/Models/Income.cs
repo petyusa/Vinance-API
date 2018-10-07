@@ -5,7 +5,7 @@
 
     public class Income : Transaction
     {
-        public virtual Account To { get; set; }
-        public virtual IncomeCategory IncomeCategory { get; set; }
+        public Account To { get; set; }
+        public IncomeCategory IncomeCategory { get; set; }
     }
 }

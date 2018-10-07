@@ -31,13 +31,11 @@ namespace Vinance.Api.Controllers
 
         [HttpPost]
         [Route("")]
-        public async Task<IActionResult> Create([FromBody] Account account)
+        public async Task<IActionResult> Create(Account account)
         {
             var createdAccount = await _accountService.Create(account);
-
             if (createdAccount == null)
                 return StatusCode((int)HttpStatusCode.InternalServerError, "There was an erro creating the account");
-
             return Created(Request.Path, createdAccount);
         }
 
@@ -46,10 +44,8 @@ namespace Vinance.Api.Controllers
         public async Task<IActionResult> Get(int accountId)
         {
             var account = await _accountService.Get(accountId);
-
             if (account == null)
                 return NotFound($"No account found with id: {accountId}");
-
             return Ok(account);
         }
 
@@ -58,10 +54,8 @@ namespace Vinance.Api.Controllers
         public async Task<IActionResult> Update(Account account)
         {
             var updatedAccount = await _accountService.Update(account);
-
             if (updatedAccount == null)
                 return StatusCode((int)HttpStatusCode.InternalServerError, "There was an erro updaeting the account");
-
             return Created(Request.Path, updatedAccount);
 
         }
@@ -71,10 +65,8 @@ namespace Vinance.Api.Controllers
         public async Task<IActionResult> Delete(int accountId)
         {
             var success = await _accountService.Delete(accountId);
-
             if (success)
                 return NoContent();
-
             return StatusCode((int)HttpStatusCode.InternalServerError, "There was an erro deleting the account");
         }
     }

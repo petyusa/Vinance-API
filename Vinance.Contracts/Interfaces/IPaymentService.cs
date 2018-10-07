@@ -7,6 +7,10 @@ namespace Vinance.Contracts.Interfaces
 
     public interface IPaymentService
     {
-        Task<IEnumerable<Payment>> GetPayments();
+        Task<Payment> Create(Payment payment);
+        Task<IEnumerable<Payment>> GetAll();
+        Task<Payment> GetById(int paymentId);
+        Task<Payment> Update(Payment payment);
+        Task<bool> Delete(int paymentId);
     }
 }

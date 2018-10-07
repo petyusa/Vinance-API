@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
@@ -20,18 +21,64 @@ namespace Vinance.Logic.Services
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<Payment>> GetPayments()
+        public async Task<Payment> Create(Payment payment)
         {
-            IEnumerable<Payment> payments;
+            using (var context = _factory.Create())
+            {
+                var dataPayment = _mapper.Map<Data.Entities.Payment>(payment);
+                await context.Payments.AddAsync(dataPayment);
+                return _mapper.Map<Payment>(dataPayment);
+            }
+        }
+
+        public async Task<IEnumerable<Payment>> GetAll()
+        {
             using (var context = _factory.Create())
             {
                 var dataPayments = await context.Payments
                     .Include(p => p.From)
                     .Include(p => p.PaymentCategory)
                     .ToListAsync();
-                payments = _mapper.Map<IEnumerable<Payment>>(dataPayments);
+                return _mapper.Map<IEnumerable<Payment>>(dataPayments);
             }
-            return payments;
+        }
+
+        public async Task<Payment> GetById(int paymentId)
+        {
+            using (var context = _factory.Create())
+            {
+                var dataPayment = await context.Payments
+                    .Include(p => p.From)
+                    .Include(p => p.PaymentCategory)
+                    .SingleOrDefaultAsync(p=>p.Id == paymentId);
+                return _mapper.Map<Payment>(dataPayment);
+            }
+        }
+
+        public async Task<Payment> Update(Payment payment)
+        {
+            using (var context = _factory.Create())
+            {
+                if (!context.Payments.Any(p => p.Id == payment.Id))
+                    return null;
+
+                var dataPayment = _mapper.Map<Data.Entities.Payment>(payment);
+                context.Entry(dataPayment).State = EntityState.Modified;
+                await context.SaveChangesAsync();
+                return _mapper.Map<Payment>(dataPayment);
+            }
+        }
+
+        public async Task<bool> Delete(int paymentId)
+        {
+            using (var context = _factory.Create())
+            {
+                var dataPayment = await context.Payments.FindAsync(paymentId);
+                if (dataPayment == null)
+                    return false;
+                context.Payments.Remove(dataPayment);
+                return await context.SaveChangesAsync() == 1;
+            }
         }
     }
 }
