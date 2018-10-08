@@ -27,53 +27,45 @@ namespace Vinance.Api.Controllers
             return Ok(incomes);
         }
 
-        //[HttpPost]
-        //[Route("accounts")]
-        //public async Task<IActionResult> Create([FromBody] Income account)
-        //{
-        //    var createdAccount = await _incomeService.Create(account);
+        [HttpPost]
+        [Route("")]
+        public async Task<IActionResult> Create(Income income)
+        {
+            var createdIncome = await _incomeService.Create(income);
+            if (createdIncome == null)
+                return StatusCode((int)HttpStatusCode.InternalServerError, "There was an erro creating the income");
+            return Created(Request.Path, createdIncome);
+        }
 
-        //    if (createdAccount == null)
-        //        return StatusCode((int)HttpStatusCode.InternalServerError, "There was an erro creating the account");
+        [HttpGet]
+        [Route("{incomeId}")]
+        public async Task<IActionResult> Get(int incomeId)
+        {
+            var income = await _incomeService.Get(incomeId);
+            if (income == null)
+                return NotFound($"No income found with id: {incomeId}");
+            return Ok(income);
+        }
 
-        //    return Created(Request.Path, createdAccount);
-        //}
+        [HttpPut]
+        [Route("")]
+        public async Task<IActionResult> Update(Income income)
+        {
+            var updatedIncome = await _incomeService.Update(income);
+            if (updatedIncome == null)
+                return StatusCode((int)HttpStatusCode.InternalServerError, "There was an erro updaeting the income");
+            return Created(Request.Path, updatedIncome);
 
-        //[HttpGet]
-        //[Route("accounts/{accountId}")]
-        //public async Task<IActionResult> Get(int accountId)
-        //{
-        //    var account = await _incomeService.Get(accountId);
+        }
 
-        //    if (account == null)
-        //        return NotFound(accountId);
-
-        //    return Ok(account);
-        //}
-
-        //[HttpPut]
-        //[Route("accounts/{accountId}")]
-        //public async Task<IActionResult> Update(Income account)
-        //{
-        //    var updatedAccount = await _incomeService.Update(account);
-
-        //    if (updatedAccount == null)
-        //        return StatusCode((int)HttpStatusCode.InternalServerError, "There was an erro updaeting the account");
-
-        //    return Created(Request.Path, updatedAccount);
-
-        //}
-
-        //[HttpDelete]
-        //[Route("accounts/{accountId}")]
-        //public async Task<IActionResult> Delete(int accountId)
-        //{
-        //    var account = await _incomeService.Get(accountId);
-
-        //    if (account == null)
-        //        return NotFound(accountId);
-
-        //    return Ok(account);
-        //}
+        [HttpDelete]
+        [Route("{incomeId}")]
+        public async Task<IActionResult> Delete(int incomeId)
+        {
+            var success = await _incomeService.Delete(incomeId);
+            if (success)
+                return NoContent();
+            return StatusCode((int)HttpStatusCode.InternalServerError, "There was an erro deleting the income");
+        }
     }
 }
