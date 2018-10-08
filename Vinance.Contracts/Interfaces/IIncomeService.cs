@@ -8,5 +8,9 @@ namespace Vinance.Contracts.Interfaces
     public interface IIncomeService
     {
         Task<IEnumerable<Income>> GetAll();
+        Task<Income> Create(Income account);
+        Task<Income> Get(int accountId);
+        Task<Income> Update(Income account);
+        Task<bool> Delete(int account);
     }
 }

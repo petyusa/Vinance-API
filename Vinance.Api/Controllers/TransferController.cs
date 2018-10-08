@@ -20,7 +20,7 @@ namespace Vinance.Api.Controllers
         [Route("transfers")]
         public async Task<ActionResult> GetTransfers()
         {
-            var transfers = await _transferService.GetTransfers();
+            var transfers = await _transferService.GetAll();
             return Ok(transfers);
         }
     }
