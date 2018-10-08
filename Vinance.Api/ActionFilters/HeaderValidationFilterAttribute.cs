@@ -1,9 +1,10 @@
 ﻿using System;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Vinance.Api.Exceptions;
 
 namespace Vinance.Api.ActionFilters
 {
+    using Contracts.Exceptions;
+
     public class HeaderValidationFilterAttribute : IResourceFilter
     {
         public void OnResourceExecuting(ResourceExecutingContext context)

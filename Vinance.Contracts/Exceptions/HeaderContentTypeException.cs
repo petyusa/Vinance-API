@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Runtime.Serialization;
 
-namespace Vinance.Api.Exceptions
+namespace Vinance.Contracts.Exceptions
 {
-    public class HeaderContentTypeException : Exception
+    public class HeaderContentTypeException : VinanceException
     {
         public HeaderContentTypeException()
         {
