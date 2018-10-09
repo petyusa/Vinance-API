@@ -1,5 +1,7 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Threading.Tasks;
+using AspNetCoreNlog;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Vinance.Contracts.Models;
@@ -8,6 +10,7 @@ namespace Vinance.Api.Controllers
 {
     using Contracts.Interfaces;
 
+    [ServiceFilter(typeof(LogFilter))]
     [Route("api/payments")]
     [ApiController]
     public class PaymentController : ControllerBase

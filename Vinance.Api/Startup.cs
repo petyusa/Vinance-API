@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using AspNetCoreNlog;
+using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -26,6 +27,7 @@ namespace Vinance.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddScoped<LogFilter>();
             services.AddScoped<HeaderValidationFilterAttribute>();
             services.AddAutoMapper();
             services.AddVinanceServices();
@@ -42,6 +44,7 @@ namespace Vinance.Api
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseMvc();
             app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
 
             app.UseMvc(routes =>
@@ -50,7 +53,6 @@ namespace Vinance.Api
                     name: "default",
                     template: "{controller=payment}/{action=get}/{id?}");
             });
-
 
         }
     }
