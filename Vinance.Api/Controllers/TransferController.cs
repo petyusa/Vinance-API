@@ -26,7 +26,6 @@ namespace Vinance.Api.Controllers
             return Ok(transfers);
         }
 
-
         [HttpPost]
         [Route("")]
         public async Task<IActionResult> Create(Transfer transfer)

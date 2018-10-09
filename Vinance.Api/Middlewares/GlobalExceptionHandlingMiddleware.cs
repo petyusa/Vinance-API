@@ -3,6 +3,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
+using Vinance.Contracts.Exceptions;
 
 namespace Vinance.Api.Middlewares
 {
@@ -29,14 +30,19 @@ namespace Vinance.Api.Middlewares
 
         private static Task HandleExceptionAsync(HttpContext context, Exception exception)
         {
-            context.Response.ContentType = "application/json";
-            context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-
-            return context.Response.WriteAsync(new ErrorDetails()
+            if (exception is VinanceException)
             {
-                StatusCode = context.Response.StatusCode,
-                Message = exception.Message
-            }.ToString());
+                context.Response.ContentType = "application/json";
+                context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+
+                return context.Response.WriteAsync(new ErrorDetails
+                {
+                    StatusCode = context.Response.StatusCode,
+                    Message = exception.Message
+                }.ToString());
+            }
+
+            return Task.CompletedTask;
         }
 
     }
