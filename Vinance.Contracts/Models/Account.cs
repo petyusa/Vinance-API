@@ -1,7 +1,8 @@
-﻿namespace Vinance.Contracts.Models
-{
-    using BaseModels;
+﻿using System.Collections.Generic;
+using System.Linq;
 
+namespace Vinance.Contracts.Models
+{
     public class Account
     {
         public int Id { get; set; }
