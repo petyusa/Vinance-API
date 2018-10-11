@@ -1,5 +1,4 @@
-﻿using AspNetCoreNlog;
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -27,25 +26,17 @@ namespace Vinance.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-            services.AddScoped<LogFilter>();
             services.AddScoped<HeaderValidationFilterAttribute>();
             services.AddAutoMapper();
             services.AddVinanceServices();
 
-
             services.AddTransient<IFactory<VinanceContext>, VinanceContextFactory<VinanceContext>>();
-
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-
-            app.UseMvc();
             app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
+            app.UseMvc();
 
             app.UseMvc(routes =>
             {

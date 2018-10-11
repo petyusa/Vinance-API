@@ -1,16 +1,12 @@
-﻿using System;
-using System.Net;
+﻿using System.Net;
 using System.Threading.Tasks;
-using AspNetCoreNlog;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
-using Vinance.Contracts.Models;
 
 namespace Vinance.Api.Controllers
 {
     using Contracts.Interfaces;
+    using Contracts.Models;
 
-    [ServiceFilter(typeof(LogFilter))]
     [Route("api/payments")]
     [ApiController]
     public class PaymentController : ControllerBase
@@ -27,8 +23,11 @@ namespace Vinance.Api.Controllers
         public async Task<IActionResult> Create(Payment payment)
         {
             var createdPayment = await _paymentService.Create(payment);
-            if(createdPayment == null)
+            if (createdPayment == null)
+            {
                 return StatusCode((int)HttpStatusCode.InternalServerError, "There was an erro creating the payment");
+            }
+
             return Ok(createdPayment);
         }
 
@@ -46,7 +45,10 @@ namespace Vinance.Api.Controllers
         {
             var payment = await _paymentService.GetById(paymentId);
             if (payment == null)
+            {
                 return NotFound($"No account found with id: {paymentId}");
+            }
+
             return Ok(payment);
         }
 
@@ -56,7 +58,10 @@ namespace Vinance.Api.Controllers
         {
             var updatedPayment = await _paymentService.Update(payment);
             if (updatedPayment == null)
+            {
                 return NotFound("There was an error updating the payment");
+            }
+
             return Ok(updatedPayment);
         }
 
@@ -66,7 +71,10 @@ namespace Vinance.Api.Controllers
         {
             var success = await _paymentService.Delete(paymentId);
             if (success)
+            {
                 return NoContent();
+            }
+
             return StatusCode((int)HttpStatusCode.InternalServerError, "There was an erro deleting the payment");
         }
     }

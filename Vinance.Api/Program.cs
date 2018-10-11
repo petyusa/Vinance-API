@@ -1,7 +1,5 @@
-﻿using System;
-using Microsoft.AspNetCore;
+﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
-using NLog;
 using NLog.Web;
 
 namespace Vinance.Api
@@ -10,25 +8,7 @@ namespace Vinance.Api
     {
         public static void Main(string[] args)
         {
-            GlobalDiagnosticsContext.Set("connectionString", "Data Source=.;Initial Catalog=Vinance; Integrated Security=SSPI;");
-            // GlobalDiagnosticsContext.Set("connectionString", Configuration.GetConnectionString("NLogDb"));
-
-            var logger = NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger();
-            try
-            {
-                //logger.Debug("init main");
-                CreateWebHostBuilder(args).Build().Run();
-            }
-            catch (Exception exception)
-            {
-                logger.Error(exception, "Stopped program because of exception");
-                throw;
-            }
-            finally
-            {
-                // Ensure to flush and stop internal timers/threads before application-exit (Avoid segmentation fault on Linux)
-                LogManager.Shutdown();
-            }
+            CreateWebHostBuilder(args).Build().Run();
         }
 
         private static IWebHostBuilder CreateWebHostBuilder(string[] args)
