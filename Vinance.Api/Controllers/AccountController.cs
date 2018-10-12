@@ -1,7 +1,10 @@
-﻿using System.Net;
+﻿using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Vinance.Api.ActionFilters;
+using Vinance.Api.Viewmodels;
 
 namespace Vinance.Api.Controllers
 {
@@ -14,10 +17,12 @@ namespace Vinance.Api.Controllers
     public class AccountController : ControllerBase
     {
         private readonly IAccountService _accountService;
+        private readonly IMapper _mapper;
 
-        public AccountController(IAccountService accountService)
+        public AccountController(IAccountService accountService, IMapper mapper)
         {
             _accountService = accountService;
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -25,8 +30,9 @@ namespace Vinance.Api.Controllers
         public async Task<IActionResult> GetAll()
         {
             var accounts = await _accountService.GetAll();
+            var model = _mapper.Map<IEnumerable<BasicAccountViewmodel>>(accounts);
 
-            return Ok(accounts);
+            return Ok(model);
         }
 
         [HttpPost]

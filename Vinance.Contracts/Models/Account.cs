@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 
 namespace Vinance.Contracts.Models
 {
@@ -12,5 +11,13 @@ namespace Vinance.Contracts.Models
         public int Balance { get; set; }
 
         public int UserId { get; set; }
+
+        public ICollection<Income> Incomes { get; set; }
+
+        public ICollection<Payment> Payments { get; set; }
+
+        public ICollection<Transfer> TransfersFrom { get; set; }
+
+        public ICollection<Transfer> TransfersTo { get; set; }
     }
 }

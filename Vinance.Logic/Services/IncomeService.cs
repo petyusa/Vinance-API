@@ -25,7 +25,9 @@ namespace Vinance.Logic.Services
         {
             using (var context = _factory.Create())
             {
-                var dataIncomes = await context.Incomes.Include(i => i.IncomeCategory).Include(i => i.To).ToListAsync();
+                var dataIncomes = await context.Incomes
+                    .Include(i => i.IncomeCategory)
+                    .ToListAsync();
                 return _mapper.Map<IEnumerable<Income>>(dataIncomes);
             }
         }
@@ -45,7 +47,9 @@ namespace Vinance.Logic.Services
         {
             using (var context = _factory.Create())
             {
-                var dataIncome = await context.Incomes.Include(i=>i.IncomeCategory).Include(i=>i.To).SingleOrDefaultAsync(a => a.Id == incomeId);
+                var dataIncome = await context.Incomes
+                    .Include(i=>i.IncomeCategory)
+                    .SingleOrDefaultAsync(a => a.Id == incomeId);
                 return _mapper.Map<Income>(dataIncome);
             }
         }

@@ -50,7 +50,6 @@ namespace Vinance.Logic.Services
             using (var context = _factory.Create())
             {
                 var dataPayment = await context.Payments
-                    .Include(p => p.From)
                     .Include(p => p.PaymentCategory)
                     .SingleOrDefaultAsync(p=>p.Id == paymentId);
                 return _mapper.Map<Payment>(dataPayment);

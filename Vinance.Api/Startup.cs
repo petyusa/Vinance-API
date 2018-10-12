@@ -1,9 +1,12 @@
-﻿using AutoMapper;
+﻿using System.Buffers;
+using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
 using Vinance.Api.ActionFilters;
 using Vinance.Api.Middlewares;
 
@@ -25,7 +28,18 @@ namespace Vinance.Api
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddMvc(opt =>
+            {
+                opt.OutputFormatters.Clear();
+                opt.OutputFormatters.Add(
+                    new JsonOutputFormatter(
+                        new JsonSerializerSettings
+                        {
+                            ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                        }, ArrayPool<char>.Shared
+                        )
+                    );
+            }).SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddScoped<HeaderValidationFilterAttribute>();
             services.AddAutoMapper();
             services.AddVinanceServices();

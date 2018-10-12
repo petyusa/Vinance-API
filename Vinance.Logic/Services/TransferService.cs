@@ -27,8 +27,6 @@ namespace Vinance.Logic.Services
             using (var context = _factory.Create())
             {
                 var dataTransfers = await context.Transfers
-                    .Include(t => t.From)
-                    .Include(t => t.To)
                     .Include(t => t.TransferCategory)
                     .ToListAsync();
                 transfers = _mapper.Map<IEnumerable<Transfer>>(dataTransfers);
@@ -52,8 +50,6 @@ namespace Vinance.Logic.Services
             using (var context = _factory.Create())
             {
                 var dataTransfer = await context.Transfers
-                    .Include(t => t.From)
-                    .Include(t => t.To)
                     .Include(t => t.TransferCategory)
                     .SingleOrDefaultAsync(a => a.Id == transferId);
                 return _mapper.Map<Transfer>(dataTransfer);
