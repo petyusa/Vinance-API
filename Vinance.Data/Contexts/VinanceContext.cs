@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using EntityFrameworkCore.Triggers;
 using Microsoft.EntityFrameworkCore;
 
 namespace Vinance.Data.Contexts
@@ -8,7 +7,7 @@ namespace Vinance.Data.Contexts
     using Entities;
     using Entities.Categories;
 
-    public sealed class VinanceContext : DbContextWithTriggers
+    public sealed class VinanceContext : DbContext
     {
         public VinanceContext(DbContextOptions options) : base(options)
         {

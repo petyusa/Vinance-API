@@ -1,9 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using EntityFrameworkCore.Triggers;
 
 namespace Vinance.Data.Entities
 {
@@ -29,22 +26,5 @@ namespace Vinance.Data.Entities
 
         [InverseProperty("To")]
         public virtual IEnumerable<Transfer> TransfersTo { get; set; }
-
-        static Account()
-        {
-            Triggers<Income>.Inserting += entry =>
-            {
-                var account = entry.Context.Set<Account>().SingleOrDefault(a => a.Id == entry.Entity.ToId);
-                if (account != null)
-                    account.Balance += entry.Entity.Amount;
-            };
-
-            Triggers<Income>.Deleting += entry =>
-            {
-                var account = entry.Context.Set<Account>().SingleOrDefault(a => a.Id == entry.Entity.ToId);
-                if (account != null)
-                    account.Balance -= entry.Original.Amount;
-            };
-        }
     }
 }
