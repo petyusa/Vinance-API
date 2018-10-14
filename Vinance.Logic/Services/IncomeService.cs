@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Vinance.Contracts.Extensions;
 
 namespace Vinance.Logic.Services
 {
@@ -29,7 +30,7 @@ namespace Vinance.Logic.Services
                     .Include(i => i.IncomeCategory)
                     .Include(i => i.To)
                     .ToListAsync();
-                return _mapper.Map<IEnumerable<Income>>(dataIncomes);
+                return _mapper.MapAll<Income>(dataIncomes);
             }
         }
 
@@ -72,11 +73,11 @@ namespace Vinance.Logic.Services
             }
         }
 
-        public async Task<bool> Delete(int accountId)
+        public async Task<bool> Delete(int incomeId)
         {
             using (var context = _factory.Create())
             {
-                var dataIncome = context.Incomes.Find(accountId);
+                var dataIncome = context.Incomes.Find(incomeId);
                 if (dataIncome == null)
                 {
                     return false;
@@ -84,6 +85,24 @@ namespace Vinance.Logic.Services
 
                 context.Incomes.Remove(dataIncome);
                 return await context.SaveChangesAsync() == 1;
+            }
+        }
+
+        public async Task<IEnumerable<Income>> GetByAccountId(int accountId)
+        {
+            using (var context = _factory.Create())
+            {
+                var incomes = await context.Incomes.Where(i => i.ToId == accountId).ToListAsync();
+                return _mapper.MapAll<Income>(incomes);
+            }
+        }
+
+        public async Task<IEnumerable<Income>> GetByCategoryId(int categoryId)
+        {
+            using (var context = _factory.Create())
+            {
+                var incomes = await context.Incomes.Where(i => i.IncomeCategoryId == categoryId).ToListAsync();
+                return _mapper.MapAll<Income>(incomes);
             }
         }
     }

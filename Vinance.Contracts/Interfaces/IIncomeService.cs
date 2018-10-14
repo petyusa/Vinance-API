@@ -11,6 +11,6 @@ namespace Vinance.Contracts.Interfaces
         Task<Income> Create(Income account);
         Task<Income> Get(int accountId);
         Task<Income> Update(Income account);
-        Task<bool> Delete(int account);
+        Task<bool> Delete(int incomeId);
     }
 }

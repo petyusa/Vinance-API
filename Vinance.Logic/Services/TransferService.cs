@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Vinance.Contracts.Extensions;
 
 namespace Vinance.Logic.Services
 {
@@ -88,6 +89,24 @@ namespace Vinance.Logic.Services
 
                 context.Transfers.Remove(dataTransfer);
                 return await context.SaveChangesAsync() == 1;
+            }
+        }
+
+        public async Task<IEnumerable<Transfer>> GetByAccountId(int accountId)
+        {
+            using (var context = _factory.Create())
+            {
+                var transfers = await context.Transfers.Where(t => t.ToId == accountId || t.FromId == accountId).ToListAsync();
+                return _mapper.MapAll<Transfer>(transfers);
+            }
+        }
+
+        public async Task<IEnumerable<Transfer>> GetByCategoryId(int categoryId)
+        {
+            using (var context = _factory.Create())
+            {
+                var transfers = await context.Transfers.Where(t => t.TransferCategoryId == categoryId).ToListAsync();
+                return _mapper.MapAll<Transfer>(transfers);
             }
         }
     }

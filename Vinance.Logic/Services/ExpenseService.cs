@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using Vinance.Contracts.Exceptions;
 
 namespace Vinance.Logic.Services
 {
+    using Contracts.Extensions;
     using Contracts.Interfaces;
     using Contracts.Models;
     using Data.Contexts;
@@ -38,8 +37,8 @@ namespace Vinance.Logic.Services
             using (var context = _factory.Create())
             {
                 var dataExpenses = await context.Expenses
-                    .Include(p => p.From)
-                    .Include(p => p.ExpenseCategory)
+                    .Include(e => e.From)
+                    .Include(e => e.ExpenseCategory)
                     .ToListAsync();
                 return _mapper.Map<IEnumerable<Expense>>(dataExpenses);
             }
@@ -50,9 +49,9 @@ namespace Vinance.Logic.Services
             using (var context = _factory.Create())
             {
                 var dataExpense = await context.Expenses
-                    .Include(p => p.From)
-                    .Include(p => p.ExpenseCategory)
-                    .SingleOrDefaultAsync(p=>p.Id == expenseId);
+                    .Include(e => e.From)
+                    .Include(e => e.ExpenseCategory)
+                    .SingleOrDefaultAsync(e => e.Id == expenseId);
                 return _mapper.Map<Expense>(dataExpense);
             }
         }
@@ -61,8 +60,10 @@ namespace Vinance.Logic.Services
         {
             using (var context = _factory.Create())
             {
-                if (!context.Expenses.Any(p => p.Id == expense.Id))
+                if (!context.Expenses.Any(e => e.Id == expense.Id))
+                {
                     return null;
+                }
 
                 var dataExpense = _mapper.Map<Data.Entities.Expense>(expense);
                 context.Entry(dataExpense).State = EntityState.Modified;
@@ -77,9 +78,30 @@ namespace Vinance.Logic.Services
             {
                 var dataExpense = await context.Expenses.FindAsync(expenseId);
                 if (dataExpense == null)
+                {
                     return false;
+                }
+
                 context.Expenses.Remove(dataExpense);
                 return await context.SaveChangesAsync() == 1;
+            }
+        }
+
+        public async Task<IEnumerable<Expense>> GetByAccountId(int accountId)
+        {
+            using (var context = _factory.Create())
+            {
+                var expenses = await context.Expenses.Where(e => e.FromId == accountId).ToListAsync();
+                return _mapper.MapAll<Expense>(expenses);
+            }
+        }
+
+        public async Task<IEnumerable<Expense>> GetByCategoryId(int categoryId)
+        {
+            using (var context = _factory.Create())
+            {
+                var expenses = await context.Expenses.Where(e => e.ExpenseCategoryId == categoryId).ToListAsync();
+                return _mapper.MapAll<Expense>(expenses);
             }
         }
     }
