@@ -6,18 +6,18 @@ namespace Vinance.Data.Entities
     using Base;
     using Categories;
 
-    [Table("Payments", Schema = "Vinance")]
-    public class Payment : Transaction
+    [Table("Expenses", Schema = "Vinance")]
+    public class Expense : Transaction
     {
         [Required]
         [ForeignKey("From")]
         public int FromId { get; set; }
 
         [Required]
-        [ForeignKey("PaymentCategory")]
-        public int PaymentCategoryId { get; set; }
+        [ForeignKey("ExpenseCategory")]
+        public int ExpenseCategoryId { get; set; }
 
         public virtual Account From { get; set; }
-        public virtual PaymentCategory PaymentCategory { get; set; }
+        public virtual ExpenseCategory ExpenseCategory { get; set; }
     }
 }

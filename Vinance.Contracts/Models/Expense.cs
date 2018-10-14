@@ -3,9 +3,9 @@
     using BaseModels;
     using Categories;
 
-    public class Payment : Transaction
+    public class Expense : Transaction
     {
         public Account From { get; set; }
-        public PaymentCategory PaymentCategory { get; set; }
+        public ExpenseCategory ExpenseCategory { get; set; }
     }
 }

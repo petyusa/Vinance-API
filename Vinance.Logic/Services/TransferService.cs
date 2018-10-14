@@ -27,6 +27,8 @@ namespace Vinance.Logic.Services
             using (var context = _factory.Create())
             {
                 var dataTransfers = await context.Transfers
+                    .Include(p => p.From)
+                    .Include(p => p.To)
                     .Include(t => t.TransferCategory)
                     .ToListAsync();
                 transfers = _mapper.Map<IEnumerable<Transfer>>(dataTransfers);
@@ -50,6 +52,8 @@ namespace Vinance.Logic.Services
             using (var context = _factory.Create())
             {
                 var dataTransfer = await context.Transfers
+                    .Include(p => p.From)
+                    .Include(p => p.To)
                     .Include(t => t.TransferCategory)
                     .SingleOrDefaultAsync(a => a.Id == transferId);
                 return _mapper.Map<Transfer>(dataTransfer);
@@ -61,7 +65,9 @@ namespace Vinance.Logic.Services
             using (var context = _factory.Create())
             {
                 if (!context.Transfers.Any(a => a.Id == transfer.Id))
+                {
                     return null;
+                }
 
                 var dataTransfer = _mapper.Map<Data.Entities.Transfer>(transfer);
                 context.Entry(dataTransfer).State = EntityState.Modified;
@@ -76,7 +82,10 @@ namespace Vinance.Logic.Services
             {
                 var dataTransfer = context.Transfers.Find(transferId);
                 if (dataTransfer == null)
+                {
                     return false;
+                }
+
                 context.Transfers.Remove(dataTransfer);
                 return await context.SaveChangesAsync() == 1;
             }

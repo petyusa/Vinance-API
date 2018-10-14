@@ -1,15 +1,18 @@
 ﻿using AutoMapper;
-using Vinance.Api.Viewmodels;
-using Vinance.Contracts.Models;
 
 namespace Vinance.Api
 {
+    using Contracts.Models;
+    using Viewmodels;
+
     public class MapperProfile : Profile
     {
         public MapperProfile()
         {
             CreateMap<Account, AccountViewmodel>();
-            CreateMap<Payment, PaymentViewmodel>();
+            CreateMap<Expense, ExpenseViewmodel>();
+            CreateMap<Income, IncomeViewmodel>();
+            CreateMap<Transfer, TransferViewmodel>();
         }
     }
 }

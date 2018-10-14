@@ -1,15 +1,15 @@
-﻿using System.Collections.Generic;
-using System.Net;
+﻿using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Vinance.Api.ActionFilters;
-using Vinance.Api.Viewmodels;
 
 namespace Vinance.Api.Controllers
 {
+    using ActionFilters;
+    using Contracts.Extensions;
     using Contracts.Interfaces;
     using Contracts.Models;
+    using Viewmodels;
 
     [Route("api/accounts")]
     [ApiController]
@@ -30,7 +30,7 @@ namespace Vinance.Api.Controllers
         public async Task<IActionResult> GetAll()
         {
             var accounts = await _accountService.GetAll();
-            var model = _mapper.Map<IEnumerable<AccountViewmodel>>(accounts);
+            var model = _mapper.MapAll<AccountViewmodel>(accounts);
 
             return Ok(model);
         }
@@ -41,8 +41,12 @@ namespace Vinance.Api.Controllers
         {
             var createdAccount = await _accountService.Create(account);
             if (createdAccount == null)
-                return StatusCode((int)HttpStatusCode.InternalServerError, "There was an erro creating the account");
-            return Created(Request.Path, createdAccount);
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, "There was an error creating the account");
+            }
+
+            var model = _mapper.Map<AccountViewmodel>(createdAccount);
+            return Created(Request.Path, model);
         }
 
         [HttpGet]
@@ -51,8 +55,12 @@ namespace Vinance.Api.Controllers
         {
             var account = await _accountService.Get(accountId);
             if (account == null)
+            {
                 return NotFound($"No account found with id: {accountId}");
-            return Ok(account);
+            }
+
+            var model = _mapper.Map<AccountViewmodel>(account);
+            return Ok(model);
         }
 
         [HttpPut]
@@ -61,9 +69,12 @@ namespace Vinance.Api.Controllers
         {
             var updatedAccount = await _accountService.Update(account);
             if (updatedAccount == null)
-                return StatusCode((int)HttpStatusCode.InternalServerError, "There was an erro updaeting the account");
-            return Created(Request.Path, updatedAccount);
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, "There was an error updating the account");
+            }
 
+            var model = _mapper.Map<AccountViewmodel>(account);
+            return Ok(model);
         }
 
         [HttpDelete]
@@ -72,8 +83,11 @@ namespace Vinance.Api.Controllers
         {
             var success = await _accountService.Delete(accountId);
             if (success)
+            {
                 return NoContent();
-            return StatusCode((int)HttpStatusCode.InternalServerError, "There was an erro deleting the account");
+            }
+
+            return StatusCode((int)HttpStatusCode.InternalServerError, "There was an error deleting the account");
         }
     }
 }

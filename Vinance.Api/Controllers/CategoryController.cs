@@ -8,11 +8,11 @@ namespace Vinance.Api.Controllers
     [ApiController]
     public class CategoryController : ControllerBase
     {
-        private readonly IPaymentService _paymentService;
+        private readonly IExpenseService _expenseService;
 
-        public CategoryController(IPaymentService paymentService)
+        public CategoryController(IExpenseService expenseService)
         {
-            _paymentService = paymentService;
+            _expenseService = expenseService;
         }
 
         //[HttpGet]
@@ -34,12 +34,12 @@ namespace Vinance.Api.Controllers
         //}
 
         //[HttpGet]
-        //[Route("payment-categories")]
-        //public async Task<ActionResult> GetPaymentCategories()
+        //[Route("expense-categories")]
+        //public async Task<ActionResult> GetExpenseCategories()
         //{
-        //    var paymentCategories = await _transactionService.GetCategory<PaymentCategory>();
+        //    var expenseCategories = await _transactionService.GetCategory<ExpenseCategory>();
 
-        //    return Ok(paymentCategories);
+        //    return Ok(expenseCategories);
         //}
     }
 }

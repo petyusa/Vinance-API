@@ -1,21 +1,26 @@
 ﻿using System.Net;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Vinance.Api.Controllers
 {
-    using Contracts.Models;
+    using Contracts.Extensions;
     using Contracts.Interfaces;
+    using Contracts.Models;
+    using Viewmodels;
 
     [Route("api/transfers")]
     [ApiController]
     public class TransferController : ControllerBase
     {
         private readonly ITransferService _transferService;
+        private readonly IMapper _mapper;
 
-        public TransferController(ITransferService transferService)
+        public TransferController(ITransferService transferService, IMapper mapper)
         {
             _transferService = transferService;
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -23,7 +28,9 @@ namespace Vinance.Api.Controllers
         public async Task<ActionResult> GetAll()
         {
             var transfers = await _transferService.GetAll();
-            return Ok(transfers);
+
+            var model = _mapper.MapAll<TransferViewmodel>(transfers);
+            return Ok(model);
         }
 
         [HttpPost]
@@ -32,8 +39,12 @@ namespace Vinance.Api.Controllers
         {
             var createdTransfer = await _transferService.Create(transfer);
             if (createdTransfer == null)
+            {
                 return StatusCode((int)HttpStatusCode.InternalServerError, "There was an erro creating the transfer");
-            return Created(Request.Path, createdTransfer);
+            }
+
+            var model = _mapper.Map<TransferViewmodel>(createdTransfer);
+            return Ok(model);
         }
 
         [HttpGet]
@@ -42,8 +53,12 @@ namespace Vinance.Api.Controllers
         {
             var transfer = await _transferService.Get(transferId);
             if (transfer == null)
+            {
                 return NotFound($"No transfer found with id: {transferId}");
-            return Ok(transfer);
+            }
+
+            var model = _mapper.Map<TransferViewmodel>(transfer);
+            return Ok(model);
         }
 
         [HttpPut]
@@ -52,9 +67,12 @@ namespace Vinance.Api.Controllers
         {
             var updatedTransfer = await _transferService.Update(transfer);
             if (updatedTransfer == null)
+            {
                 return StatusCode((int)HttpStatusCode.InternalServerError, "There was an erro updaeting the transfer");
-            return Created(Request.Path, updatedTransfer);
+            }
 
+            var model = _mapper.Map<TransferViewmodel>(updatedTransfer);
+            return Ok(model);
         }
 
         [HttpDelete]
@@ -63,7 +81,10 @@ namespace Vinance.Api.Controllers
         {
             var success = await _transferService.Delete(transferId);
             if (success)
+            {
                 return NoContent();
+            }
+
             return StatusCode((int)HttpStatusCode.InternalServerError, "There was an erro deleting the transfer");
         }
     }

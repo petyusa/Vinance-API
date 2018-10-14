@@ -1,8 +1,5 @@
 ﻿using AutoMapper;
 using System.Collections.Generic;
-using System.Linq;
-using AutoMapper.Mappers;
-using Vinance.Contracts.Models.BaseModels;
 
 namespace Vinance.Contracts.Extensions
 {

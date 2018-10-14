@@ -1,21 +1,26 @@
 ﻿using System.Net;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Vinance.Contracts.Models;
 
 namespace Vinance.Api.Controllers
 {
+    using Contracts.Extensions;
     using Contracts.Interfaces;
+    using Contracts.Models;
+    using Viewmodels;
 
     [Route("api/incomes")]
     [ApiController]
     public class IncomeController : ControllerBase
     {
         private readonly IIncomeService _incomeService;
+        private readonly IMapper _mapper;
 
-        public IncomeController(IIncomeService incomeService)
+        public IncomeController(IIncomeService incomeService, IMapper mapper)
         {
             _incomeService = incomeService;
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -24,7 +29,8 @@ namespace Vinance.Api.Controllers
         {
             var incomes = await _incomeService.GetAll();
 
-            return Ok(incomes);
+            var model = _mapper.MapAll<IncomeViewmodel>(incomes);
+            return Ok(model);
         }
 
         [HttpPost]
@@ -33,8 +39,12 @@ namespace Vinance.Api.Controllers
         {
             var createdIncome = await _incomeService.Create(income);
             if (createdIncome == null)
-                return StatusCode((int)HttpStatusCode.InternalServerError, "There was an erro creating the income");
-            return Created(Request.Path, createdIncome);
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, "There was an error creating the income");
+            }
+
+            var model = _mapper.Map<IncomeViewmodel>(createdIncome);
+            return Created(Request.Path, model);
         }
 
         [HttpGet]
@@ -43,8 +53,12 @@ namespace Vinance.Api.Controllers
         {
             var income = await _incomeService.Get(incomeId);
             if (income == null)
+            {
                 return NotFound($"No income found with id: {incomeId}");
-            return Ok(income);
+            }
+
+            var model = _mapper.Map<IncomeViewmodel>(income);
+            return Ok(model);
         }
 
         [HttpPut]
@@ -53,8 +67,12 @@ namespace Vinance.Api.Controllers
         {
             var updatedIncome = await _incomeService.Update(income);
             if (updatedIncome == null)
-                return StatusCode((int)HttpStatusCode.InternalServerError, "There was an erro updaeting the income");
-            return Created(Request.Path, updatedIncome);
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, "There was an error updaeting the income");
+            }
+
+            var model = _mapper.Map<IncomeViewmodel>(updatedIncome);
+            return Ok(model);
 
         }
 
@@ -64,8 +82,11 @@ namespace Vinance.Api.Controllers
         {
             var success = await _incomeService.Delete(incomeId);
             if (success)
+            {
                 return NoContent();
-            return StatusCode((int)HttpStatusCode.InternalServerError, "There was an erro deleting the income");
+            }
+
+            return StatusCode((int)HttpStatusCode.InternalServerError, "There was an error deleting the income");
         }
     }
 }

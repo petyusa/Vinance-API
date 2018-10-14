@@ -27,6 +27,7 @@ namespace Vinance.Logic.Services
             {
                 var dataIncomes = await context.Incomes
                     .Include(i => i.IncomeCategory)
+                    .Include(i => i.To)
                     .ToListAsync();
                 return _mapper.Map<IEnumerable<Income>>(dataIncomes);
             }
@@ -48,7 +49,8 @@ namespace Vinance.Logic.Services
             using (var context = _factory.Create())
             {
                 var dataIncome = await context.Incomes
-                    .Include(i=>i.IncomeCategory)
+                    .Include(i => i.To)
+                    .Include(i => i.IncomeCategory)
                     .SingleOrDefaultAsync(a => a.Id == incomeId);
                 return _mapper.Map<Income>(dataIncome);
             }
@@ -59,7 +61,9 @@ namespace Vinance.Logic.Services
             using (var context = _factory.Create())
             {
                 if (!context.Incomes.Any(a => a.Id == income.Id))
+                {
                     return null;
+                }
 
                 var dataIncome = _mapper.Map<Data.Entities.Income>(income);
                 context.Entry(dataIncome).State = EntityState.Modified;
@@ -74,7 +78,10 @@ namespace Vinance.Logic.Services
             {
                 var dataIncome = context.Incomes.Find(accountId);
                 if (dataIncome == null)
+                {
                     return false;
+                }
+
                 context.Incomes.Remove(dataIncome);
                 return await context.SaveChangesAsync() == 1;
             }

@@ -37,7 +37,7 @@ namespace Vinance.Api
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=payment}/{action=get}/{id?}");
+                    template: "{controller=expense}/{action=get}/{id?}");
             });
 
         }

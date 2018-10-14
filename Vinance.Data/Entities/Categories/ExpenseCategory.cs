@@ -4,8 +4,8 @@ namespace Vinance.Data.Entities.Categories
 {
     using Base;
 
-    [Table("PaymentCategories", Schema = "Vinance")]
-    public class PaymentCategory : Category
+    [Table("ExpenseCategories", Schema = "Vinance")]
+    public class ExpenseCategory : Category
     {
     }
 }

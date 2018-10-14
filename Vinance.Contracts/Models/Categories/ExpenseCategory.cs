@@ -2,7 +2,7 @@
 {
     using BaseModels;
 
-    public class PaymentCategory : Category
+    public class ExpenseCategory : Category
     {
     }
 }

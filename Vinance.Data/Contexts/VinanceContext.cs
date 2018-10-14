@@ -16,10 +16,10 @@ namespace Vinance.Data.Contexts
 
         public DbSet<Account> Accounts { get; set; }
         public DbSet<Income> Incomes { get; set; }
-        public DbSet<Payment> Payments { get; set; }
+        public DbSet<Expense> Expenses { get; set; }
         public DbSet<Transfer> Transfers { get; set; }
         public DbSet<IncomeCategory> IncomeCategories { get; set; }
-        public DbSet<PaymentCategory> PaymentCategories { get; set; }
+        public DbSet<ExpenseCategory> ExpenseCategories { get; set; }
         public DbSet<TransferCategory> TransferCategories { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -37,38 +37,38 @@ namespace Vinance.Data.Contexts
                 }
             );
 
-            modelBuilder.Entity<PaymentCategory>().HasData(
-                new PaymentCategory
+            modelBuilder.Entity<ExpenseCategory>().HasData(
+                new ExpenseCategory
                 {
                     Id = 1,
                     Name = "Extra kiadás"
                 },
-                new PaymentCategory
+                new ExpenseCategory
                 {
                     Id = 2,
                     Name = "Élelmiszer"
                 }
             );
 
-            modelBuilder.Entity<Payment>().HasData(
-                new Payment
+            modelBuilder.Entity<Expense>().HasData(
+                new Expense
                 {
                     Id = 1,
                     Amount = 4000,
                     Comment = "ez egy komment",
                     Date = DateTime.Now,
                     FromId = 1,
-                    PaymentCategoryId = 1
+                    ExpenseCategoryId = 1
 
                 },
-                new Payment
+                new Expense
                 {
                     Id = 2,
                     Amount = 5000,
                     Comment = "ez egy másik komment",
                     Date = DateTime.Now,
                     FromId = 2,
-                    PaymentCategoryId = 2
+                    ExpenseCategoryId = 2
                 }
             );
 

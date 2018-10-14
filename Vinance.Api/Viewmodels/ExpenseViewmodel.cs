@@ -2,7 +2,7 @@
 
 namespace Vinance.Api.Viewmodels
 {
-    public class PaymentViewmodel
+    public class ExpenseViewmodel
     {
         public int Id { get; set; }
 
@@ -14,6 +14,10 @@ namespace Vinance.Api.Viewmodels
 
         public int FromId { get; set; }
 
-        public int PaymentCategoryId { get; set; }
+        public string FromName { get; set; }
+
+        public int ExpenseCategoryId { get; set; }
+
+        public string ExpenseCategoryName { get; set; }
     }
 }

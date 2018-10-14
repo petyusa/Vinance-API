@@ -19,7 +19,7 @@ namespace Vinance.Data.Entities
 
         public virtual IEnumerable<Income> Incomes { get; set; }
 
-        public virtual IEnumerable<Payment> Payments { get; set; }
+        public virtual IEnumerable<Expense> Expenses { get; set; }
 
         [InverseProperty("From")]
         public virtual IEnumerable<Transfer> TransfersFrom { get; set; }
