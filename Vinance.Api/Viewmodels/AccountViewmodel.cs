@@ -1,6 +1,6 @@
 ﻿namespace Vinance.Api.Viewmodels
 {
-    public class BasicAccountViewmodel
+    public class AccountViewmodel
     {
         public int Id { get; set; }
 

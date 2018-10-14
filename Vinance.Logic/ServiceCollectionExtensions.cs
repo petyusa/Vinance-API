@@ -3,12 +3,15 @@
 namespace Vinance.Logic
 {
     using Contracts.Interfaces;
+    using Data;
+    using Data.Contexts;
     using Services;
 
     public static class ServiceCollectionExtensions
     {
         public static IServiceCollection AddVinanceServices(this IServiceCollection services)
         {
+            services.AddTransient<IFactory<VinanceContext>, VinanceContextFactory<VinanceContext>>();
             services.AddTransient<IPaymentService, PaymentService>();
             services.AddTransient<ITransferService, TransferService>();
             services.AddTransient<IAccountService, AccountService>();

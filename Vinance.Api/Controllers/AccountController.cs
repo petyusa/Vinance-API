@@ -30,7 +30,7 @@ namespace Vinance.Api.Controllers
         public async Task<IActionResult> GetAll()
         {
             var accounts = await _accountService.GetAll();
-            var model = _mapper.Map<IEnumerable<BasicAccountViewmodel>>(accounts);
+            var model = _mapper.Map<IEnumerable<AccountViewmodel>>(accounts);
 
             return Ok(model);
         }

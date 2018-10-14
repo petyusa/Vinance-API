@@ -1,21 +1,26 @@
 ﻿using System.Net;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Vinance.Api.Controllers
 {
+    using Contracts.Extensions;
     using Contracts.Interfaces;
     using Contracts.Models;
+    using Viewmodels;
 
     [Route("api/payments")]
     [ApiController]
     public class PaymentController : ControllerBase
     {
         private readonly IPaymentService _paymentService;
+        private readonly IMapper _mapper;
 
-        public PaymentController(IPaymentService paymentService)
+        public PaymentController(IPaymentService paymentService, IMapper mapper)
         {
             _paymentService = paymentService;
+            _mapper = mapper;
         }
 
         [HttpPost]
@@ -25,10 +30,11 @@ namespace Vinance.Api.Controllers
             var createdPayment = await _paymentService.Create(payment);
             if (createdPayment == null)
             {
-                return StatusCode((int)HttpStatusCode.InternalServerError, "There was an erro creating the payment");
+                return StatusCode((int)HttpStatusCode.InternalServerError, "There was an error creating the payment");
             }
 
-            return Ok(createdPayment);
+            var model = _mapper.Map<PaymentViewmodel>(createdPayment);
+            return Ok(model);
         }
 
         [HttpGet]
@@ -36,7 +42,8 @@ namespace Vinance.Api.Controllers
         public async Task<IActionResult> GetAll()
         {
             var payments = await _paymentService.GetAll();
-            return Ok(payments);
+            var model = _mapper.MapAll<PaymentViewmodel>(payments);
+            return Ok(model);
         }
 
         [HttpGet]
@@ -49,7 +56,8 @@ namespace Vinance.Api.Controllers
                 return NotFound($"No account found with id: {paymentId}");
             }
 
-            return Ok(payment);
+            var model = _mapper.Map<PaymentViewmodel>(payment);
+            return Ok(model);
         }
 
         [HttpPut]
@@ -62,7 +70,8 @@ namespace Vinance.Api.Controllers
                 return NotFound("There was an error updating the payment");
             }
 
-            return Ok(updatedPayment);
+            var model = _mapper.Map<PaymentViewmodel>(updatedPayment);
+            return Ok(model);
         }
 
         [HttpDelete]
@@ -75,7 +84,7 @@ namespace Vinance.Api.Controllers
                 return NoContent();
             }
 
-            return StatusCode((int)HttpStatusCode.InternalServerError, "There was an erro deleting the payment");
+            return StatusCode((int)HttpStatusCode.InternalServerError, "There was an error deleting the payment");
         }
     }
 }

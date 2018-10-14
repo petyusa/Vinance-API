@@ -8,7 +8,8 @@ namespace Vinance.Api
     {
         public MapperProfile()
         {
-            CreateMap<Account, BasicAccountViewmodel>();
+            CreateMap<Account, AccountViewmodel>();
+            CreateMap<Payment, PaymentViewmodel>();
         }
     }
 }
