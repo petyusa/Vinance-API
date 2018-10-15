@@ -15,7 +15,7 @@ namespace Vinance.Data.Entities
 
         public int UserId { get; set; }
 
-        public int Balance { get; private set; }
+        public int Balance { get; set; }
 
         public virtual IEnumerable<Income> Incomes { get; set; }
 

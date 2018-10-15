@@ -14,12 +14,14 @@ namespace Vinance.Logic.Services
     public class IncomeService : IIncomeService
     {
         private readonly IFactory<VinanceContext> _factory;
+        private readonly IAccountService _accountService;
         private readonly IMapper _mapper;
 
-        public IncomeService(IFactory<VinanceContext> factory, IMapper mapper)
+        public IncomeService(IFactory<VinanceContext> factory, IMapper mapper, IAccountService accountService)
         {
             _factory = factory;
             _mapper = mapper;
+            _accountService = accountService;
         }
 
         public async Task<IEnumerable<Income>> GetAll()
@@ -41,8 +43,11 @@ namespace Vinance.Logic.Services
                 var dataIncome = _mapper.Map<Data.Entities.Income>(income);
                 context.Incomes.Add(dataIncome);
                 await context.SaveChangesAsync();
-                return _mapper.Map<Income>(dataIncome);
+                var createdIncome = _mapper.Map<Income>(dataIncome);
+                await _accountService.OnAddTransaction(income);
+                return createdIncome;
             }
+
         }
 
         public async Task<Income> Get(int incomeId)
@@ -68,6 +73,7 @@ namespace Vinance.Logic.Services
 
                 var dataIncome = _mapper.Map<Data.Entities.Income>(income);
                 context.Entry(dataIncome).State = EntityState.Modified;
+                await _accountService.OnAddEditTransaction(income);
                 await context.SaveChangesAsync();
                 return _mapper.Map<Income>(dataIncome);
             }

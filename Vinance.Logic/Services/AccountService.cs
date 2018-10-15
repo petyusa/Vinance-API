@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Vinance.Data.Entities.Base;
 
 namespace Vinance.Logic.Services
 {
@@ -74,6 +75,64 @@ namespace Vinance.Logic.Services
                 context.Accounts.Remove(dataAccount);
                 return await context.SaveChangesAsync() == 1;
             }
+        }
+
+        public async Task OnAddTransaction(Transaction transaction)
+        {
+            using (var context = _factory.Create())
+            {
+                Data.Entities.Account account;
+                switch (transaction)
+                {
+                    case Data.Entities.Income income:
+                        account = await context.Accounts.SingleOrDefaultAsync(a => a.Id == income.ToId);
+                        account.Balance += income.Amount;
+                        break;
+                    case Data.Entities.Expense expense:
+                        account = await context.Accounts.SingleOrDefaultAsync(a => a.Id == expense.FromId);
+                        account.Balance -= expense.Amount;
+                        break;
+                    case Data.Entities.Transfer transfer:
+                        var accountFrom = await context.Accounts.SingleOrDefaultAsync(a => a.Id == transfer.FromId);
+                        var accountTo = await context.Accounts.SingleOrDefaultAsync(a => a.Id == transfer.ToId);
+                        accountFrom.Balance -= transfer.Amount;
+                        accountTo.Balance += transfer.Amount;
+                        break;
+                }
+                context.SaveChanges();
+            }
+        }
+
+        public async Task OnAddDeleteTransaction(Transaction transaction)
+        {
+            using (var context = _factory.Create())
+            {
+                Data.Entities.Account account;
+                switch (transaction)
+                {
+                    case Data.Entities.Income income:
+                        account = await context.Accounts.SingleOrDefaultAsync(a => a.Id == income.ToId);
+                        account.Balance -= income.Amount;
+                        break;
+                    case Data.Entities.Expense expense:
+                        account = await context.Accounts.SingleOrDefaultAsync(a => a.Id == expense.FromId);
+                        account.Balance += expense.Amount;
+                        break;
+                    case Data.Entities.Transfer transfer:
+                        var accountFrom = await context.Accounts.SingleOrDefaultAsync(a => a.Id == transfer.FromId);
+                        var accountTo = await context.Accounts.SingleOrDefaultAsync(a => a.Id == transfer.ToId);
+                        accountFrom.Balance += transfer.Amount;
+                        accountTo.Balance -= transfer.Amount;
+                        break;
+                }
+                context.SaveChanges();
+            }
+        }
+
+        public async Task OnAddEditTransaction(Transaction oldTransaction, Transaction newTransaction)
+        {
+            await OnAddDeleteTransaction(oldTransaction);
+            await OnAddTransaction(newTransaction);
         }
     }
 }
