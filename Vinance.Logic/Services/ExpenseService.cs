@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Vinance.Logic.Services
 {
+    using Contracts.Exceptions;
     using Contracts.Extensions;
     using Contracts.Interfaces;
     using Contracts.Models;
@@ -52,6 +53,12 @@ namespace Vinance.Logic.Services
                     .Include(e => e.From)
                     .Include(e => e.ExpenseCategory)
                     .SingleOrDefaultAsync(e => e.Id == expenseId);
+
+                if (dataExpense == null)
+                {
+                    throw new ExpenseNotFoundException($"No expense found with id: {expenseId}");
+                }
+
                 return _mapper.Map<Expense>(dataExpense);
             }
         }
@@ -62,7 +69,7 @@ namespace Vinance.Logic.Services
             {
                 if (!context.Expenses.Any(e => e.Id == expense.Id))
                 {
-                    return null;
+                    throw new ExpenseNotFoundException($"No expense found with id: {expense.Id}");
                 }
 
                 var dataExpense = _mapper.Map<Data.Entities.Expense>(expense);
@@ -79,7 +86,7 @@ namespace Vinance.Logic.Services
                 var dataExpense = await context.Expenses.FindAsync(expenseId);
                 if (dataExpense == null)
                 {
-                    return false;
+                    throw new ExpenseNotFoundException($"No expense found with id: {expenseId}");
                 }
 
                 context.Expenses.Remove(dataExpense);

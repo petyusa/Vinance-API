@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 
 namespace Vinance.Data.Entities
 {
@@ -15,7 +16,16 @@ namespace Vinance.Data.Entities
 
         public int UserId { get; set; }
 
-        public int Balance { get; set; }
+        public int OpeningBalance { get; set; }
+
+        public int Balance()
+        {
+            return OpeningBalance +
+                Incomes.Sum(i => i.Amount) -
+                Expenses.Sum(e => e.Amount) -
+                TransfersFrom.Sum(t => t.Amount) +
+                TransfersTo.Sum(t => t.Amount);
+        }
 
         public virtual IEnumerable<Income> Incomes { get; set; }
 

@@ -13,9 +13,5 @@ namespace Vinance.Contracts.Interfaces
         Task<IEnumerable<Account>> GetAll();
         Task<Account> Update(Account account);
         Task<bool> Delete(int account);
-        Task OnAddTransaction(Transaction transaction);
-        Task OnAddDeleteTransaction(Transaction transaction);
-        Task OnAddEditTransaction(Transaction transaction);
-
     }
 }

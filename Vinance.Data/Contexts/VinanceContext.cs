@@ -28,12 +28,14 @@ namespace Vinance.Data.Contexts
                 new Account
                 {
                     Id = 1,
-                    Name = "Bankszámla"
+                    Name = "Bankszámla",
+                    OpeningBalance = 0
                 },
                 new Account
                 {
                     Id = 2,
-                    Name = "Megtakarítás"
+                    Name = "Megtakarítás",
+                    OpeningBalance = 0
                 }
             );
 

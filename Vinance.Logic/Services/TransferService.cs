@@ -3,10 +3,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using Vinance.Contracts.Extensions;
 
 namespace Vinance.Logic.Services
 {
+    using Contracts.Extensions;
     using Contracts.Interfaces;
     using Contracts.Models;
     using Data.Contexts;

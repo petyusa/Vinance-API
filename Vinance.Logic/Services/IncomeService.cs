@@ -2,11 +2,12 @@
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using Vinance.Contracts.Extensions;
 
 namespace Vinance.Logic.Services
 {
     using System.Linq;
+    using Contracts.Exceptions;
+    using Contracts.Extensions;
     using Contracts.Interfaces;
     using Contracts.Models;
     using Data.Contexts;
@@ -14,14 +15,12 @@ namespace Vinance.Logic.Services
     public class IncomeService : IIncomeService
     {
         private readonly IFactory<VinanceContext> _factory;
-        private readonly IAccountService _accountService;
         private readonly IMapper _mapper;
 
-        public IncomeService(IFactory<VinanceContext> factory, IMapper mapper, IAccountService accountService)
+        public IncomeService(IFactory<VinanceContext> factory, IMapper mapper)
         {
             _factory = factory;
             _mapper = mapper;
-            _accountService = accountService;
         }
 
         public async Task<IEnumerable<Income>> GetAll()
@@ -43,8 +42,8 @@ namespace Vinance.Logic.Services
                 var dataIncome = _mapper.Map<Data.Entities.Income>(income);
                 context.Incomes.Add(dataIncome);
                 await context.SaveChangesAsync();
+
                 var createdIncome = _mapper.Map<Income>(dataIncome);
-                await _accountService.OnAddTransaction(income);
                 return createdIncome;
             }
 
@@ -58,6 +57,11 @@ namespace Vinance.Logic.Services
                     .Include(i => i.To)
                     .Include(i => i.IncomeCategory)
                     .SingleOrDefaultAsync(a => a.Id == incomeId);
+
+                if (dataIncome == null)
+                {
+                    throw new IncomeNotFoundException($"No income found with id: {incomeId}");
+                }
                 return _mapper.Map<Income>(dataIncome);
             }
         }
@@ -66,16 +70,15 @@ namespace Vinance.Logic.Services
         {
             using (var context = _factory.Create())
             {
-                if (!context.Incomes.Any(a => a.Id == income.Id))
+                if (!context.Incomes.Any(i => i.Id == income.Id))
                 {
-                    return null;
+                    throw new IncomeNotFoundException($"No income found with id: {income.Id}");
                 }
 
-                var dataIncome = _mapper.Map<Data.Entities.Income>(income);
-                context.Entry(dataIncome).State = EntityState.Modified;
-                await _accountService.OnAddEditTransaction(income);
+                var updatedIncome = _mapper.Map<Data.Entities.Income>(income);
+                context.Entry(updatedIncome).State = EntityState.Modified;
                 await context.SaveChangesAsync();
-                return _mapper.Map<Income>(dataIncome);
+                return _mapper.Map<Income>(updatedIncome);
             }
         }
 
@@ -86,7 +89,7 @@ namespace Vinance.Logic.Services
                 var dataIncome = context.Incomes.Find(incomeId);
                 if (dataIncome == null)
                 {
-                    return false;
+                    throw new IncomeNotFoundException($"No income found with id: {incomeId}");
                 }
 
                 context.Incomes.Remove(dataIncome);
