@@ -28,7 +28,8 @@ namespace Vinance.Logic.Services
             using (var context = _factory.Create())
             {
                 var dataExpense = _mapper.Map<Data.Entities.Expense>(expense);
-                await context.Expenses.AddAsync(dataExpense);
+                context.Expenses.Add(dataExpense);
+                await context.SaveChangesAsync();
                 return _mapper.Map<Expense>(dataExpense);
             }
         }
@@ -38,8 +39,8 @@ namespace Vinance.Logic.Services
             using (var context = _factory.Create())
             {
                 var dataExpenses = await context.Expenses
-                    .Include(e => e.From)
                     .Include(e => e.ExpenseCategory)
+                    .Include(e => e.From)
                     .ToListAsync();
                 return _mapper.Map<IEnumerable<Expense>>(dataExpenses);
             }

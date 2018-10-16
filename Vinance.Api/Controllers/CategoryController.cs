@@ -1,45 +1,44 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Vinance.Api.Controllers
 {
     using Contracts.Interfaces;
+    using Contracts.Models.Categories;
 
     [Route("api/category")]
     [ApiController]
     public class CategoryController : ControllerBase
     {
-        private readonly IExpenseService _expenseService;
+        private readonly ICategoryService _categoryService;
 
-        public CategoryController(IExpenseService expenseService)
+        public CategoryController(ICategoryService categoryService)
         {
-            _expenseService = expenseService;
+            _categoryService = categoryService;
         }
 
-        //[HttpGet]
-        //[Route("income-categories")]
-        //public async Task<ActionResult> GetIncomeCategories()
-        //{
-        //    var incomeCategories = await _transactionService.GetCategory<IncomeCategory>();
+        [HttpGet]
+        [Route("income-categories")]
+        public async Task<ActionResult> GetIncomeCategories()
+        {
+            var incomeCategories = await _categoryService.GetAll<IncomeCategory>();
+            return Ok(incomeCategories);
+        }
 
-        //    return Ok(incomeCategories);
-        //}
+        [HttpGet]
+        [Route("transfer-categories")]
+        public async Task<ActionResult> GetTransferCategories()
+        {
+            var transferCategories = await _categoryService.GetAll<TransferCategory>();
+            return Ok(transferCategories);
+        }
 
-        //[HttpGet]
-        //[Route("transfer-categories")]
-        //public async Task<ActionResult> GetTransferCategories()
-        //{
-        //    var transferCategories = await _transactionService.GetCategory<TransferCategory>();
-
-        //    return Ok(transferCategories);
-        //}
-
-        //[HttpGet]
-        //[Route("expense-categories")]
-        //public async Task<ActionResult> GetExpenseCategories()
-        //{
-        //    var expenseCategories = await _transactionService.GetCategory<ExpenseCategory>();
-
-        //    return Ok(expenseCategories);
-        //}
+        [HttpGet]
+        [Route("expense-categories")]
+        public async Task<ActionResult> GetExpenseCategories()
+        {
+            var expenseCategories = await _categoryService.GetAll<ExpenseCategory>();
+            return Ok(expenseCategories);
+        }
     }
 }

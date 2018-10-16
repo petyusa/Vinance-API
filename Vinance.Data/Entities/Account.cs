@@ -20,11 +20,19 @@ namespace Vinance.Data.Entities
 
         public int Balance()
         {
-            return OpeningBalance +
-                Incomes.Sum(i => i.Amount) -
-                Expenses.Sum(e => e.Amount) -
-                TransfersFrom.Sum(t => t.Amount) +
-                TransfersTo.Sum(t => t.Amount);
+            if (Incomes != null &&
+                Expenses != null &&
+                TransfersTo != null &&
+                TransfersFrom != null)
+            {
+                return OpeningBalance +
+                    Incomes.Sum(i => i.Amount) -
+                    Expenses.Sum(e => e.Amount) -
+                    TransfersFrom.Sum(t => t.Amount) +
+                    TransfersTo.Sum(t => t.Amount);
+            }
+
+            return 0;
         }
 
         public virtual IEnumerable<Income> Incomes { get; set; }
