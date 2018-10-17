@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -27,7 +28,19 @@ namespace Vinance.Logic.Services
         {
             using (var context = _factory.Create())
             {
-                var categories = await context.Set<T>().ToListAsync();
+                IEnumerable<Data.Entities.Base.Category> categories;
+                if (typeof(T) == typeof(ExpenseCategory))
+                {
+                    categories = await context.ExpenseCategories.Include(ec => ec.Expenses).ToListAsync();
+                }
+                else if (typeof(T) == typeof(IncomeCategory))
+                {
+                    categories = await context.IncomeCategories.Include(ic => ic.Incomes).ToListAsync();
+                }
+                else
+                {
+                    categories = await context.TransferCategories.Include(tc => tc.Transfers).ToListAsync();
+                }
                 return _mapper.MapAll<T>(categories);
             }
         }
