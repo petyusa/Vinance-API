@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Vinance.Api
 {
     using ActionFilters;
+    using Identity;
     using Logic;
     using Middlewares;
 
@@ -22,17 +23,18 @@ namespace Vinance.Api
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddVinanceServices();
+            services.AddVinanceIdentity(Configuration);
             services.AddScoped<HeaderValidationFilterAttribute>();
             services.AddAutoMapper();
-            services.AddVinanceServices();
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
+            app.UseAuthentication();
             app.UseMvc();
-
             app.UseMvc(routes =>
             {
                 routes.MapRoute(

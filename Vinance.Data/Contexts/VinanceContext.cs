@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
 
 namespace Vinance.Data.Contexts
 {
@@ -11,7 +12,7 @@ namespace Vinance.Data.Contexts
     {
         public VinanceContext(DbContextOptions options) : base(options)
         {
-            Database.EnsureCreated();
+            Database.Migrate();
         }
 
         public DbSet<Account> Accounts { get; set; }
@@ -148,6 +149,18 @@ namespace Vinance.Data.Contexts
             {
                 relationship.DeleteBehavior = DeleteBehavior.Restrict;
             }
+        }
+
+
+    }
+
+    public class VinanceContextFactory : IDesignTimeDbContextFactory<VinanceContext>
+    {
+        public VinanceContext CreateDbContext(string[] args)
+        {
+            var builder = new DbContextOptionsBuilder<VinanceContext>();
+            builder.UseSqlServer("Data Source=.;Initial Catalog=Vinance; Integrated Security=SSPI;");
+            return new VinanceContext(builder.Options);
         }
     }
 }

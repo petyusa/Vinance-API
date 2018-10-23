@@ -36,6 +36,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Vinance.Contracts\Vinance.Contracts.csproj" />
+    <ProjectReference Include="..\Vinance.Identity\Vinance.Identity.csproj" />
     <ProjectReference Include="..\Vinance.Logic\Vinance.Logic.csproj" />
   </ItemGroup>
 
