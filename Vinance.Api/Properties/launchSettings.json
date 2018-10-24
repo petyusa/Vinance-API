@@ -14,8 +14,6 @@
       "launchBrowser": true,
       "launchUrl": "api/expenses",
       "environmentVariables": {
-        "Key": "Value",
-        "SENDGRID_API_KEY": "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",
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     }
