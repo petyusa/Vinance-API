@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 
 namespace Vinance.Identity
@@ -8,9 +9,14 @@ namespace Vinance.Identity
 
     public interface IIdentityService
     {
-        Task<TokenResult> GetToken(LoginModel loginModel);
+        Task<TokenResult> GetAccessToken(LoginModel loginModel);
         Task<IdentityResult> Register(VinanceUser user, string password);
-        Task<bool> ChangePassword(PasswordChangeModel changeModel);
-        Task<string> ResetPassword(string email);
+        Task<IdentityResult> ChangePassword(PasswordChangeModel changeModel);
+        Task<string> GetPasswordResetToken(string email);
+        Task<IdentityResult> ResetPassword(PasswordResetModel resetModel);
+        Task<string> GetEmailChangeToken(string newEmail);
+        Task<IdentityResult> ChangeEmail(EmailChangeModel emailChangeModel);
+        Task<VinanceUser> GetCurrentUser();
+        Guid GetCurrentUserId();
     }
 }

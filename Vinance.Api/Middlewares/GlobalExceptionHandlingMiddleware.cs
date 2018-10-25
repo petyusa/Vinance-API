@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Vinance.Contracts.Exceptions;
 
 namespace Vinance.Api.Middlewares
 {
@@ -32,6 +34,13 @@ namespace Vinance.Api.Middlewares
         private async Task HandleExceptionAsync(HttpContext context, Exception exception)
         {
             _logger.LogError(exception, exception.Message);
+
+            switch (exception)
+            {
+                case UserNotFoundException ex:
+                    context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                    return;
+            }
 
             var result = JsonConvert.SerializeObject(new { message = exception.Message });
             context.Response.ContentType = "application/json";

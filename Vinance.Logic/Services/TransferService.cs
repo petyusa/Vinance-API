@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Vinance.Identity;
 
 namespace Vinance.Logic.Services
 {
@@ -14,12 +16,14 @@ namespace Vinance.Logic.Services
     public class TransferService : ITransferService
     {
         private readonly IFactory<VinanceContext> _factory;
+        private readonly Guid _userId;
         private readonly IMapper _mapper;
 
-        public TransferService(IFactory<VinanceContext> factory, IMapper mapper)
+        public TransferService(IFactory<VinanceContext> factory, IIdentityService identityService, IMapper mapper)
         {
             _factory = factory;
             _mapper = mapper;
+            _userId = identityService.GetCurrentUserId();
         }
 
         public async Task<IEnumerable<Transfer>> GetAll()
@@ -31,6 +35,7 @@ namespace Vinance.Logic.Services
                     .Include(p => p.From)
                     .Include(p => p.To)
                     .Include(t => t.TransferCategory)
+                    .Where(t => t.UserId == _userId)
                     .ToListAsync();
                 transfers = _mapper.Map<IEnumerable<Transfer>>(dataTransfers);
             }
@@ -42,6 +47,7 @@ namespace Vinance.Logic.Services
             using (var context = _factory.Create())
             {
                 var dataTransfer = _mapper.Map<Data.Entities.Transfer>(transfer);
+                dataTransfer.UserId = _userId;
                 context.Transfers.Add(dataTransfer);
                 await context.SaveChangesAsync();
                 return _mapper.Map<Transfer>(dataTransfer);
@@ -56,7 +62,7 @@ namespace Vinance.Logic.Services
                     .Include(p => p.From)
                     .Include(p => p.To)
                     .Include(t => t.TransferCategory)
-                    .SingleOrDefaultAsync(a => a.Id == transferId);
+                    .SingleOrDefaultAsync(t => t.Id == transferId && t.UserId == _userId);
                 return _mapper.Map<Transfer>(dataTransfer);
             }
         }
@@ -65,7 +71,7 @@ namespace Vinance.Logic.Services
         {
             using (var context = _factory.Create())
             {
-                if (!context.Transfers.Any(a => a.Id == transfer.Id))
+                if (!context.Transfers.Any(t => t.Id == transfer.Id && t.UserId == _userId))
                 {
                     return null;
                 }
@@ -82,7 +88,7 @@ namespace Vinance.Logic.Services
             using (var context = _factory.Create())
             {
                 var dataTransfer = context.Transfers.Find(transferId);
-                if (dataTransfer == null)
+                if (dataTransfer == null || dataTransfer.UserId != _userId)
                 {
                     return false;
                 }
@@ -96,7 +102,11 @@ namespace Vinance.Logic.Services
         {
             using (var context = _factory.Create())
             {
-                var transfers = await context.Transfers.Where(t => t.ToId == accountId || t.FromId == accountId).ToListAsync();
+                var account = await context.Accounts
+                    .Include(a => a.TransfersFrom)
+                    .Include(a => a.TransfersTo)
+                    .SingleOrDefaultAsync(a => a.Id == accountId && a.UserId == _userId);
+                var transfers = account.TransfersFrom.ToList().Concat(account.TransfersTo.ToList());
                 return _mapper.MapAll<Transfer>(transfers);
             }
         }
@@ -105,8 +115,10 @@ namespace Vinance.Logic.Services
         {
             using (var context = _factory.Create())
             {
-                var transfers = await context.Transfers.Where(t => t.TransferCategoryId == categoryId).ToListAsync();
-                return _mapper.MapAll<Transfer>(transfers);
+                var category = await context.TransferCategories
+                    .Include(tc => tc.Transfers)
+                    .SingleOrDefaultAsync(tc => tc.Id == categoryId && tc.UserId == _userId);
+                return _mapper.MapAll<Transfer>(category.Transfers.ToList());
             }
         }
     }

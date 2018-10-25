@@ -14,8 +14,6 @@ namespace Vinance.Data.Entities
         [Column(TypeName = "NVARCHAR(50)")]
         public string Name { get; set; }
 
-        public int UserId { get; set; }
-
         public int OpeningBalance { get; set; }
 
         public int Balance()

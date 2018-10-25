@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Vinance.Api.Viewmodels
+namespace Vinance.Api.Viewmodels.Identity
 {
     public class RegisterViewmodel
     {

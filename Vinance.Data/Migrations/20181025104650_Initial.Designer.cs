@@ -10,7 +10,7 @@ using Vinance.Data.Contexts;
 namespace Vinance.Data.Migrations
 {
     [DbContext(typeof(VinanceContext))]
-    [Migration("20181021222445_Initial")]
+    [Migration("20181025104650_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -33,15 +33,15 @@ namespace Vinance.Data.Migrations
 
                     b.Property<int>("OpeningBalance");
 
-                    b.Property<int>("UserId");
+                    b.Property<Guid>("UserId");
 
                     b.HasKey("Id");
 
                     b.ToTable("Accounts","Vinance");
 
                     b.HasData(
-                        new { Id = 1, Name = "Bankszámla", OpeningBalance = 0, UserId = 0 },
-                        new { Id = 2, Name = "Megtakarítás", OpeningBalance = 0, UserId = 0 }
+                        new { Id = 1, Name = "Bankszámla", OpeningBalance = 0, UserId = new Guid("00000000-0000-0000-0000-000000000000") },
+                        new { Id = 2, Name = "Megtakarítás", OpeningBalance = 0, UserId = new Guid("00000000-0000-0000-0000-000000000000") }
                     );
                 });
 
@@ -55,13 +55,15 @@ namespace Vinance.Data.Migrations
                         .IsRequired()
                         .HasColumnType("NVARCHAR(50)");
 
+                    b.Property<Guid>("UserId");
+
                     b.HasKey("Id");
 
                     b.ToTable("ExpenseCategories","Vinance");
 
                     b.HasData(
-                        new { Id = 1, Name = "Extra kiadás" },
-                        new { Id = 2, Name = "Élelmiszer" }
+                        new { Id = 1, Name = "Extra kiadás", UserId = new Guid("00000000-0000-0000-0000-000000000000") },
+                        new { Id = 2, Name = "Élelmiszer", UserId = new Guid("00000000-0000-0000-0000-000000000000") }
                     );
                 });
 
@@ -75,13 +77,15 @@ namespace Vinance.Data.Migrations
                         .IsRequired()
                         .HasColumnType("NVARCHAR(50)");
 
+                    b.Property<Guid>("UserId");
+
                     b.HasKey("Id");
 
                     b.ToTable("IncomeCategories","Vinance");
 
                     b.HasData(
-                        new { Id = 1, Name = "Fizetés" },
-                        new { Id = 2, Name = "Egyéb bevétel" }
+                        new { Id = 1, Name = "Fizetés", UserId = new Guid("00000000-0000-0000-0000-000000000000") },
+                        new { Id = 2, Name = "Egyéb bevétel", UserId = new Guid("00000000-0000-0000-0000-000000000000") }
                     );
                 });
 
@@ -95,13 +99,15 @@ namespace Vinance.Data.Migrations
                         .IsRequired()
                         .HasColumnType("NVARCHAR(50)");
 
+                    b.Property<Guid>("UserId");
+
                     b.HasKey("Id");
 
                     b.ToTable("TransferCategories","Vinance");
 
                     b.HasData(
-                        new { Id = 1, Name = "Kölcsönadás" },
-                        new { Id = 2, Name = "Levétel" }
+                        new { Id = 1, Name = "Kölcsönadás", UserId = new Guid("00000000-0000-0000-0000-000000000000") },
+                        new { Id = 2, Name = "Levétel", UserId = new Guid("00000000-0000-0000-0000-000000000000") }
                     );
                 });
 
@@ -124,6 +130,8 @@ namespace Vinance.Data.Migrations
 
                     b.Property<int>("FromId");
 
+                    b.Property<Guid>("UserId");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ExpenseCategoryId");
@@ -133,8 +141,8 @@ namespace Vinance.Data.Migrations
                     b.ToTable("Expenses","Vinance");
 
                     b.HasData(
-                        new { Id = 1, Amount = 4000, Comment = "ez egy komment", Date = new DateTime(2018, 10, 22, 0, 24, 44, 819, DateTimeKind.Local), ExpenseCategoryId = 1, FromId = 1 },
-                        new { Id = 2, Amount = 5000, Comment = "ez egy másik komment", Date = new DateTime(2018, 10, 22, 0, 24, 44, 819, DateTimeKind.Local), ExpenseCategoryId = 2, FromId = 2 }
+                        new { Id = 1, Amount = 4000, Comment = "ez egy komment", Date = new DateTime(2018, 10, 25, 12, 46, 50, 128, DateTimeKind.Local), ExpenseCategoryId = 1, FromId = 1, UserId = new Guid("00000000-0000-0000-0000-000000000000") },
+                        new { Id = 2, Amount = 5000, Comment = "ez egy másik komment", Date = new DateTime(2018, 10, 25, 12, 46, 50, 128, DateTimeKind.Local), ExpenseCategoryId = 2, FromId = 2, UserId = new Guid("00000000-0000-0000-0000-000000000000") }
                     );
                 });
 
@@ -157,6 +165,8 @@ namespace Vinance.Data.Migrations
 
                     b.Property<int>("ToId");
 
+                    b.Property<Guid>("UserId");
+
                     b.HasKey("Id");
 
                     b.HasIndex("IncomeCategoryId");
@@ -166,8 +176,8 @@ namespace Vinance.Data.Migrations
                     b.ToTable("Incomes","Vinance");
 
                     b.HasData(
-                        new { Id = 1, Amount = 20000, Comment = "this is an income comment", Date = new DateTime(2018, 10, 22, 0, 24, 44, 819, DateTimeKind.Local), IncomeCategoryId = 1, ToId = 1 },
-                        new { Id = 2, Amount = 30000, Comment = "this is another income comment", Date = new DateTime(2018, 10, 22, 0, 24, 44, 819, DateTimeKind.Local), IncomeCategoryId = 2, ToId = 2 }
+                        new { Id = 1, Amount = 20000, Comment = "this is an income comment", Date = new DateTime(2018, 10, 25, 12, 46, 50, 128, DateTimeKind.Local), IncomeCategoryId = 1, ToId = 1, UserId = new Guid("00000000-0000-0000-0000-000000000000") },
+                        new { Id = 2, Amount = 30000, Comment = "this is another income comment", Date = new DateTime(2018, 10, 25, 12, 46, 50, 128, DateTimeKind.Local), IncomeCategoryId = 2, ToId = 2, UserId = new Guid("00000000-0000-0000-0000-000000000000") }
                     );
                 });
 
@@ -192,6 +202,8 @@ namespace Vinance.Data.Migrations
 
                     b.Property<int>("TransferCategoryId");
 
+                    b.Property<Guid>("UserId");
+
                     b.HasKey("Id");
 
                     b.HasIndex("FromId");
@@ -203,8 +215,8 @@ namespace Vinance.Data.Migrations
                     b.ToTable("Transfers","Vinance");
 
                     b.HasData(
-                        new { Id = 1, Amount = 20000, Comment = "this is a transfer comment", Date = new DateTime(2018, 10, 22, 0, 24, 44, 819, DateTimeKind.Local), FromId = 1, ToId = 2, TransferCategoryId = 1 },
-                        new { Id = 2, Amount = 20000, Comment = "this is another transfer comment", Date = new DateTime(2018, 10, 22, 0, 24, 44, 820, DateTimeKind.Local), FromId = 2, ToId = 1, TransferCategoryId = 2 }
+                        new { Id = 1, Amount = 20000, Comment = "this is a transfer comment", Date = new DateTime(2018, 10, 25, 12, 46, 50, 128, DateTimeKind.Local), FromId = 1, ToId = 2, TransferCategoryId = 1, UserId = new Guid("00000000-0000-0000-0000-000000000000") },
+                        new { Id = 2, Amount = 20000, Comment = "this is another transfer comment", Date = new DateTime(2018, 10, 25, 12, 46, 50, 129, DateTimeKind.Local), FromId = 2, ToId = 1, TransferCategoryId = 2, UserId = new Guid("00000000-0000-0000-0000-000000000000") }
                     );
                 });
 

@@ -18,8 +18,8 @@ namespace Vinance.Data.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    UserId = table.Column<Guid>(nullable: false),
                     Name = table.Column<string>(type: "NVARCHAR(50)", nullable: false),
-                    UserId = table.Column<int>(nullable: false),
                     OpeningBalance = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
@@ -34,6 +34,7 @@ namespace Vinance.Data.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    UserId = table.Column<Guid>(nullable: false),
                     Name = table.Column<string>(type: "NVARCHAR(50)", nullable: false)
                 },
                 constraints: table =>
@@ -48,6 +49,7 @@ namespace Vinance.Data.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    UserId = table.Column<Guid>(nullable: false),
                     Name = table.Column<string>(type: "NVARCHAR(50)", nullable: false)
                 },
                 constraints: table =>
@@ -62,6 +64,7 @@ namespace Vinance.Data.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    UserId = table.Column<Guid>(nullable: false),
                     Name = table.Column<string>(type: "NVARCHAR(50)", nullable: false)
                 },
                 constraints: table =>
@@ -76,6 +79,7 @@ namespace Vinance.Data.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    UserId = table.Column<Guid>(nullable: false),
                     Date = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Amount = table.Column<int>(type: "int", nullable: false),
                     Comment = table.Column<string>(type: "NVARCHAR(256)", nullable: true),
@@ -108,6 +112,7 @@ namespace Vinance.Data.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    UserId = table.Column<Guid>(nullable: false),
                     Date = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Amount = table.Column<int>(type: "int", nullable: false),
                     Comment = table.Column<string>(type: "NVARCHAR(256)", nullable: true),
@@ -140,6 +145,7 @@ namespace Vinance.Data.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    UserId = table.Column<Guid>(nullable: false),
                     Date = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Amount = table.Column<int>(type: "int", nullable: false),
                     Comment = table.Column<string>(type: "NVARCHAR(256)", nullable: true),
@@ -179,68 +185,68 @@ namespace Vinance.Data.Migrations
                 columns: new[] { "Id", "Name", "OpeningBalance", "UserId" },
                 values: new object[,]
                 {
-                    { 1, "Bankszámla", 0, 0 },
-                    { 2, "Megtakarítás", 0, 0 }
+                    { 1, "Bankszámla", 0, new Guid("00000000-0000-0000-0000-000000000000") },
+                    { 2, "Megtakarítás", 0, new Guid("00000000-0000-0000-0000-000000000000") }
                 });
 
             migrationBuilder.InsertData(
                 schema: "Vinance",
                 table: "ExpenseCategories",
-                columns: new[] { "Id", "Name" },
+                columns: new[] { "Id", "Name", "UserId" },
                 values: new object[,]
                 {
-                    { 1, "Extra kiadás" },
-                    { 2, "Élelmiszer" }
+                    { 1, "Extra kiadás", new Guid("00000000-0000-0000-0000-000000000000") },
+                    { 2, "Élelmiszer", new Guid("00000000-0000-0000-0000-000000000000") }
                 });
 
             migrationBuilder.InsertData(
                 schema: "Vinance",
                 table: "IncomeCategories",
-                columns: new[] { "Id", "Name" },
+                columns: new[] { "Id", "Name", "UserId" },
                 values: new object[,]
                 {
-                    { 1, "Fizetés" },
-                    { 2, "Egyéb bevétel" }
+                    { 1, "Fizetés", new Guid("00000000-0000-0000-0000-000000000000") },
+                    { 2, "Egyéb bevétel", new Guid("00000000-0000-0000-0000-000000000000") }
                 });
 
             migrationBuilder.InsertData(
                 schema: "Vinance",
                 table: "TransferCategories",
-                columns: new[] { "Id", "Name" },
+                columns: new[] { "Id", "Name", "UserId" },
                 values: new object[,]
                 {
-                    { 1, "Kölcsönadás" },
-                    { 2, "Levétel" }
+                    { 1, "Kölcsönadás", new Guid("00000000-0000-0000-0000-000000000000") },
+                    { 2, "Levétel", new Guid("00000000-0000-0000-0000-000000000000") }
                 });
 
             migrationBuilder.InsertData(
                 schema: "Vinance",
                 table: "Expenses",
-                columns: new[] { "Id", "Amount", "Comment", "Date", "ExpenseCategoryId", "FromId" },
+                columns: new[] { "Id", "Amount", "Comment", "Date", "ExpenseCategoryId", "FromId", "UserId" },
                 values: new object[,]
                 {
-                    { 1, 4000, "ez egy komment", new DateTime(2018, 10, 22, 0, 24, 44, 819, DateTimeKind.Local), 1, 1 },
-                    { 2, 5000, "ez egy másik komment", new DateTime(2018, 10, 22, 0, 24, 44, 819, DateTimeKind.Local), 2, 2 }
+                    { 1, 4000, "ez egy komment", new DateTime(2018, 10, 25, 12, 46, 50, 128, DateTimeKind.Local), 1, 1, new Guid("00000000-0000-0000-0000-000000000000") },
+                    { 2, 5000, "ez egy másik komment", new DateTime(2018, 10, 25, 12, 46, 50, 128, DateTimeKind.Local), 2, 2, new Guid("00000000-0000-0000-0000-000000000000") }
                 });
 
             migrationBuilder.InsertData(
                 schema: "Vinance",
                 table: "Incomes",
-                columns: new[] { "Id", "Amount", "Comment", "Date", "IncomeCategoryId", "ToId" },
+                columns: new[] { "Id", "Amount", "Comment", "Date", "IncomeCategoryId", "ToId", "UserId" },
                 values: new object[,]
                 {
-                    { 1, 20000, "this is an income comment", new DateTime(2018, 10, 22, 0, 24, 44, 819, DateTimeKind.Local), 1, 1 },
-                    { 2, 30000, "this is another income comment", new DateTime(2018, 10, 22, 0, 24, 44, 819, DateTimeKind.Local), 2, 2 }
+                    { 1, 20000, "this is an income comment", new DateTime(2018, 10, 25, 12, 46, 50, 128, DateTimeKind.Local), 1, 1, new Guid("00000000-0000-0000-0000-000000000000") },
+                    { 2, 30000, "this is another income comment", new DateTime(2018, 10, 25, 12, 46, 50, 128, DateTimeKind.Local), 2, 2, new Guid("00000000-0000-0000-0000-000000000000") }
                 });
 
             migrationBuilder.InsertData(
                 schema: "Vinance",
                 table: "Transfers",
-                columns: new[] { "Id", "Amount", "Comment", "Date", "FromId", "ToId", "TransferCategoryId" },
+                columns: new[] { "Id", "Amount", "Comment", "Date", "FromId", "ToId", "TransferCategoryId", "UserId" },
                 values: new object[,]
                 {
-                    { 1, 20000, "this is a transfer comment", new DateTime(2018, 10, 22, 0, 24, 44, 819, DateTimeKind.Local), 1, 2, 1 },
-                    { 2, 20000, "this is another transfer comment", new DateTime(2018, 10, 22, 0, 24, 44, 820, DateTimeKind.Local), 2, 1, 2 }
+                    { 1, 20000, "this is a transfer comment", new DateTime(2018, 10, 25, 12, 46, 50, 128, DateTimeKind.Local), 1, 2, 1, new Guid("00000000-0000-0000-0000-000000000000") },
+                    { 2, 20000, "this is another transfer comment", new DateTime(2018, 10, 25, 12, 46, 50, 129, DateTimeKind.Local), 2, 1, 2, new Guid("00000000-0000-0000-0000-000000000000") }
                 });
 
             migrationBuilder.CreateIndex(

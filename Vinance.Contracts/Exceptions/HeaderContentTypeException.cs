@@ -2,6 +2,8 @@
 
 namespace Vinance.Contracts.Exceptions
 {
+    using Base;
+
     public class HeaderContentTypeException : VinanceException
     {
         public HeaderContentTypeException()

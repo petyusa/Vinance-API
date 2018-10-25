@@ -57,9 +57,9 @@ namespace Vinance.Identity
                 o.Password.RequireNonAlphanumeric = true;
                 o.Password.RequiredLength = 8;
             });
-            builder = new IdentityBuilder(builder.UserType, typeof(IdentityRole), builder.Services);
+            builder = new IdentityBuilder(builder.UserType, typeof(IdentityRole<Guid>), builder.Services);
             builder.AddEntityFrameworkStores<IdentityContext>().AddDefaultTokenProviders();
-            builder.AddRoleManager<RoleManager<IdentityRole>>();
+            builder.AddRoleManager<RoleManager<IdentityRole<Guid>>>();
             return services;
         }
     }

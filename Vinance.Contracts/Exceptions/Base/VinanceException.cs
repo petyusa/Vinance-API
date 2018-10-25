@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Vinance.Contracts.Exceptions
+namespace Vinance.Contracts.Exceptions.Base
 {
     public class VinanceException : Exception
     {

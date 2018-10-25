@@ -1,9 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Identity;
 
 namespace Vinance.Identity
 {
-    public class VinanceUser : IdentityUser
+    public class VinanceUser : IdentityUser<Guid>
     {
         [Required]
         public string FirstName { get; set; }

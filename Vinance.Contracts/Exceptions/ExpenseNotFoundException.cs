@@ -2,6 +2,8 @@
 
 namespace Vinance.Contracts.Exceptions
 {
+    using Base;
+
     public class ExpenseNotFoundException : VinanceException
     {
         public ExpenseNotFoundException()

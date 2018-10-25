@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using System;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Vinance.Identity
 {
-    public class IdentityContext : IdentityDbContext<VinanceUser>
+    public class IdentityContext : IdentityDbContext<VinanceUser, IdentityRole<Guid>, Guid>
     {
         public IdentityContext(DbContextOptions options) : base(options)
         {

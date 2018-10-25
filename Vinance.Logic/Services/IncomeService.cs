@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Vinance.Identity;
 
 namespace Vinance.Logic.Services
 {
@@ -15,12 +17,14 @@ namespace Vinance.Logic.Services
     public class IncomeService : IIncomeService
     {
         private readonly IFactory<VinanceContext> _factory;
+        private readonly Guid _userId;
         private readonly IMapper _mapper;
 
-        public IncomeService(IFactory<VinanceContext> factory, IMapper mapper)
+        public IncomeService(IFactory<VinanceContext> factory, IIdentityService identityService, IMapper mapper)
         {
             _factory = factory;
             _mapper = mapper;
+            _userId = identityService.GetCurrentUserId();
         }
 
         public async Task<IEnumerable<Income>> GetAll()
@@ -30,6 +34,7 @@ namespace Vinance.Logic.Services
                 var dataIncomes = await context.Incomes
                     .Include(i => i.IncomeCategory)
                     .Include(i => i.To)
+                    .Where(i => i.UserId == _userId)
                     .ToListAsync();
                 return _mapper.MapAll<Income>(dataIncomes);
             }
@@ -40,6 +45,7 @@ namespace Vinance.Logic.Services
             using (var context = _factory.Create())
             {
                 var dataIncome = _mapper.Map<Data.Entities.Income>(income);
+                dataIncome.UserId = _userId;
                 context.Incomes.Add(dataIncome);
                 await context.SaveChangesAsync();
 
@@ -56,7 +62,7 @@ namespace Vinance.Logic.Services
                 var dataIncome = await context.Incomes
                     .Include(i => i.To)
                     .Include(i => i.IncomeCategory)
-                    .SingleOrDefaultAsync(a => a.Id == incomeId);
+                    .SingleOrDefaultAsync(i => i.Id == incomeId && i.UserId == _userId);
 
                 if (dataIncome == null)
                 {
@@ -70,7 +76,7 @@ namespace Vinance.Logic.Services
         {
             using (var context = _factory.Create())
             {
-                if (!context.Incomes.Any(i => i.Id == income.Id))
+                if (!context.Incomes.Any(i => i.Id == income.Id && i.UserId == _userId))
                 {
                     throw new IncomeNotFoundException($"No income found with id: {income.Id}");
                 }
@@ -87,7 +93,7 @@ namespace Vinance.Logic.Services
             using (var context = _factory.Create())
             {
                 var dataIncome = context.Incomes.Find(incomeId);
-                if (dataIncome == null)
+                if (dataIncome == null || dataIncome.UserId != _userId)
                 {
                     throw new IncomeNotFoundException($"No income found with id: {incomeId}");
                 }
@@ -101,8 +107,13 @@ namespace Vinance.Logic.Services
         {
             using (var context = _factory.Create())
             {
-                var incomes = await context.Incomes.Where(i => i.ToId == accountId).ToListAsync();
-                return _mapper.MapAll<Income>(incomes);
+                var account = await context.Accounts.Include(a => a.Incomes)
+                    .SingleOrDefaultAsync(a => a.Id == accountId && a.UserId == _userId);
+                if (account == null)
+                {
+                    throw new IncomeNotFoundException($"No income found with accountId: {accountId}");
+                }
+                return _mapper.MapAll<Income>(account.Incomes.ToList());
             }
         }
 
@@ -110,8 +121,13 @@ namespace Vinance.Logic.Services
         {
             using (var context = _factory.Create())
             {
-                var incomes = await context.Incomes.Where(i => i.IncomeCategoryId == categoryId).ToListAsync();
-                return _mapper.MapAll<Income>(incomes);
+                var category = await context.IncomeCategories.Include(ic => ic.Incomes)
+                    .SingleOrDefaultAsync(ic => ic.Id == categoryId && ic.UserId == _userId);
+                if (category == null)
+                {
+                    throw new IncomeNotFoundException($"No income found with categoryId: {categoryId}");
+                }
+                return _mapper.MapAll<Income>(category.Incomes.ToList());
             }
         }
     }

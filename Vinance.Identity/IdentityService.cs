@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
+using Vinance.Contracts.Exceptions;
 
 namespace Vinance.Identity
 {
@@ -30,7 +31,7 @@ namespace Vinance.Identity
             return await _userManager.CreateAsync(user, password);
         }
 
-        public async Task<TokenResult> GetToken(LoginModel loginModel)
+        public async Task<TokenResult> GetAccessToken(LoginModel loginModel)
         {
             var user = await _userManager.FindByNameAsync(loginModel.UserName);
             var passwordCheckResult = await _userManager.CheckPasswordAsync(user, loginModel.Password);
@@ -49,17 +50,58 @@ namespace Vinance.Identity
             return result;
         }
 
-        public async Task<bool> ChangePassword(PasswordChangeModel changeModel)
+        public async Task<IdentityResult> ChangePassword(PasswordChangeModel changeModel)
         {
             var user = await _userManager.GetUserAsync(_user);
             var passwordChangeResult = await _userManager.ChangePasswordAsync(user, changeModel.OldPassword, changeModel.NewPassword);
-            return passwordChangeResult.Succeeded;
+            return passwordChangeResult;
         }
 
-        public async Task<string> ResetPassword(string email)
+        public async Task<string> GetPasswordResetToken(string email)
         {
             var user = await _userManager.FindByEmailAsync(email);
             return await _userManager.GeneratePasswordResetTokenAsync(user);
+        }
+
+        public async Task<IdentityResult> ResetPassword(PasswordResetModel resetModel)
+        {
+            var user = await _userManager.FindByEmailAsync(resetModel.Email);
+            var result = await _userManager.ResetPasswordAsync(user, resetModel.Token, resetModel.Password);
+            return result;
+        }
+
+        public async Task<string> GetEmailChangeToken(string newEmail)
+        {
+            var user = await _userManager.GetUserAsync(_user);
+            var token = await _userManager.GenerateChangeEmailTokenAsync(user, newEmail);
+            return token;
+        }
+
+        public async Task<IdentityResult> ChangeEmail(EmailChangeModel emailChangeModel)
+        {
+            var user = await _userManager.GetUserAsync(_user);
+            var result = await _userManager.ChangeEmailAsync(user, emailChangeModel.NewEmail, emailChangeModel.Token);
+            return result;
+        }
+
+        public async Task<VinanceUser> GetCurrentUser()
+        {
+            var user = await _userManager.GetUserAsync(_user);
+            if (user == null)
+            {
+                throw new UserNotFoundException();
+            }
+            return user;
+        }
+
+        public Guid GetCurrentUserId()
+        {
+            var user = _userManager.GetUserAsync(_user).Result;
+            if (user == null)
+            {
+                throw new UserNotFoundException();
+            }
+            return user.Id;
         }
 
 
@@ -68,7 +110,7 @@ namespace Vinance.Identity
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, user.FirstName),
-                new Claim(JwtRegisteredClaimNames.Sub, user.Id),
+                new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
                 new Claim(JwtRegisteredClaimNames.Nbf, new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds().ToString()),
                 new Claim(JwtRegisteredClaimNames.Exp, new DateTimeOffset(DateTime.Now.AddDays(30)).ToUnixTimeSeconds().ToString()),
             };

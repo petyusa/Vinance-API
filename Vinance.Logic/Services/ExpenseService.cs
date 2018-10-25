@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Vinance.Identity;
 
 namespace Vinance.Logic.Services
 {
@@ -15,12 +17,14 @@ namespace Vinance.Logic.Services
     public class ExpenseService : IExpenseService
     {
         private readonly IFactory<VinanceContext> _factory;
+        private readonly Guid _userId;
         private readonly IMapper _mapper;
 
-        public ExpenseService(IFactory<VinanceContext> factory, IMapper mapper)
+        public ExpenseService(IIdentityService identityService, IFactory<VinanceContext> factory, IMapper mapper)
         {
             _factory = factory;
             _mapper = mapper;
+            _userId = identityService.GetCurrentUserId();
         }
 
         public async Task<Expense> Create(Expense expense)
@@ -28,6 +32,7 @@ namespace Vinance.Logic.Services
             using (var context = _factory.Create())
             {
                 var dataExpense = _mapper.Map<Data.Entities.Expense>(expense);
+                dataExpense.UserId = _userId;
                 context.Expenses.Add(dataExpense);
                 await context.SaveChangesAsync();
                 return _mapper.Map<Expense>(dataExpense);
@@ -39,6 +44,7 @@ namespace Vinance.Logic.Services
             using (var context = _factory.Create())
             {
                 var dataExpenses = await context.Expenses
+                    .Where(e => e.UserId == _userId)
                     .Include(e => e.ExpenseCategory)
                     .Include(e => e.From)
                     .ToListAsync();
@@ -53,7 +59,7 @@ namespace Vinance.Logic.Services
                 var dataExpense = await context.Expenses
                     .Include(e => e.From)
                     .Include(e => e.ExpenseCategory)
-                    .SingleOrDefaultAsync(e => e.Id == expenseId);
+                    .SingleOrDefaultAsync(e => e.Id == expenseId && e.UserId == _userId);
 
                 if (dataExpense == null)
                 {
@@ -68,7 +74,7 @@ namespace Vinance.Logic.Services
         {
             using (var context = _factory.Create())
             {
-                if (!context.Expenses.Any(e => e.Id == expense.Id))
+                if (!context.Expenses.Any(e => e.Id == expense.Id && e.UserId == _userId))
                 {
                     throw new ExpenseNotFoundException($"No expense found with id: {expense.Id}");
                 }
@@ -85,7 +91,7 @@ namespace Vinance.Logic.Services
             using (var context = _factory.Create())
             {
                 var dataExpense = await context.Expenses.FindAsync(expenseId);
-                if (dataExpense == null)
+                if (dataExpense == null || dataExpense.UserId != _userId)
                 {
                     throw new ExpenseNotFoundException($"No expense found with id: {expenseId}");
                 }
@@ -99,8 +105,13 @@ namespace Vinance.Logic.Services
         {
             using (var context = _factory.Create())
             {
-                var expenses = await context.Expenses.Where(e => e.FromId == accountId).ToListAsync();
-                return _mapper.MapAll<Expense>(expenses);
+                var account = await context.Accounts.Include(a => a.Expenses).SingleOrDefaultAsync(a => a.Id == accountId && a.UserId == _userId);
+                if (account == null)
+                {
+                    throw new ExpenseNotFoundException($"No expense found with accountId: {accountId}");
+                }
+
+                return _mapper.MapAll<Expense>(account.Expenses.ToList());
             }
         }
 
@@ -108,8 +119,14 @@ namespace Vinance.Logic.Services
         {
             using (var context = _factory.Create())
             {
-                var expenses = await context.Expenses.Where(e => e.ExpenseCategoryId == categoryId).ToListAsync();
-                return _mapper.MapAll<Expense>(expenses);
+                var category = await context.ExpenseCategories
+                    .Include(ec => ec.Expenses)
+                    .SingleOrDefaultAsync(ec =>ec.Id == categoryId && ec.UserId == _userId);
+                if (category == null)
+                {
+                    throw new ExpenseNotFoundException($"No expense found with categoryId: {categoryId}");
+                }
+                return _mapper.MapAll<Expense>(category.Expenses.ToList());
             }
         }
     }

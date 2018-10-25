@@ -11,6 +11,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Vinance.Contracts\Vinance.Contracts.csproj" />
     <ProjectReference Include="..\Vinance.Data\Vinance.Data.csproj" />
+    <ProjectReference Include="..\Vinance.Identity\Vinance.Identity.csproj" />
   </ItemGroup>
 
 </Project>

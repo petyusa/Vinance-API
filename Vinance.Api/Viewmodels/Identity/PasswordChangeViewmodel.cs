@@ -1,4 +1,4 @@
-﻿namespace Vinance.Api.Viewmodels
+﻿namespace Vinance.Api.Viewmodels.Identity
 {
     public class PasswordChangeViewmodel
     {
