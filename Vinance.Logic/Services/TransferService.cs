@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Vinance.Contracts.Exceptions;
 using Vinance.Identity;
 
 namespace Vinance.Logic.Services
@@ -63,6 +64,10 @@ namespace Vinance.Logic.Services
                     .Include(p => p.To)
                     .Include(t => t.TransferCategory)
                     .SingleOrDefaultAsync(t => t.Id == transferId && t.UserId == _userId);
+                if (dataTransfer == null)
+                {
+                    throw new TransferNotFoundException($"No transfer found with id: {transferId}");
+                }
                 return _mapper.Map<Transfer>(dataTransfer);
             }
         }
@@ -73,12 +78,14 @@ namespace Vinance.Logic.Services
             {
                 if (!context.Transfers.Any(t => t.Id == transfer.Id && t.UserId == _userId))
                 {
-                    return null;
+                    throw new TransferNotFoundException($"No transfer found with id: {transfer.Id}");
                 }
 
                 var dataTransfer = _mapper.Map<Data.Entities.Transfer>(transfer);
                 context.Entry(dataTransfer).State = EntityState.Modified;
+                context.Entry(dataTransfer).Property(t => t.UserId).IsModified = false;
                 await context.SaveChangesAsync();
+                dataTransfer = context.Transfers.Find(transfer.Id);
                 return _mapper.Map<Transfer>(dataTransfer);
             }
         }
@@ -90,7 +97,7 @@ namespace Vinance.Logic.Services
                 var dataTransfer = context.Transfers.Find(transferId);
                 if (dataTransfer == null || dataTransfer.UserId != _userId)
                 {
-                    return false;
+                    throw new TransferNotFoundException($"No transfer found with id: {transferId}");
                 }
 
                 context.Transfers.Remove(dataTransfer);

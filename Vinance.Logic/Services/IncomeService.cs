@@ -81,10 +81,12 @@ namespace Vinance.Logic.Services
                     throw new IncomeNotFoundException($"No income found with id: {income.Id}");
                 }
 
-                var updatedIncome = _mapper.Map<Data.Entities.Income>(income);
-                context.Entry(updatedIncome).State = EntityState.Modified;
+                var dataIncome = _mapper.Map<Data.Entities.Income>(income);
+                context.Entry(dataIncome).State = EntityState.Modified;
+                context.Entry(dataIncome).Property(i => i.UserId).IsModified = false;
                 await context.SaveChangesAsync();
-                return _mapper.Map<Income>(updatedIncome);
+                dataIncome = context.Incomes.Find(income.Id);
+                return _mapper.Map<Income>(dataIncome);
             }
         }
 
