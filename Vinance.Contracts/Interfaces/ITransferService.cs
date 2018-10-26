@@ -8,9 +8,9 @@ namespace Vinance.Contracts.Interfaces
     public interface ITransferService
     {
         Task<Transfer> Create(Transfer transfer);
-        Task<Transfer> Get(int transferId);
+        Task<Transfer> GetById(int transferId);
         Task<IEnumerable<Transfer>> GetAll();
         Task<Transfer> Update(Transfer transfer);
-        Task<bool> Delete(int transfer);
+        Task Delete(int transfer);
     }
 }

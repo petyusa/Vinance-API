@@ -107,5 +107,25 @@ namespace Vinance.Logic.Services
                 return await context.SaveChangesAsync() == 1;
             }
         }
+
+        public async Task CheckOwner(params int[] accountIds)
+        {
+            foreach (var accountId in accountIds)
+            {
+                await CheckOwner(accountId);
+            }
+        }
+
+        private async Task CheckOwner(int accountId)
+        {
+            using (var context = _factory.Create())
+            {
+                var dataAccount = await context.Accounts.FindAsync(accountId);
+                if (dataAccount == null || dataAccount.UserId != _userId)
+                {
+                    throw new AccountNotFoundException($"No account found with id: {accountId}");
+                }
+            }
+        }
     }
 }

@@ -4,15 +4,15 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using Vinance.Contracts.Extensions;
-using Vinance.Contracts.Models.BaseModels;
-using Vinance.Contracts.Models.Categories;
-using Vinance.Identity;
 
 namespace Vinance.Logic.Services
 {
+    using Contracts.Extensions;
     using Contracts.Interfaces;
+    using Contracts.Models.BaseModels;
+    using Contracts.Models.Categories;
     using Data.Contexts;
+    using Identity;
 
     public class CategoryService : ICategoryService
     {
@@ -54,6 +54,40 @@ namespace Vinance.Logic.Services
                         .ToListAsync();
                 }
                 return _mapper.MapAll<T>(categories);
+            }
+        }
+
+        public async Task<Category> Create(Category category)
+        {
+            using (var context = _factory.Create())
+            {
+                switch (category)
+                {
+                    case IncomeCategory incomeCategory:
+                        var dataIncomeCategory = _mapper.Map<Data.Entities.Categories.IncomeCategory>(incomeCategory);
+                        dataIncomeCategory.UserId = _userId;
+                        context.IncomeCategories.Add(dataIncomeCategory);
+                        await context.SaveChangesAsync();
+                        dataIncomeCategory = context.IncomeCategories.Find(category.Id);
+                        return _mapper.Map<IncomeCategory>(dataIncomeCategory);
+                    case ExpenseCategory expenseCategory:
+                        var dataExpenseCategory = _mapper.Map<Data.Entities.Categories.ExpenseCategory>(expenseCategory);
+                        dataExpenseCategory.UserId = _userId;
+                        context.ExpenseCategories.Add(dataExpenseCategory);
+                        await context.SaveChangesAsync();
+                        dataExpenseCategory = context.ExpenseCategories.Find(category.Id);
+                        return _mapper.Map<IncomeCategory>(dataExpenseCategory);
+                    case TransferCategory transferCategory:
+                        var dataTransferCategory =
+                            _mapper.Map<Data.Entities.Categories.TransferCategory>(transferCategory);
+                        dataTransferCategory.UserId = _userId;
+                        context.TransferCategories.Add(dataTransferCategory);
+                        await context.SaveChangesAsync();
+                        dataTransferCategory = context.TransferCategories.Find(category.Id);
+                        return _mapper.Map<IncomeCategory>(dataTransferCategory);
+                    default:
+                        throw new InvalidOperationException($"{nameof(category)} is not of type Category");
+                }
             }
         }
     }

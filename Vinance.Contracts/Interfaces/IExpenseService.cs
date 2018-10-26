@@ -11,6 +11,8 @@ namespace Vinance.Contracts.Interfaces
         Task<IEnumerable<Expense>> GetAll();
         Task<Expense> GetById(int expenseId);
         Task<Expense> Update(Expense expense);
-        Task<bool> Delete(int expenseId);
+        Task Delete(int expenseId);
+        Task<IEnumerable<Expense>> GetByAccountId(int accountId);
+        Task<IEnumerable<Expense>> GetByCategoryId(int categoryId);
     }
 }

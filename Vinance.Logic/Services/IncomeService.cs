@@ -55,7 +55,7 @@ namespace Vinance.Logic.Services
 
         }
 
-        public async Task<Income> Get(int incomeId)
+        public async Task<Income> GetById(int incomeId)
         {
             using (var context = _factory.Create())
             {
@@ -88,7 +88,7 @@ namespace Vinance.Logic.Services
             }
         }
 
-        public async Task<bool> Delete(int incomeId)
+        public async Task Delete(int incomeId)
         {
             using (var context = _factory.Create())
             {
@@ -99,7 +99,7 @@ namespace Vinance.Logic.Services
                 }
 
                 context.Incomes.Remove(dataIncome);
-                return await context.SaveChangesAsync() == 1;
+                await context.SaveChangesAsync();
             }
         }
 

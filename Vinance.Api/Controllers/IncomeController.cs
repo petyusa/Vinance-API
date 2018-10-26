@@ -1,5 +1,4 @@
-﻿using System.Net;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,48 +14,40 @@ namespace Vinance.Api.Controllers
     public class IncomeController : ControllerBase
     {
         private readonly IIncomeService _incomeService;
+        private readonly IAccountService _accountService;
         private readonly IMapper _mapper;
 
-        public IncomeController(IIncomeService incomeService, IMapper mapper)
+        public IncomeController(IIncomeService incomeService, IMapper mapper, IAccountService accountService)
         {
             _incomeService = incomeService;
             _mapper = mapper;
-        }
-
-        [HttpGet]
-        [Route("")]
-        public async Task<ActionResult> GetIncomes()
-        {
-            var incomes = await _incomeService.GetAll();
-
-            var model = _mapper.MapAll<IncomeViewmodel>(incomes);
-            return Ok(model);
+            _accountService = accountService;
         }
 
         [HttpPost]
         [Route("")]
         public async Task<IActionResult> Create(Income income)
         {
+            await _accountService.CheckOwner(income.ToId);
             var createdIncome = await _incomeService.Create(income);
-            if (createdIncome == null)
-            {
-                return StatusCode((int)HttpStatusCode.InternalServerError, "There was an error creating the income");
-            }
-
             var model = _mapper.Map<IncomeViewmodel>(createdIncome);
-            return Created(Request.Path, model);
+            return Ok(model);
+        }
+
+        [HttpGet]
+        [Route("")]
+        public async Task<IActionResult> GetAll()
+        {
+            var incomes = await _incomeService.GetAll();
+            var model = _mapper.MapAll<IncomeViewmodel>(incomes);
+            return Ok(model);
         }
 
         [HttpGet]
         [Route("{incomeId}")]
-        public async Task<IActionResult> Get(int incomeId)
+        public async Task<IActionResult> GetById(int incomeId)
         {
-            var income = await _incomeService.Get(incomeId);
-            if (income == null)
-            {
-                return NotFound($"No income found with id: {incomeId}");
-            }
-
+            var income = await _incomeService.GetById(incomeId);
             var model = _mapper.Map<IncomeViewmodel>(income);
             return Ok(model);
         }
@@ -65,28 +56,18 @@ namespace Vinance.Api.Controllers
         [Route("")]
         public async Task<IActionResult> Update(Income income)
         {
+            await _accountService.CheckOwner(income.ToId);
             var updatedIncome = await _incomeService.Update(income);
-            if (updatedIncome == null)
-            {
-                return StatusCode((int)HttpStatusCode.InternalServerError, "There was an error updaeting the income");
-            }
-
             var model = _mapper.Map<IncomeViewmodel>(updatedIncome);
             return Ok(model);
-
         }
 
         [HttpDelete]
         [Route("{incomeId}")]
         public async Task<IActionResult> Delete(int incomeId)
         {
-            var success = await _incomeService.Delete(incomeId);
-            if (success)
-            {
-                return NoContent();
-            }
-
-            return StatusCode((int)HttpStatusCode.InternalServerError, "There was an error deleting the income");
+            await _incomeService.Delete(incomeId);
+            return NoContent();
         }
     }
 }

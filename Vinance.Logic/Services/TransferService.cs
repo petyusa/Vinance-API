@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Vinance.Contracts.Exceptions;
 using Vinance.Identity;
 
 namespace Vinance.Logic.Services
@@ -54,7 +55,7 @@ namespace Vinance.Logic.Services
             }
         }
 
-        public async Task<Transfer> Get(int transferId)
+        public async Task<Transfer> GetById(int transferId)
         {
             using (var context = _factory.Create())
             {
@@ -73,7 +74,7 @@ namespace Vinance.Logic.Services
             {
                 if (!context.Transfers.Any(t => t.Id == transfer.Id && t.UserId == _userId))
                 {
-                    return null;
+                    throw new TransferNotFoundAcception($"No transfer found with id: {transfer.Id}");
                 }
 
                 var dataTransfer = _mapper.Map<Data.Entities.Transfer>(transfer);
@@ -83,18 +84,18 @@ namespace Vinance.Logic.Services
             }
         }
 
-        public async Task<bool> Delete(int transferId)
+        public async Task Delete(int transferId)
         {
             using (var context = _factory.Create())
             {
                 var dataTransfer = context.Transfers.Find(transferId);
                 if (dataTransfer == null || dataTransfer.UserId != _userId)
                 {
-                    return false;
+                    throw new TransferNotFoundAcception($"No transfer found with id: {transferId}");
                 }
 
                 context.Transfers.Remove(dataTransfer);
-                return await context.SaveChangesAsync() == 1;
+                await context.SaveChangesAsync();
             }
         }
 

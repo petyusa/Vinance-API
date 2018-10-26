@@ -1,5 +1,4 @@
-﻿using System.Net;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,12 +14,14 @@ namespace Vinance.Api.Controllers
     public class TransferController : ControllerBase
     {
         private readonly ITransferService _transferService;
+        private readonly IAccountService _accountService;
         private readonly IMapper _mapper;
 
-        public TransferController(ITransferService transferService, IMapper mapper)
+        public TransferController(ITransferService transferService, IMapper mapper, IAccountService accountService)
         {
             _transferService = transferService;
             _mapper = mapper;
+            _accountService = accountService;
         }
 
         [HttpGet]
@@ -28,7 +29,6 @@ namespace Vinance.Api.Controllers
         public async Task<ActionResult> GetAll()
         {
             var transfers = await _transferService.GetAll();
-
             var model = _mapper.MapAll<TransferViewmodel>(transfers);
             return Ok(model);
         }
@@ -37,26 +37,17 @@ namespace Vinance.Api.Controllers
         [Route("")]
         public async Task<IActionResult> Create(Transfer transfer)
         {
+            await _accountService.CheckOwner(transfer.FromId, transfer.ToId);
             var createdTransfer = await _transferService.Create(transfer);
-            if (createdTransfer == null)
-            {
-                return StatusCode((int)HttpStatusCode.InternalServerError, "There was an erro creating the transfer");
-            }
-
             var model = _mapper.Map<TransferViewmodel>(createdTransfer);
             return Ok(model);
         }
 
         [HttpGet]
         [Route("{transferId}")]
-        public async Task<IActionResult> Get(int transferId)
+        public async Task<IActionResult> GetById(int transferId)
         {
-            var transfer = await _transferService.Get(transferId);
-            if (transfer == null)
-            {
-                return NotFound($"No transfer found with id: {transferId}");
-            }
-
+            var transfer = await _transferService.GetById(transferId);
             var model = _mapper.Map<TransferViewmodel>(transfer);
             return Ok(model);
         }
@@ -65,12 +56,8 @@ namespace Vinance.Api.Controllers
         [Route("")]
         public async Task<IActionResult> Update(Transfer transfer)
         {
+            await _accountService.CheckOwner(transfer.FromId, transfer.ToId);
             var updatedTransfer = await _transferService.Update(transfer);
-            if (updatedTransfer == null)
-            {
-                return StatusCode((int)HttpStatusCode.InternalServerError, "There was an erro updaeting the transfer");
-            }
-
             var model = _mapper.Map<TransferViewmodel>(updatedTransfer);
             return Ok(model);
         }
@@ -79,13 +66,8 @@ namespace Vinance.Api.Controllers
         [Route("{transferId}")]
         public async Task<IActionResult> Delete(int transferId)
         {
-            var success = await _transferService.Delete(transferId);
-            if (success)
-            {
-                return NoContent();
-            }
-
-            return StatusCode((int)HttpStatusCode.InternalServerError, "There was an erro deleting the transfer");
+            await _transferService.Delete(transferId);
+            return NoContent();
         }
     }
 }

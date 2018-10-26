@@ -1,5 +1,4 @@
-﻿using System.Net;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,26 +14,24 @@ namespace Vinance.Api.Controllers
     public class ExpenseController : ControllerBase
     {
         private readonly IExpenseService _expenseService;
+        private readonly IAccountService _accountService;
         private readonly IMapper _mapper;
 
-        public ExpenseController(IExpenseService expenseService, IMapper mapper)
+        public ExpenseController(IExpenseService expenseService, IMapper mapper, IAccountService accountService)
         {
             _expenseService = expenseService;
             _mapper = mapper;
+            _accountService = accountService;
         }
 
         [HttpPost]
         [Route("")]
         public async Task<IActionResult> Create(Expense expense)
         {
+            await _accountService.CheckOwner(expense.FromId);
             var createdExpense = await _expenseService.Create(expense);
-            if (createdExpense == null)
-            {
-                return StatusCode((int)HttpStatusCode.InternalServerError, "There was an error creating the expense");
-            }
-
             var model = _mapper.Map<ExpenseViewmodel>(createdExpense);
-            return Ok(model);
+            return Created(Request.Path, model);
         }
 
         [HttpGet]
@@ -51,25 +48,16 @@ namespace Vinance.Api.Controllers
         public async Task<IActionResult> GetById(int expenseId)
         {
             var expense = await _expenseService.GetById(expenseId);
-            if (expense == null)
-            {
-                return NotFound($"No account found with id: {expenseId}");
-            }
-
             var model = _mapper.Map<ExpenseViewmodel>(expense);
             return Ok(model);
         }
 
         [HttpPut]
         [Route("")]
-        public async Task<IActionResult> Update([FromBody] Expense expense)
+        public async Task<IActionResult> Update(Expense expense)
         {
+            await _accountService.CheckOwner(expense.FromId);
             var updatedExpense = await _expenseService.Update(expense);
-            if (updatedExpense == null)
-            {
-                return NotFound("There was an error updating the expense");
-            }
-
             var model = _mapper.Map<ExpenseViewmodel>(updatedExpense);
             return Ok(model);
         }
@@ -78,13 +66,8 @@ namespace Vinance.Api.Controllers
         [Route("{expenseId}")]
         public async Task<IActionResult> Delete(int expenseId)
         {
-            var success = await _expenseService.Delete(expenseId);
-            if (success)
-            {
-                return NoContent();
-            }
-
-            return StatusCode((int)HttpStatusCode.InternalServerError, "There was an error deleting the expense");
+            await _expenseService.Delete(expenseId);
+            return NoContent();
         }
     }
 }

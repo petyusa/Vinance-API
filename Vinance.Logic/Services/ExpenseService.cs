@@ -81,12 +81,13 @@ namespace Vinance.Logic.Services
 
                 var dataExpense = _mapper.Map<Data.Entities.Expense>(expense);
                 context.Entry(dataExpense).State = EntityState.Modified;
+                context.Entry(dataExpense).Property(e => e.UserId).IsModified = false;
                 await context.SaveChangesAsync();
                 return _mapper.Map<Expense>(dataExpense);
             }
         }
 
-        public async Task<bool> Delete(int expenseId)
+        public async Task Delete(int expenseId)
         {
             using (var context = _factory.Create())
             {
@@ -97,7 +98,7 @@ namespace Vinance.Logic.Services
                 }
 
                 context.Expenses.Remove(dataExpense);
-                return await context.SaveChangesAsync() == 1;
+                await context.SaveChangesAsync();
             }
         }
 
@@ -105,7 +106,9 @@ namespace Vinance.Logic.Services
         {
             using (var context = _factory.Create())
             {
-                var account = await context.Accounts.Include(a => a.Expenses).SingleOrDefaultAsync(a => a.Id == accountId && a.UserId == _userId);
+                var account = await context.Accounts
+                    .Include(a => a.Expenses).ThenInclude(e => e.ExpenseCategory)
+                    .SingleOrDefaultAsync(a => a.Id == accountId && a.UserId == _userId);
                 if (account == null)
                 {
                     throw new ExpenseNotFoundException($"No expense found with accountId: {accountId}");

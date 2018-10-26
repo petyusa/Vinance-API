@@ -17,12 +17,14 @@ namespace Vinance.Api.Controllers
     public class AccountController : ControllerBase
     {
         private readonly IAccountService _accountService;
+        private readonly IExpenseService _expenseService;
         private readonly IMapper _mapper;
 
-        public AccountController(IAccountService accountService, IMapper mapper)
+        public AccountController(IAccountService accountService, IMapper mapper, IExpenseService expenseService)
         {
             _accountService = accountService;
             _mapper = mapper;
+            _expenseService = expenseService;
         }
 
         [HttpGet]
@@ -88,6 +90,15 @@ namespace Vinance.Api.Controllers
             }
 
             return StatusCode((int)HttpStatusCode.InternalServerError, "There was an error deleting the account");
+        }
+
+        [HttpGet]
+        [Route("{accountId}/expenses")]
+        public async Task<IActionResult> GetExpensesByAccountId(int accountId)
+        {
+            var expenses = await _expenseService.GetByAccountId(accountId);
+            var model = _mapper.MapAll<ExpenseViewmodel>(expenses);
+            return Ok(model);
         }
     }
 }

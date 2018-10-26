@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Vinance.Contracts.Models.BaseModels;
 
 namespace Vinance.Contracts.Interfaces
 {
@@ -13,5 +12,6 @@ namespace Vinance.Contracts.Interfaces
         Task<IEnumerable<Account>> GetAll();
         Task<Account> Update(Account account);
         Task<bool> Delete(int account);
+        Task CheckOwner(params int[] accountIds);
     }
 }

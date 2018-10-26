@@ -104,7 +104,6 @@ namespace Vinance.Identity
             return user.Id;
         }
 
-
         private string GenerateToken(VinanceUser user, IEnumerable<string> roles)
         {
             var claims = new List<Claim>

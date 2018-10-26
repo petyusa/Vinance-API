@@ -32,6 +32,7 @@ namespace Vinance.Api
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            app.UseResponseWrapper();
             app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
             app.UseAuthentication();
             app.UseMvc();
