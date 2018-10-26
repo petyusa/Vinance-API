@@ -83,6 +83,7 @@ namespace Vinance.Logic.Services
                 context.Entry(dataExpense).State = EntityState.Modified;
                 context.Entry(dataExpense).Property(e => e.UserId).IsModified = false;
                 await context.SaveChangesAsync();
+                dataExpense = context.Expenses.Find(expense.Id);
                 return _mapper.Map<Expense>(dataExpense);
             }
         }
