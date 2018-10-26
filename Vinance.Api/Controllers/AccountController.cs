@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Vinance.Api.Controllers
 {
-    using ActionFilters;
     using Contracts.Extensions;
     using Contracts.Interfaces;
     using Contracts.Models;
@@ -13,7 +12,6 @@ namespace Vinance.Api.Controllers
 
     [Route("api/accounts")]
     [ApiController]
-    [ServiceFilter(typeof(HeaderValidationFilterAttribute))]
     public class AccountController : ControllerBase
     {
         private readonly IAccountService _accountService;

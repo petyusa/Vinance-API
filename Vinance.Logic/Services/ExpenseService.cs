@@ -4,15 +4,15 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using Vinance.Identity;
 
 namespace Vinance.Logic.Services
 {
-    using Contracts.Exceptions;
+    using Contracts.Exceptions.NotFound;
     using Contracts.Extensions;
     using Contracts.Interfaces;
     using Contracts.Models;
     using Data.Contexts;
+    using Identity;
 
     public class ExpenseService : IExpenseService
     {
@@ -125,7 +125,7 @@ namespace Vinance.Logic.Services
             {
                 var category = await context.ExpenseCategories
                     .Include(ec => ec.Expenses)
-                    .SingleOrDefaultAsync(ec =>ec.Id == categoryId && ec.UserId == _userId);
+                    .SingleOrDefaultAsync(ec => ec.Id == categoryId && ec.UserId == _userId);
                 if (category == null)
                 {
                     throw new ExpenseNotFoundException($"No expense found with categoryId: {categoryId}");

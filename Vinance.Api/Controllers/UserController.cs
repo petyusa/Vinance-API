@@ -2,18 +2,16 @@
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Vinance.Api.Viewmodels.Identity;
 
 namespace Vinance.Api.Controllers
 {
     using Contracts.Models.Identity;
     using Identity;
+    using Viewmodels.Identity;
 
     [Route("api/users")]
     [ApiController]
-    [Authorize(Policy = "Admin")]
     public class UserController : ControllerBase
     {
         private readonly IIdentityService _identityService;
@@ -55,7 +53,7 @@ namespace Vinance.Api.Controllers
             var result = await _identityService.GetAccessToken(model);
             if (result.Succeeded)
             {
-                return Ok(result.Token);
+                return Ok(result);
             }
             return Unauthorized();
         }
@@ -80,7 +78,7 @@ namespace Vinance.Api.Controllers
         public async Task<IActionResult> ResetPassword([FromBody]string email)
         {
             var token = await _identityService.GetPasswordResetToken(email);
-            return Ok(token);
+            return Ok(new { token });
         }
 
         [HttpPost]

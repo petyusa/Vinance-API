@@ -3,16 +3,16 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using Vinance.Identity;
 
 namespace Vinance.Logic.Services
 {
     using System.Linq;
-    using Contracts.Exceptions;
+    using Contracts.Exceptions.NotFound;
     using Contracts.Extensions;
     using Contracts.Interfaces;
     using Contracts.Models;
     using Data.Contexts;
+    using Identity;
 
     public class IncomeService : IIncomeService
     {

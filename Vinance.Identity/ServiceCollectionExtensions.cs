@@ -41,10 +41,7 @@ namespace Vinance.Identity
                 };
             });
 
-            services.AddAuthorization(opt =>
-            {
-                opt.AddPolicy("Admin", policy => policy.RequireClaim("rol", "Admin"));
-            });
+            services.AddAuthorization();
             services.AddHttpContextAccessor();
             services.AddTransient<IIdentityService, IdentityService>();
 

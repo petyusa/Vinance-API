@@ -12,6 +12,7 @@ using Vinance.Contracts.Exceptions;
 
 namespace Vinance.Identity
 {
+    using Contracts.Exceptions.NotFound;
     using Contracts.Models.Identity;
     using Contracts.Models.ServiceResults;
 
@@ -99,7 +100,7 @@ namespace Vinance.Identity
             var user = _userManager.GetUserAsync(_user).Result;
             if (user == null)
             {
-                throw new UserNotFoundException();
+                throw new UserNotAuthenticatedException("You are not authorized to make this request");
             }
             return user.Id;
         }

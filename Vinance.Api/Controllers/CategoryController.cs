@@ -1,13 +1,13 @@
 ﻿using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Vinance.Api.Viewmodels;
-using Vinance.Contracts.Extensions;
 
 namespace Vinance.Api.Controllers
 {
+    using Contracts.Extensions;
     using Contracts.Interfaces;
     using Contracts.Models.Categories;
+    using Viewmodels;
 
     [Route("api")]
     [ApiController]

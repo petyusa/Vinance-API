@@ -4,15 +4,15 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using Vinance.Contracts.Exceptions;
-using Vinance.Identity;
 
 namespace Vinance.Logic.Services
 {
+    using Contracts.Exceptions.NotFound;
     using Contracts.Extensions;
     using Contracts.Interfaces;
     using Contracts.Models;
     using Data.Contexts;
+    using Identity;
 
     public class TransferService : ITransferService
     {

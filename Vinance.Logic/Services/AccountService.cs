@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Vinance.Logic.Services
 {
-    using Contracts.Exceptions;
+    using Contracts.Exceptions.NotFound;
     using Contracts.Extensions;
     using Contracts.Interfaces;
     using Contracts.Models;

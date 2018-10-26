@@ -1,10 +1,10 @@
 ﻿using System;
 
-namespace Vinance.Contracts.Exceptions
+namespace Vinance.Contracts.Exceptions.NotFound
 {
     using Base;
 
-    public class UserNotFoundException : VinanceException
+    public class UserNotFoundException : VinanceNotFoundException
     {
         public UserNotFoundException()
         {

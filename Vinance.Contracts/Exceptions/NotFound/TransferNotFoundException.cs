@@ -1,10 +1,10 @@
 ﻿using System;
 
-namespace Vinance.Contracts.Exceptions
+namespace Vinance.Contracts.Exceptions.NotFound
 {
     using Base;
 
-    public class TransferNotFoundException : VinanceException
+    public class TransferNotFoundException : VinanceNotFoundException
     {
         public TransferNotFoundException()
         {

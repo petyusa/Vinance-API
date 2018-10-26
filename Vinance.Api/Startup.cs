@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -25,14 +27,21 @@ namespace Vinance.Api
         {
             services.AddVinanceServices();
             services.AddVinanceIdentity(Configuration);
-            services.AddScoped<HeaderValidationFilterAttribute>();
             services.AddAutoMapper();
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddMvc(config =>
+            {
+                var policy = new AuthorizationPolicyBuilder()
+                    .RequireAuthenticatedUser()
+                    .Build();
+                config.Filters.Add(new AuthorizeFilter(policy));
+                config.Filters.Add<HeaderValidationFilter>();
+
+            }).SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            app.UseResponseWrapper();
+            app.UseMiddleware<VinanceResponseWrapper>();
             app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
             app.UseAuthentication();
             app.UseMvc();

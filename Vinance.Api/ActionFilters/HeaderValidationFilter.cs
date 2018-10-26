@@ -5,7 +5,7 @@ namespace Vinance.Api.ActionFilters
 {
     using Contracts.Exceptions;
 
-    public class HeaderValidationFilterAttribute : IResourceFilter
+    public class HeaderValidationFilter : IResourceFilter
     {
         public void OnResourceExecuting(ResourceExecutingContext context)
         {

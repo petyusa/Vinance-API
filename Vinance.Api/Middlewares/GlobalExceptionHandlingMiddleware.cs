@@ -4,10 +4,12 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using Vinance.Contracts.Exceptions;
 
 namespace Vinance.Api.Middlewares
 {
+    using Contracts.Exceptions;
+    using Contracts.Exceptions.Base;
+
     public class GlobalExceptionHandlingMiddleware
     {
         private readonly RequestDelegate _next;
@@ -35,16 +37,25 @@ namespace Vinance.Api.Middlewares
         {
             _logger.LogError(exception, exception.Message);
 
-            switch (exception)
+            var message = JsonConvert.SerializeObject(exception.Message);
+
+            if (exception is VinanceException)
             {
-                case UserNotFoundException ex:
-                    context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
-                    return;
+                switch (exception)
+                {
+                    case VinanceNotFoundException ex:
+                        context.Response.StatusCode = (int)HttpStatusCode.NotFound;
+                        break;
+                    case HeaderContentTypeException ex:
+                        context.Response.StatusCode = (int) HttpStatusCode.UnsupportedMediaType;
+                        break;
+                    case UserNotAuthenticatedException ex:
+                        context.Response.StatusCode = (int) HttpStatusCode.Unauthorized;
+                        break;
+                }
             }
 
-            var result = JsonConvert.SerializeObject(new { message = exception.Message });
-            context.Response.ContentType = "application/json";
-            await context.Response.WriteAsync(result);
+            await context.Response.WriteAsync(message);
         }
     }
 }
