@@ -42,7 +42,7 @@ namespace Vinance.Api.Middlewares
                 }
                 else
                 {
-                    errorMessage = JsonConvert.DeserializeObject<string>(readToEnd);
+                    objectResult = JsonConvert.DeserializeObject(readToEnd);
                 }
 
                 var response = new VinanceApiResponse((HttpStatusCode)context.Response.StatusCode, objectResult, errorMessage);

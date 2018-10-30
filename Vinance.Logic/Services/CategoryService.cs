@@ -7,10 +7,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Vinance.Logic.Services
 {
+    using Contracts.Enums;
+    using Contracts.Exceptions.NotFound;
     using Contracts.Extensions;
     using Contracts.Interfaces;
-    using Contracts.Models.BaseModels;
-    using Contracts.Models.Categories;
+    using Contracts.Models;
     using Data.Contexts;
     using Identity;
 
@@ -27,33 +28,36 @@ namespace Vinance.Logic.Services
             _userId = identityService.GetCurrentUserId();
         }
 
-        public async Task<IEnumerable<Category>> GetAll<T>() where T : Category
+        public async Task<IEnumerable<Category>> GetAll(CategoryType? type)
         {
             using (var context = _factory.Create())
             {
-                IEnumerable<Data.Entities.Base.Category> categories;
-                if (typeof(T) == typeof(ExpenseCategory))
+                var categories = context.Categories
+                    .Where(ic => ic.UserId == _userId);
+
+                if (type == null)
                 {
-                    categories = await context.ExpenseCategories
-                        .Include(ec => ec.Expenses)
-                        .Where(ec => ec.UserId == _userId)
-                        .ToListAsync();
+                    return _mapper.MapAll<Category>(await categories.ToListAsync());
                 }
-                else if (typeof(T) == typeof(IncomeCategory))
+
+                var dataType = _mapper.Map<Data.Enums.CategoryType>(type);
+                var filteredCategories = await categories.Where(c => c.Type == dataType).ToListAsync();
+                return _mapper.MapAll<Category>(filteredCategories);
+            }
+        }
+
+        public async Task<Category> Get(int categoryId)
+        {
+            using (var context = _factory.Create())
+            {
+                var category = await context.Categories
+                    .SingleOrDefaultAsync(c => c.Id == categoryId && c.UserId == _userId);
+                if (category == null)
                 {
-                    categories = await context.IncomeCategories
-                        .Include(ic => ic.Incomes)
-                        .Where(ic => ic.UserId == _userId)
-                        .ToListAsync();
+                    throw new CategoryNotFoundException($"No category found with id: {categoryId}");
                 }
-                else
-                {
-                    categories = await context.TransferCategories
-                        .Include(tc => tc.Transfers)
-                        .Where(ic => ic.UserId == _userId)
-                        .ToListAsync();
-                }
-                return _mapper.MapAll<T>(categories);
+
+                return _mapper.Map<Category>(category);
             }
         }
 
@@ -61,33 +65,45 @@ namespace Vinance.Logic.Services
         {
             using (var context = _factory.Create())
             {
-                switch (category)
+                var dataCategory = _mapper.Map<Data.Entities.Category>(category);
+                dataCategory.UserId = _userId;
+                context.Categories.Add(dataCategory);
+                await context.SaveChangesAsync();
+                return _mapper.Map<Category>(dataCategory);
+            }
+        }
+
+        public async Task<Category> Update(Category category)
+        {
+            using (var context = _factory.Create())
+            {
+                if (!context.Categories.Any(c => c.Id == category.Id && c.UserId == _userId))
                 {
-                    case IncomeCategory incomeCategory:
-                        var dataIncomeCategory = _mapper.Map<Data.Entities.Categories.IncomeCategory>(incomeCategory);
-                        dataIncomeCategory.UserId = _userId;
-                        context.IncomeCategories.Add(dataIncomeCategory);
-                        await context.SaveChangesAsync();
-                        dataIncomeCategory = context.IncomeCategories.Find(category.Id);
-                        return _mapper.Map<IncomeCategory>(dataIncomeCategory);
-                    case ExpenseCategory expenseCategory:
-                        var dataExpenseCategory = _mapper.Map<Data.Entities.Categories.ExpenseCategory>(expenseCategory);
-                        dataExpenseCategory.UserId = _userId;
-                        context.ExpenseCategories.Add(dataExpenseCategory);
-                        await context.SaveChangesAsync();
-                        dataExpenseCategory = context.ExpenseCategories.Find(category.Id);
-                        return _mapper.Map<IncomeCategory>(dataExpenseCategory);
-                    case TransferCategory transferCategory:
-                        var dataTransferCategory =
-                            _mapper.Map<Data.Entities.Categories.TransferCategory>(transferCategory);
-                        dataTransferCategory.UserId = _userId;
-                        context.TransferCategories.Add(dataTransferCategory);
-                        await context.SaveChangesAsync();
-                        dataTransferCategory = context.TransferCategories.Find(category.Id);
-                        return _mapper.Map<IncomeCategory>(dataTransferCategory);
-                    default:
-                        throw new InvalidOperationException($"{nameof(category)} is not of type Category");
+                    throw new CategoryNotFoundException($"No category found with id: {category.Id}");
                 }
+
+                var dataCategory = _mapper.Map<Data.Entities.Category>(category);
+                context.Entry(dataCategory).State = EntityState.Modified;
+                context.Entry(dataCategory).Property(c => c.UserId).IsModified = false;
+                await context.SaveChangesAsync();
+                dataCategory = await context.Categories.FindAsync(category.Id);
+                return _mapper.Map<Category>(dataCategory);
+            }
+        }
+
+        public async Task Delete(int categoryId)
+        {
+            using (var context = _factory.Create())
+            {
+                var category = await context.Categories
+                    .SingleOrDefaultAsync(c => c.Id == categoryId && c.UserId == _userId);
+                if (category == null || category.UserId != _userId)
+                {
+                    throw new CategoryNotFoundException($"No category found with id: {categoryId}");
+                }
+
+                context.Remove(category);
+                await context.SaveChangesAsync();
             }
         }
     }

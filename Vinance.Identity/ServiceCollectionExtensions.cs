@@ -14,7 +14,7 @@ namespace Vinance.Identity
         public static IServiceCollection AddVinanceIdentity(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddDbContext<IdentityContext>(options =>
-                options.UseSqlServer(configuration.GetConnectionString("VinanceConnection")));
+                options.UseSqlServer(configuration.GetConnectionString("IdentityConnection")));
             services.AddAuthentication(opt =>
             {
                 opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

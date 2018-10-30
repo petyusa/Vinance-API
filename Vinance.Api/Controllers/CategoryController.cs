@@ -4,64 +4,57 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Vinance.Api.Controllers
 {
-    using Contracts.Extensions;
+    using Contracts.Enums;
     using Contracts.Interfaces;
-    using Contracts.Models.Categories;
+    using Contracts.Models;
     using Viewmodels;
 
-    [Route("api")]
+    [Route("api/categories")]
     [ApiController]
     public class CategoryController : ControllerBase
     {
         private readonly ICategoryService _categoryService;
-        private readonly IExpenseService _expenseService;
         private readonly IMapper _mapper;
 
-        public CategoryController(ICategoryService categoryService, IExpenseService expenseService, IMapper mapper)
+        public CategoryController(ICategoryService categoryService, IMapper mapper)
         {
             _categoryService = categoryService;
-            _expenseService = expenseService;
             _mapper = mapper;
         }
 
         [HttpGet]
-        [Route("income-categories")]
-        public async Task<IActionResult> GetIncomeCategories()
+        [Route("")]
+        public async Task<IActionResult> GetAll(CategoryType? type)
         {
-            var incomeCategories = await _categoryService.GetAll<IncomeCategory>();
-            return Ok(incomeCategories);
+            var categories = await _categoryService.GetAll(type);
+            return Ok(categories);
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateIncomeCategory(IncomeCategory category)
+        [Route("")]
+        public async Task<IActionResult> Create(Category category)
         {
             var createdCategory = await _categoryService.Create(category);
-            return Created(Request.Path.Value, createdCategory);
+            var categoryViewmodel = _mapper.Map<CategoryViewmodel>(createdCategory);
+            return Created(Request.Path.Value, categoryViewmodel);
         }
 
-        [HttpGet]
-        [Route("transfer-categories")]
-        public async Task<IActionResult> GetTransferCategories()
+        [HttpPut]
+        [Route("")]
+        public async Task<IActionResult> Update(Category category)
         {
-            var transferCategories = await _categoryService.GetAll<TransferCategory>();
-            return Ok(transferCategories);
+            await _categoryService.Update(category);
+            var updatedCategory = _categoryService.Get(category.Id);
+            var categoryViewmodel = _mapper.Map<CategoryViewmodel>(updatedCategory);
+            return Ok(categoryViewmodel);
         }
 
-        [HttpGet]
-        [Route("expense-categories")]
-        public async Task<IActionResult> GetExpenseCategories()
+        [HttpDelete]
+        [Route("")]
+        public async Task<IActionResult> Delete(int categoryId)
         {
-            var expenseCategories = await _categoryService.GetAll<ExpenseCategory>();
-            return Ok(expenseCategories);
-        }
-
-        [HttpGet]
-        [Route("expense-categories/{categoryId}/expenses")]
-        public async Task<IActionResult> GetExpensesByCategory(int categoryId)
-        {
-            var expenses = await _expenseService.GetByCategoryId(categoryId);
-            var model = _mapper.MapAll<ExpenseViewmodel>(expenses);
-            return Ok(model);
+            await _categoryService.Delete(categoryId);
+            return NoContent();
         }
     }
 }

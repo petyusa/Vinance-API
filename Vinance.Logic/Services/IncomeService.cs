@@ -32,7 +32,7 @@ namespace Vinance.Logic.Services
             using (var context = _factory.Create())
             {
                 var dataIncomes = await context.Incomes
-                    .Include(i => i.IncomeCategory)
+                    .Include(i => i.Category)
                     .Include(i => i.To)
                     .Where(i => i.UserId == _userId)
                     .ToListAsync();
@@ -61,7 +61,7 @@ namespace Vinance.Logic.Services
             {
                 var dataIncome = await context.Incomes
                     .Include(i => i.To)
-                    .Include(i => i.IncomeCategory)
+                    .Include(i => i.Category)
                     .SingleOrDefaultAsync(i => i.Id == incomeId && i.UserId == _userId);
 
                 if (dataIncome == null)
@@ -123,13 +123,9 @@ namespace Vinance.Logic.Services
         {
             using (var context = _factory.Create())
             {
-                var category = await context.IncomeCategories.Include(ic => ic.Incomes)
-                    .SingleOrDefaultAsync(ic => ic.Id == categoryId && ic.UserId == _userId);
-                if (category == null)
-                {
-                    throw new IncomeNotFoundException($"No income found with categoryId: {categoryId}");
-                }
-                return _mapper.MapAll<Income>(category.Incomes.ToList());
+                var incomes = await context.Incomes.Where(i => i.CategoryId == categoryId && i.UserId == _userId)
+                    .ToListAsync();
+                return _mapper.MapAll<Income>(incomes);
             }
         }
     }

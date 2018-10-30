@@ -1,7 +1,6 @@
 ﻿namespace Vinance.Contracts.Models
 {
     using BaseModels;
-    using Categories;
 
     public class Transfer : Transaction
     {
@@ -9,7 +8,7 @@
         public int FromId { get; set; }
         public Account To { get; set; }
         public int ToId { get; set; }
-        public TransferCategory TransferCategory { get; set; }
-        public int TransferCategoryId { get; set; }
+        public Category Category { get; set; }
+        public int CategoryId { get; set; }
     }
 }

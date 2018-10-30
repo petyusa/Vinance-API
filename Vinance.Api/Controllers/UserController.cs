@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Vinance.Contracts.Models;
 
 namespace Vinance.Api.Controllers
 {
@@ -33,7 +34,7 @@ namespace Vinance.Api.Controllers
                 return BadRequest(ModelState.Values.SelectMany(x => x.Errors).Select(e => e.ErrorMessage));
             }
 
-            var user = _mapper.Map<VinanceUser>(model);
+            var user = _mapper.Map<RegisterModel>(model);
             var result = await _identityService.Register(user, model.Password);
 
             if (result.Succeeded)

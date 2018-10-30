@@ -63,7 +63,7 @@ namespace Vinance.Api.Controllers
         }
 
         [HttpDelete]
-        [Route("{expenseId}")]
+        [Route("")]
         public async Task<IActionResult> Delete(int expenseId)
         {
             await _expenseService.Delete(expenseId);

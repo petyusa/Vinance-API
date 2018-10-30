@@ -4,7 +4,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Vinance.Data.Entities
 {
     using Base;
-    using Categories;
 
     [Table("Transfers", Schema = "Vinance")]
     public class Transfer : Transaction
@@ -18,11 +17,11 @@ namespace Vinance.Data.Entities
         public int ToId { get; set; }
 
         [Required]
-        [ForeignKey("TransferCategory")]
-        public int TransferCategoryId { get; set; }
+        [ForeignKey("Category")]
+        public int CategoryId { get; set; }
 
         public virtual Account From { get; set; }
         public virtual Account To { get; set; }
-        public virtual TransferCategory TransferCategory { get; set; }
+        public virtual Category Category { get; set; }
     }
 }

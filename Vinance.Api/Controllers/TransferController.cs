@@ -40,7 +40,7 @@ namespace Vinance.Api.Controllers
             await _accountService.CheckOwner(transfer.FromId, transfer.ToId);
             var createdTransfer = await _transferService.Create(transfer);
             var model = _mapper.Map<TransferViewmodel>(createdTransfer);
-            return Ok(model);
+            return Created(Request.Path, model);
         }
 
         [HttpGet]

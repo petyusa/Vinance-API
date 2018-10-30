@@ -35,7 +35,7 @@ namespace Vinance.Logic.Services
                 var dataTransfers = await context.Transfers
                     .Include(p => p.From)
                     .Include(p => p.To)
-                    .Include(t => t.TransferCategory)
+                    .Include(t => t.Category)
                     .Where(t => t.UserId == _userId)
                     .ToListAsync();
                 transfers = _mapper.Map<IEnumerable<Transfer>>(dataTransfers);
@@ -62,7 +62,7 @@ namespace Vinance.Logic.Services
                 var dataTransfer = await context.Transfers
                     .Include(p => p.From)
                     .Include(p => p.To)
-                    .Include(t => t.TransferCategory)
+                    .Include(t => t.Category)
                     .SingleOrDefaultAsync(t => t.Id == transferId && t.UserId == _userId);
                 if (dataTransfer == null)
                 {
@@ -122,10 +122,10 @@ namespace Vinance.Logic.Services
         {
             using (var context = _factory.Create())
             {
-                var category = await context.TransferCategories
-                    .Include(tc => tc.Transfers)
-                    .SingleOrDefaultAsync(tc => tc.Id == categoryId && tc.UserId == _userId);
-                return _mapper.MapAll<Transfer>(category.Transfers.ToList());
+                var transfers = await context.Transfers
+                    .Where(t => t.CategoryId == categoryId && t.UserId == _userId)
+                    .ToListAsync();
+                return _mapper.MapAll<Transfer>(transfers);
             }
         }
     }

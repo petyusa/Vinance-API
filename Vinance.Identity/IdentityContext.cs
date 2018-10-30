@@ -9,7 +9,7 @@ namespace Vinance.Identity
     {
         public IdentityContext(DbContextOptions options) : base(options)
         {
-            Database.Migrate();
+            Database.EnsureCreated();
         }
 
         public DbSet<VinanceUser> VinanceUsers { get; set; }

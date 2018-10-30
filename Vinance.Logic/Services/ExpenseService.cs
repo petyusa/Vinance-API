@@ -45,7 +45,7 @@ namespace Vinance.Logic.Services
             {
                 var dataExpenses = await context.Expenses
                     .Where(e => e.UserId == _userId)
-                    .Include(e => e.ExpenseCategory)
+                    .Include(e => e.Category)
                     .Include(e => e.From)
                     .ToListAsync();
                 return _mapper.Map<IEnumerable<Expense>>(dataExpenses);
@@ -58,7 +58,7 @@ namespace Vinance.Logic.Services
             {
                 var dataExpense = await context.Expenses
                     .Include(e => e.From)
-                    .Include(e => e.ExpenseCategory)
+                    .Include(e => e.Category)
                     .SingleOrDefaultAsync(e => e.Id == expenseId && e.UserId == _userId);
 
                 if (dataExpense == null)
@@ -108,7 +108,7 @@ namespace Vinance.Logic.Services
             using (var context = _factory.Create())
             {
                 var account = await context.Accounts
-                    .Include(a => a.Expenses).ThenInclude(e => e.ExpenseCategory)
+                    .Include(a => a.Expenses).ThenInclude(e => e.Category)
                     .SingleOrDefaultAsync(a => a.Id == accountId && a.UserId == _userId);
                 if (account == null)
                 {
@@ -123,14 +123,10 @@ namespace Vinance.Logic.Services
         {
             using (var context = _factory.Create())
             {
-                var category = await context.ExpenseCategories
-                    .Include(ec => ec.Expenses)
-                    .SingleOrDefaultAsync(ec => ec.Id == categoryId && ec.UserId == _userId);
-                if (category == null)
-                {
-                    throw new ExpenseNotFoundException($"No expense found with categoryId: {categoryId}");
-                }
-                return _mapper.MapAll<Expense>(category.Expenses.ToList());
+                var expenses = await context.Expenses
+                    .Where(e => e.CategoryId == categoryId && e.UserId == _userId)
+                    .ToListAsync();
+                return _mapper.MapAll<Expense>(expenses);
             }
         }
     }

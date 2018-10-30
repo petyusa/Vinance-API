@@ -5,6 +5,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
@@ -20,15 +21,18 @@ namespace Vinance.Identity
     {
         private readonly UserManager<VinanceUser> _userManager;
         private readonly ClaimsPrincipal _user;
+        private readonly IMapper _mapper;
 
-        public IdentityService(UserManager<VinanceUser> userManager, IHttpContextAccessor contextAccessor)
+        public IdentityService(UserManager<VinanceUser> userManager, IHttpContextAccessor contextAccessor, IMapper mapper)
         {
             _userManager = userManager;
+            _mapper = mapper;
             _user = contextAccessor.HttpContext.User;
         }
 
-        public async Task<IdentityResult> Register(VinanceUser user, string password)
+        public async Task<IdentityResult> Register(RegisterModel model, string password)
         {
+            var user = _mapper.Map<VinanceUser>(model);
             return await _userManager.CreateAsync(user, password);
         }
 

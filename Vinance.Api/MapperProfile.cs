@@ -1,10 +1,9 @@
 ﻿using AutoMapper;
-using Vinance.Contracts.Models.Identity;
 
 namespace Vinance.Api
 {
     using Contracts.Models;
-    using Identity;
+    using Contracts.Models.Identity;
     using Viewmodels;
     using Viewmodels.Identity;
 
@@ -12,7 +11,7 @@ namespace Vinance.Api
     {
         public MapperProfile()
         {
-            CreateMap<RegisterViewmodel, VinanceUser>();
+            CreateMap<RegisterViewmodel, RegisterModel>();
             CreateMap<LoginViewmodel, LoginModel>();
             CreateMap<PasswordChangeViewmodel, PasswordChangeModel>();
             CreateMap<PasswordResetViewmodel, PasswordResetModel>();
@@ -22,6 +21,7 @@ namespace Vinance.Api
             CreateMap<Expense, ExpenseViewmodel>();
             CreateMap<Income, IncomeViewmodel>();
             CreateMap<Transfer, TransferViewmodel>();
+            CreateMap<Category, CategoryViewmodel>();
         }
     }
 }

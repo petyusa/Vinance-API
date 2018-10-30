@@ -31,7 +31,7 @@ namespace Vinance.Api.Controllers
             await _accountService.CheckOwner(income.ToId);
             var createdIncome = await _incomeService.Create(income);
             var model = _mapper.Map<IncomeViewmodel>(createdIncome);
-            return Ok(model);
+            return Created(Request.Path, model);
         }
 
         [HttpGet]
