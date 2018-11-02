@@ -1,19 +1,19 @@
 ﻿using System.Net;
 
-namespace Vinance.Api.Middlewares
+namespace Vinance.Api.Viewmodels
 {
     public class VinanceApiResponse
     {
-        public VinanceApiResponse(HttpStatusCode statusCode, object data = null, object errorMessage = null)
+        public VinanceApiResponse(HttpStatusCode statusCode, object data = null, object error = null)
         {
             StatusCode = (int)statusCode;
             Data = data;
-            ErrorMessage = errorMessage;
+            Error = error;
         }
 
         public int StatusCode { get; }
 
-        public object ErrorMessage { get; }
+        public object Error { get; }
 
         public object Data { get; }
     }

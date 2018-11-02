@@ -1,5 +1,4 @@
-﻿using System.Net;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
@@ -40,11 +39,6 @@ namespace Vinance.Api.Controllers
         public async Task<IActionResult> Create(Account account)
         {
             var createdAccount = await _accountService.Create(account);
-            if (createdAccount == null)
-            {
-                return StatusCode((int)HttpStatusCode.InternalServerError, "There was an error creating the account");
-            }
-
             var model = _mapper.Map<AccountViewmodel>(createdAccount);
             return Created(Request.Path, model);
         }
@@ -69,12 +63,8 @@ namespace Vinance.Api.Controllers
         {
             await _authorizationService.HandleCreateUpdateAsync(account);
             var updatedAccount = await _accountService.Update(account);
-            if (updatedAccount == null)
-            {
-                return StatusCode((int)HttpStatusCode.InternalServerError, "There was an error updating the account");
-            }
 
-            var model = _mapper.Map<AccountViewmodel>(account);
+            var model = _mapper.Map<AccountViewmodel>(updatedAccount);
             return Ok(model);
         }
 
@@ -83,13 +73,8 @@ namespace Vinance.Api.Controllers
         public async Task<IActionResult> Delete(int accountId)
         {
             await _authorizationService.HandleGetDeleteAsync<Account>(accountId);
-            var success = await _accountService.Delete(accountId);
-            if (success)
-            {
-                return NoContent();
-            }
-
-            return StatusCode((int)HttpStatusCode.InternalServerError, "There was an error deleting the account");
+            await _accountService.Delete(accountId);
+            return NoContent();
         }
     }
 }

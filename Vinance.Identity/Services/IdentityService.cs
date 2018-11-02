@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Vinance.Identity.Services
@@ -24,11 +24,13 @@ namespace Vinance.Identity.Services
         private readonly UserManager<VinanceUser> _userManager;
         private readonly ClaimsPrincipal _user;
         private readonly IMapper _mapper;
+        private readonly IConfiguration _configuration;
 
-        public IdentityService(UserManager<VinanceUser> userManager, IHttpContextAccessor contextAccessor, IMapper mapper)
+        public IdentityService(UserManager<VinanceUser> userManager, IHttpContextAccessor contextAccessor, IMapper mapper, IConfiguration configuration)
         {
             _userManager = userManager;
             _mapper = mapper;
+            _configuration = configuration;
             _user = contextAccessor.HttpContext.User;
         }
 
@@ -45,15 +47,14 @@ namespace Vinance.Identity.Services
 
             var result = new TokenResult { Succeeded = false };
 
-            if (passwordCheckResult)
+            if (!passwordCheckResult)
             {
-                var roles = await _userManager.GetRolesAsync(user);
-                var token = GenerateToken(user, roles);
-                result.Succeeded = true;
-                result.Token = token;
                 return result;
             }
 
+            var token = GenerateToken(user);
+            result.Succeeded = true;
+            result.Token = token;
             return result;
         }
 
@@ -136,7 +137,7 @@ namespace Vinance.Identity.Services
             return user;
         }
 
-        private string GenerateToken(VinanceUser user, IEnumerable<string> roles)
+        private string GenerateToken(VinanceUser user)
         {
             var claims = new List<Claim>
             {
@@ -146,14 +147,9 @@ namespace Vinance.Identity.Services
                 new Claim(JwtRegisteredClaimNames.Exp, new DateTimeOffset(DateTime.Now.AddDays(30)).ToUnixTimeSeconds().ToString()),
             };
 
-            claims.AddRange(roles.Select(role => new Claim("rol", role)));
-
-            var header =
-                new JwtHeader(new SigningCredentials(
-                    new SymmetricSecurityKey(
-                        Encoding.UTF8.GetBytes(
-                            "the secret that needs to be at least 16characeters long for HmacSha256")),
-                    SecurityAlgorithms.HmacSha256));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("super secret key more than 16 characters"));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            var header = new JwtHeader(creds);
             var payLoad = new JwtPayload(claims);
             var token = new JwtSecurityToken(header, payLoad);
 

@@ -7,7 +7,9 @@ using Newtonsoft.Json;
 
 namespace Vinance.Api.Middlewares
 {
+    using Contracts;
     using Extensions;
+    using Viewmodels;
 
     public class VinanceResponseWrapper
     {
@@ -40,7 +42,7 @@ namespace Vinance.Api.Middlewares
                     objectResult = JsonConvert.DeserializeObject(readToEnd);
                 }
 
-                if(context.Response.IsClientErrorStatusCode())
+                if (context.Response.IsClientErrorStatusCode())
                 {
                     try
                     {
@@ -63,13 +65,13 @@ namespace Vinance.Api.Middlewares
                 }
 
                 var response = new VinanceApiResponse((HttpStatusCode)context.Response.StatusCode, objectResult, errorMessage);
-                context.Response.ContentType = "application/json";
-                await context.Response.WriteAsync(JsonConvert.SerializeObject(response, new JsonSerializerSettings
+                context.Response.ContentType = Constants.ApplicationJson;
+                var settings = new JsonSerializerSettings
                 {
                     NullValueHandling = NullValueHandling.Ignore
-                }));
+                };
+                await context.Response.WriteAsync(JsonConvert.SerializeObject(response, settings));
             }
         }
-
     }
 }

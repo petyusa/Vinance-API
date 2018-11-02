@@ -66,14 +66,14 @@ namespace Vinance.Api.Controllers
         {
             var model = _mapper.Map<PasswordChangeModel>(changeViewmodel);
             var result = await _identityService.ChangePassword(model);
-            if (result.Succeeded)
+            if (!result.Succeeded)
             {
-                var user = await _identityService.GetCurrentUser();
-                var viewmodel = _mapper.Map<VinanceUserViewmodel>(user);
-                return Ok(viewmodel);
+                return BadRequest(result.Errors);
             }
 
-            return BadRequest(result.Errors);
+            var user = await _identityService.GetCurrentUser();
+            var viewmodel = _mapper.Map<VinanceUserViewmodel>(user);
+            return Ok(viewmodel);
         }
 
         [HttpPost]

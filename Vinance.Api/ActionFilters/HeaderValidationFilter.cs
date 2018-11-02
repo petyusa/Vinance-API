@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace Vinance.Api.ActionFilters
 {
+    using Contracts;
     using Contracts.Exceptions;
 
     public class HeaderValidationFilter : IResourceFilter
@@ -10,9 +11,9 @@ namespace Vinance.Api.ActionFilters
         public void OnResourceExecuting(ResourceExecutingContext context)
         {
             if (!context.HttpContext.Request.Method.Equals("get", StringComparison.OrdinalIgnoreCase) &&
-                context.HttpContext.Request.ContentType != "application/json")
+                !context.HttpContext.Request.ContentType.Equals(Constants.ApplicationJson, StringComparison.OrdinalIgnoreCase))
             {
-                throw new HeaderContentTypeException("Content-type must be 'application/json'");
+                throw new HeaderContentTypeException($"Content-type must be {Constants.ApplicationJson}");
             }
         }
 

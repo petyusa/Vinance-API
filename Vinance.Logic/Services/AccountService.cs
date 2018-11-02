@@ -93,7 +93,7 @@ namespace Vinance.Logic.Services
             }
         }
 
-        public async Task<bool> Delete(int accountId)
+        public async Task Delete(int accountId)
         {
             using (var context = _factory.Create())
             {
@@ -104,7 +104,7 @@ namespace Vinance.Logic.Services
                 }
 
                 context.Accounts.Remove(dataAccount);
-                return await context.SaveChangesAsync() == 1;
+                await context.SaveChangesAsync();
             }
         }
     }

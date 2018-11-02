@@ -28,20 +28,14 @@ namespace Vinance.Identity
                 opt.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateAudience = false,
-                    //ValidAudiences = new[]
-                    //{
-                    //  "vinance.mvc.client",
-                    //  "vinance.angular.client"
-                    //},
                     ValidateIssuer = false,
-                    //ValidIssuer = "vinance.api",
                     ValidateIssuerSigningKey = true,
                     ValidateLifetime = true,
                     ClockSkew = TimeSpan.FromMinutes(5),
                     IssuerSigningKey =
                         new SymmetricSecurityKey(
                             Encoding.UTF8.GetBytes(
-                                "the secret that needs to be at least 16characeters long for HmacSha256"))
+                                "super secret key more than 16 characters"))
                 };
             });
 
