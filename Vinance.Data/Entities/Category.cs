@@ -5,6 +5,7 @@ using Vinance.Data.Enums;
 
 namespace Vinance.Data.Entities
 {
+    [Table("Categories", Schema = "Vinance")]
     public class Category : BaseEntity
     {
         [Required]

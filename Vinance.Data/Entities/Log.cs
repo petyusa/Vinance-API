@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Vinance.Data.Entities
 {
-    [Table("Log", Schema = "Vinance")]
+    [Table("Log", Schema = "Logging")]
     public class Log
     {
         [Key]

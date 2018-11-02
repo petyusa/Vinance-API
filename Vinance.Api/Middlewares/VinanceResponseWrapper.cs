@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
@@ -6,6 +7,8 @@ using Newtonsoft.Json;
 
 namespace Vinance.Api.Middlewares
 {
+    using Extensions;
+
     public class VinanceResponseWrapper
     {
         private readonly RequestDelegate _next;
@@ -29,25 +32,42 @@ namespace Vinance.Api.Middlewares
                 memoryStream.Seek(0, SeekOrigin.Begin);
 
                 object objectResult = null;
-                string errorMessage = null;
+                object errorMessage = null;
                 var readToEnd = new StreamReader(memoryStream).ReadToEnd();
 
-                if (context.Response.StatusCode < 400)
+                if (context.Response.IsSuccessStatusCode())
                 {
                     objectResult = JsonConvert.DeserializeObject(readToEnd);
                 }
-                else if (context.Response.StatusCode == 401)
+
+                if(context.Response.IsClientErrorStatusCode())
+                {
+                    try
+                    {
+                        errorMessage = JsonConvert.DeserializeObject<string>(readToEnd);
+                    }
+                    catch (Exception)
+                    {
+                        errorMessage = JsonConvert.DeserializeObject(readToEnd);
+                    }
+                }
+
+                if (context.Response.IsUnAuthorizedStatusCode())
                 {
                     errorMessage = "You are unauthorized to make this request";
                 }
-                else
+
+                if (context.Response.IsServerErrorStatusCode())
                 {
-                    objectResult = JsonConvert.DeserializeObject(readToEnd);
+                    errorMessage = "Internal server error";
                 }
 
                 var response = new VinanceApiResponse((HttpStatusCode)context.Response.StatusCode, objectResult, errorMessage);
                 context.Response.ContentType = "application/json";
-                await context.Response.WriteAsync(JsonConvert.SerializeObject(response));
+                await context.Response.WriteAsync(JsonConvert.SerializeObject(response, new JsonSerializerSettings
+                {
+                    NullValueHandling = NullValueHandling.Ignore
+                }));
             }
         }
 

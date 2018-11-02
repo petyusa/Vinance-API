@@ -14,14 +14,14 @@ namespace Vinance.Api.Controllers
     public class TransferController : ControllerBase
     {
         private readonly ITransferService _transferService;
-        private readonly IAccountService _accountService;
+        private readonly IAuthorizationService _authorizationService;
         private readonly IMapper _mapper;
 
-        public TransferController(ITransferService transferService, IMapper mapper, IAccountService accountService)
+        public TransferController(ITransferService transferService, IAuthorizationService authorizationService, IMapper mapper)
         {
             _transferService = transferService;
+            _authorizationService = authorizationService;
             _mapper = mapper;
-            _accountService = accountService;
         }
 
         [HttpGet]
@@ -37,7 +37,7 @@ namespace Vinance.Api.Controllers
         [Route("")]
         public async Task<IActionResult> Create(Transfer transfer)
         {
-            await _accountService.CheckOwner(transfer.FromId, transfer.ToId);
+            await _authorizationService.HandleCreateUpdateAsync(transfer);
             var createdTransfer = await _transferService.Create(transfer);
             var model = _mapper.Map<TransferViewmodel>(createdTransfer);
             return Created(Request.Path, model);
@@ -47,6 +47,7 @@ namespace Vinance.Api.Controllers
         [Route("{transferId}")]
         public async Task<IActionResult> GetById(int transferId)
         {
+            await _authorizationService.HandleGetDeleteAsync<Transfer>(transferId);
             var transfer = await _transferService.GetById(transferId);
             var model = _mapper.Map<TransferViewmodel>(transfer);
             return Ok(model);
@@ -56,7 +57,7 @@ namespace Vinance.Api.Controllers
         [Route("")]
         public async Task<IActionResult> Update(Transfer transfer)
         {
-            await _accountService.CheckOwner(transfer.FromId, transfer.ToId);
+            await _authorizationService.HandleCreateUpdateAsync(transfer);
             var updatedTransfer = await _transferService.Update(transfer);
             var model = _mapper.Map<TransferViewmodel>(updatedTransfer);
             return Ok(model);
@@ -66,6 +67,7 @@ namespace Vinance.Api.Controllers
         [Route("{transferId}")]
         public async Task<IActionResult> Delete(int transferId)
         {
+            await _authorizationService.HandleGetDeleteAsync<Transfer>(transferId);
             await _transferService.Delete(transferId);
             return NoContent();
         }

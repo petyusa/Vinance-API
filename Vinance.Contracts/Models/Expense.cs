@@ -6,7 +6,5 @@
     {
         public Account From { get; set; }
         public int FromId { get; set; }
-        public Category Category { get; set; }
-        public int CategoryId { get; set; }
     }
 }

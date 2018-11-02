@@ -76,7 +76,7 @@ namespace Vinance.Logic.Services
         {
             using (var context = _factory.Create())
             {
-                if (!context.Incomes.Any(i => i.Id == income.Id && i.UserId == _userId))
+                if (!context.Incomes.Any(i => i.Id == income.Id))
                 {
                     throw new IncomeNotFoundException($"No income found with id: {income.Id}");
                 }
@@ -95,7 +95,7 @@ namespace Vinance.Logic.Services
             using (var context = _factory.Create())
             {
                 var dataIncome = context.Incomes.Find(incomeId);
-                if (dataIncome == null || dataIncome.UserId != _userId)
+                if (dataIncome == null)
                 {
                     throw new IncomeNotFoundException($"No income found with id: {incomeId}");
                 }

@@ -20,8 +20,8 @@ namespace Vinance.Api.Viewmodels
 
         public string FromName { get; set; }
 
-        public int TransferCategoryId { get; set; }
+        public int CategoryId { get; set; }
 
-        public string TransferCategoryName { get; set; }
+        public string CategoryName { get; set; }
     }
 }

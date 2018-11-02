@@ -8,7 +8,5 @@
         public int FromId { get; set; }
         public Account To { get; set; }
         public int ToId { get; set; }
-        public Category Category { get; set; }
-        public int CategoryId { get; set; }
     }
 }

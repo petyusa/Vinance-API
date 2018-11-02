@@ -16,8 +16,8 @@ namespace Vinance.Api.Viewmodels
 
         public string FromName { get; set; }
 
-        public int ExpenseCategoryId { get; set; }
+        public int CategoryId { get; set; }
 
-        public string ExpenseCategoryName { get; set; }
+        public string CategoryName { get; set; }
     }
 }

@@ -4,7 +4,7 @@ namespace Vinance.Api.Middlewares
 {
     public class VinanceApiResponse
     {
-        public VinanceApiResponse(HttpStatusCode statusCode, object data = null, string errorMessage = null)
+        public VinanceApiResponse(HttpStatusCode statusCode, object data = null, object errorMessage = null)
         {
             StatusCode = (int)statusCode;
             Data = data;
@@ -13,7 +13,7 @@ namespace Vinance.Api.Middlewares
 
         public int StatusCode { get; }
 
-        public string ErrorMessage { get; }
+        public object ErrorMessage { get; }
 
         public object Data { get; }
     }

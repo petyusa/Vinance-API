@@ -2,15 +2,11 @@
 
 namespace Vinance.Contracts.Models
 {
-    public class Account
+    public class Account : BaseModels.BaseModel
     {
-        public int Id { get; set; }
-
         public string Name { get; set; }
 
         public int Balance { get; set; }
-
-        public int UserId { get; set; }
 
         public ICollection<Income> Incomes { get; set; }
 

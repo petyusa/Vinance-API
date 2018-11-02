@@ -15,14 +15,14 @@ namespace Vinance.Api.Controllers
     public class AccountController : ControllerBase
     {
         private readonly IAccountService _accountService;
-        private readonly IExpenseService _expenseService;
+        private readonly IAuthorizationService _authorizationService;
         private readonly IMapper _mapper;
 
-        public AccountController(IAccountService accountService, IMapper mapper, IExpenseService expenseService)
+        public AccountController(IAccountService accountService, IAuthorizationService authorizationService, IMapper mapper)
         {
             _accountService = accountService;
+            _authorizationService = authorizationService;
             _mapper = mapper;
-            _expenseService = expenseService;
         }
 
         [HttpGet]
@@ -53,12 +53,12 @@ namespace Vinance.Api.Controllers
         [Route("{accountId}")]
         public async Task<IActionResult> Get(int accountId)
         {
+            await _authorizationService.HandleGetDeleteAsync<Account>(accountId);
             var account = await _accountService.Get(accountId);
             if (account == null)
             {
                 return NotFound($"No account found with id: {accountId}");
             }
-
             var model = _mapper.Map<AccountViewmodel>(account);
             return Ok(model);
         }
@@ -67,6 +67,7 @@ namespace Vinance.Api.Controllers
         [Route("")]
         public async Task<IActionResult> Update(Account account)
         {
+            await _authorizationService.HandleCreateUpdateAsync(account);
             var updatedAccount = await _accountService.Update(account);
             if (updatedAccount == null)
             {
@@ -81,6 +82,7 @@ namespace Vinance.Api.Controllers
         [Route("{accountId}")]
         public async Task<IActionResult> Delete(int accountId)
         {
+            await _authorizationService.HandleGetDeleteAsync<Account>(accountId);
             var success = await _accountService.Delete(accountId);
             if (success)
             {
@@ -88,15 +90,6 @@ namespace Vinance.Api.Controllers
             }
 
             return StatusCode((int)HttpStatusCode.InternalServerError, "There was an error deleting the account");
-        }
-
-        [HttpGet]
-        [Route("{accountId}/expenses")]
-        public async Task<IActionResult> GetExpensesByAccountId(int accountId)
-        {
-            var expenses = await _expenseService.GetByAccountId(accountId);
-            var model = _mapper.MapAll<ExpenseViewmodel>(expenses);
-            return Ok(model);
         }
     }
 }

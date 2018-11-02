@@ -14,21 +14,21 @@ namespace Vinance.Api.Controllers
     public class ExpenseController : ControllerBase
     {
         private readonly IExpenseService _expenseService;
-        private readonly IAccountService _accountService;
+        private readonly IAuthorizationService _authorizationService;
         private readonly IMapper _mapper;
 
-        public ExpenseController(IExpenseService expenseService, IMapper mapper, IAccountService accountService)
+        public ExpenseController(IExpenseService expenseService, IAuthorizationService authorizationService, IMapper mapper)
         {
             _expenseService = expenseService;
+            _authorizationService = authorizationService;
             _mapper = mapper;
-            _accountService = accountService;
         }
 
         [HttpPost]
         [Route("")]
         public async Task<IActionResult> Create(Expense expense)
         {
-            await _accountService.CheckOwner(expense.FromId);
+            await _authorizationService.HandleCreateUpdateAsync(expense);
             var createdExpense = await _expenseService.Create(expense);
             var model = _mapper.Map<ExpenseViewmodel>(createdExpense);
             return Created(Request.Path, model);
@@ -47,6 +47,7 @@ namespace Vinance.Api.Controllers
         [Route("{expenseId}")]
         public async Task<IActionResult> GetById(int expenseId)
         {
+            await _authorizationService.HandleGetDeleteAsync<Expense>(expenseId);
             var expense = await _expenseService.GetById(expenseId);
             var model = _mapper.Map<ExpenseViewmodel>(expense);
             return Ok(model);
@@ -56,7 +57,7 @@ namespace Vinance.Api.Controllers
         [Route("")]
         public async Task<IActionResult> Update(Expense expense)
         {
-            await _accountService.CheckOwner(expense.FromId);
+            await _authorizationService.HandleCreateUpdateAsync(expense);
             var updatedExpense = await _expenseService.Update(expense);
             var model = _mapper.Map<ExpenseViewmodel>(updatedExpense);
             return Ok(model);
@@ -66,6 +67,7 @@ namespace Vinance.Api.Controllers
         [Route("")]
         public async Task<IActionResult> Delete(int expenseId)
         {
+            await _authorizationService.HandleGetDeleteAsync<Expense>(expenseId);
             await _expenseService.Delete(expenseId);
             return NoContent();
         }

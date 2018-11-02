@@ -12,11 +12,6 @@ namespace Vinance.Data.Entities
         [ForeignKey("From")]
         public int FromId { get; set; }
 
-        [Required]
-        [ForeignKey("Category")]
-        public int CategoryId { get; set; }
-
         public virtual Account From { get; set; }
-        public virtual Category Category { get; set; }
     }
 }

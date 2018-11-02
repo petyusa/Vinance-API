@@ -76,7 +76,7 @@ namespace Vinance.Logic.Services
         {
             using (var context = _factory.Create())
             {
-                if (!context.Transfers.Any(t => t.Id == transfer.Id && t.UserId == _userId))
+                if (!context.Transfers.Any(t => t.Id == transfer.Id))
                 {
                     throw new TransferNotFoundException($"No transfer found with id: {transfer.Id}");
                 }
@@ -95,7 +95,7 @@ namespace Vinance.Logic.Services
             using (var context = _factory.Create())
             {
                 var dataTransfer = context.Transfers.Find(transferId);
-                if (dataTransfer == null || dataTransfer.UserId != _userId)
+                if (dataTransfer == null)
                 {
                     throw new TransferNotFoundException($"No transfer found with id: {transferId}");
                 }
@@ -112,7 +112,7 @@ namespace Vinance.Logic.Services
                 var account = await context.Accounts
                     .Include(a => a.TransfersFrom)
                     .Include(a => a.TransfersTo)
-                    .SingleOrDefaultAsync(a => a.Id == accountId && a.UserId == _userId);
+                    .SingleOrDefaultAsync(a => a.Id == accountId );
                 var transfers = account.TransfersFrom.ToList().Concat(account.TransfersTo.ToList());
                 return _mapper.MapAll<Transfer>(transfers);
             }
@@ -123,7 +123,7 @@ namespace Vinance.Logic.Services
             using (var context = _factory.Create())
             {
                 var transfers = await context.Transfers
-                    .Where(t => t.CategoryId == categoryId && t.UserId == _userId)
+                    .Where(t => t.CategoryId == categoryId)
                     .ToListAsync();
                 return _mapper.MapAll<Transfer>(transfers);
             }

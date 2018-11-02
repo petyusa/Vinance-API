@@ -1,8 +1,12 @@
-﻿namespace Vinance.Contracts.Models.BaseModels
+﻿using System;
+
+namespace Vinance.Contracts.Models.BaseModels
 {
     public class BaseModel
     {
         public int Id { get; set; }
+
+        public Guid UserId { get; set; }
 
         public override bool Equals(object obj)
         {

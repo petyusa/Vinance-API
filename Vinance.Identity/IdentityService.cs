@@ -9,10 +9,10 @@ using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
-using Vinance.Contracts.Exceptions;
 
 namespace Vinance.Identity
 {
+    using Contracts.Exceptions;
     using Contracts.Exceptions.NotFound;
     using Contracts.Models.Identity;
     using Contracts.Models.ServiceResults;
@@ -62,10 +62,20 @@ namespace Vinance.Identity
             return passwordChangeResult;
         }
 
-        public async Task<string> GetPasswordResetToken(string email)
+        public async Task<TokenResult> GetPasswordResetToken(string email)
         {
             var user = await _userManager.FindByEmailAsync(email);
-            return await _userManager.GeneratePasswordResetTokenAsync(user);
+            if (user == null)
+            {
+                throw new UserNotFoundException($"No user found with email: {email}");
+            }
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var result = new TokenResult
+            {
+                Succeeded = true,
+                Token = token
+            };
+            return result;
         }
 
         public async Task<IdentityResult> ResetPassword(PasswordResetModel resetModel)
@@ -75,11 +85,16 @@ namespace Vinance.Identity
             return result;
         }
 
-        public async Task<string> GetEmailChangeToken(string newEmail)
+        public async Task<TokenResult> GetEmailChangeToken(string newEmail)
         {
             var user = await _userManager.GetUserAsync(_user);
             var token = await _userManager.GenerateChangeEmailTokenAsync(user, newEmail);
-            return token;
+            var result = new TokenResult
+            {
+                Succeeded = true,
+                Token = token
+            };
+            return result;
         }
 
         public async Task<IdentityResult> ChangeEmail(EmailChangeModel emailChangeModel)
@@ -107,6 +122,16 @@ namespace Vinance.Identity
                 throw new UserNotAuthenticatedException("You are not authorized to make this request");
             }
             return user.Id;
+        }
+
+        public async Task<VinanceUser> GetUserByName(string userName)
+        {
+            var user = await _userManager.FindByNameAsync(userName);
+            if (user == null)
+            {
+                throw new UserNotAuthenticatedException("You are not authorized to make this request");
+            }
+            return user;
         }
 
         private string GenerateToken(VinanceUser user, IEnumerable<string> roles)

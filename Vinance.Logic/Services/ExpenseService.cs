@@ -35,7 +35,11 @@ namespace Vinance.Logic.Services
                 dataExpense.UserId = _userId;
                 context.Expenses.Add(dataExpense);
                 await context.SaveChangesAsync();
-                return _mapper.Map<Expense>(dataExpense);
+                var addedExpense = await context.Expenses
+                    .Include(e => e.From)
+                    .Include(e => e.Category)
+                    .SingleOrDefaultAsync(e => e.Id == dataExpense.Id);
+                return _mapper.Map<Expense>(addedExpense);
             }
         }
 
@@ -59,7 +63,7 @@ namespace Vinance.Logic.Services
                 var dataExpense = await context.Expenses
                     .Include(e => e.From)
                     .Include(e => e.Category)
-                    .SingleOrDefaultAsync(e => e.Id == expenseId && e.UserId == _userId);
+                    .SingleOrDefaultAsync(e => e.Id == expenseId);
 
                 if (dataExpense == null)
                 {
@@ -74,7 +78,7 @@ namespace Vinance.Logic.Services
         {
             using (var context = _factory.Create())
             {
-                if (!context.Expenses.Any(e => e.Id == expense.Id && e.UserId == _userId))
+                if (!context.Expenses.Any(e => e.Id == expense.Id))
                 {
                     throw new ExpenseNotFoundException($"No expense found with id: {expense.Id}");
                 }
@@ -83,7 +87,10 @@ namespace Vinance.Logic.Services
                 context.Entry(dataExpense).State = EntityState.Modified;
                 context.Entry(dataExpense).Property(e => e.UserId).IsModified = false;
                 await context.SaveChangesAsync();
-                dataExpense = context.Expenses.Find(expense.Id);
+                dataExpense = await context.Expenses
+                    .Include(e => e.Category)
+                    .Include(e => e.From)
+                    .SingleOrDefaultAsync(e=>e.Id == expense.Id);
                 return _mapper.Map<Expense>(dataExpense);
             }
         }
@@ -93,7 +100,7 @@ namespace Vinance.Logic.Services
             using (var context = _factory.Create())
             {
                 var dataExpense = await context.Expenses.FindAsync(expenseId);
-                if (dataExpense == null || dataExpense.UserId != _userId)
+                if (dataExpense == null)
                 {
                     throw new ExpenseNotFoundException($"No expense found with id: {expenseId}");
                 }
@@ -109,7 +116,7 @@ namespace Vinance.Logic.Services
             {
                 var account = await context.Accounts
                     .Include(a => a.Expenses).ThenInclude(e => e.Category)
-                    .SingleOrDefaultAsync(a => a.Id == accountId && a.UserId == _userId);
+                    .SingleOrDefaultAsync(a => a.Id == accountId);
                 if (account == null)
                 {
                     throw new ExpenseNotFoundException($"No expense found with accountId: {accountId}");
@@ -124,7 +131,7 @@ namespace Vinance.Logic.Services
             using (var context = _factory.Create())
             {
                 var expenses = await context.Expenses
-                    .Where(e => e.CategoryId == categoryId && e.UserId == _userId)
+                    .Where(e => e.CategoryId == categoryId)
                     .ToListAsync();
                 return _mapper.MapAll<Expense>(expenses);
             }

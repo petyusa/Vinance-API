@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Vinance.Contracts.Models;
 
 namespace Vinance.Api.Controllers
 {
@@ -37,12 +36,14 @@ namespace Vinance.Api.Controllers
             var user = _mapper.Map<RegisterModel>(model);
             var result = await _identityService.Register(user, model.Password);
 
-            if (result.Succeeded)
+            if (!result.Succeeded)
             {
-                return Ok("Success");
+                return BadRequest(result.Errors);
             }
 
-            return BadRequest(result.Errors);
+            var createdUser = await _identityService.GetUserByName(user.UserName);
+            var viewmodel = _mapper.Map<VinanceUserViewmodel>(createdUser);
+            return Created(Request.Path, viewmodel);
         }
 
         [AllowAnonymous]
@@ -56,7 +57,7 @@ namespace Vinance.Api.Controllers
             {
                 return Ok(result);
             }
-            return Unauthorized();
+            return Forbid();
         }
 
         [HttpPut]
@@ -67,7 +68,9 @@ namespace Vinance.Api.Controllers
             var result = await _identityService.ChangePassword(model);
             if (result.Succeeded)
             {
-                return Ok("password changed");
+                var user = await _identityService.GetCurrentUser();
+                var viewmodel = _mapper.Map<VinanceUserViewmodel>(user);
+                return Ok(viewmodel);
             }
 
             return BadRequest(result.Errors);
@@ -75,11 +78,16 @@ namespace Vinance.Api.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        [Route("reset-password")]
+        [Route("reset-password-token")]
         public async Task<IActionResult> ResetPassword([FromBody]string email)
         {
-            var token = await _identityService.GetPasswordResetToken(email);
-            return Ok(new { token });
+            var result = await _identityService.GetPasswordResetToken(email);
+
+            if (result.Succeeded)
+            {
+                return Ok(result);
+            }
+            return BadRequest();
         }
 
         [HttpPost]
@@ -91,7 +99,7 @@ namespace Vinance.Api.Controllers
             var result = await _identityService.ResetPassword(model);
             if (result.Succeeded)
             {
-                return Ok("password changed");
+                return Ok();
             }
             return BadRequest(result.Errors);
         }
@@ -124,7 +132,8 @@ namespace Vinance.Api.Controllers
         public async Task<IActionResult> Details()
         {
             var user = await _identityService.GetCurrentUser();
-            return Ok(user);
+            var viewmodel = _mapper.Map<VinanceUserViewmodel>(user);
+            return Ok(viewmodel);
         }
     }
 }

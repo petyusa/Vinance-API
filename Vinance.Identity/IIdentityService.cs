@@ -12,10 +12,11 @@ namespace Vinance.Identity
         Task<TokenResult> GetAccessToken(LoginModel loginModel);
         Task<IdentityResult> Register(RegisterModel user, string password);
         Task<IdentityResult> ChangePassword(PasswordChangeModel changeModel);
-        Task<string> GetPasswordResetToken(string email);
+        Task<TokenResult> GetPasswordResetToken(string email);
         Task<IdentityResult> ResetPassword(PasswordResetModel resetModel);
-        Task<string> GetEmailChangeToken(string newEmail);
+        Task<TokenResult> GetEmailChangeToken(string newEmail);
         Task<IdentityResult> ChangeEmail(EmailChangeModel emailChangeModel);
+        Task<VinanceUser> GetUserByName(string userName);
         Task<VinanceUser> GetCurrentUser();
         Guid GetCurrentUserId();
     }

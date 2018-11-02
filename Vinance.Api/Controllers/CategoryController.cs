@@ -14,11 +14,13 @@ namespace Vinance.Api.Controllers
     public class CategoryController : ControllerBase
     {
         private readonly ICategoryService _categoryService;
+        private readonly IAuthorizationService _authorizationService;
         private readonly IMapper _mapper;
 
-        public CategoryController(ICategoryService categoryService, IMapper mapper)
+        public CategoryController(ICategoryService categoryService, IAuthorizationService authorizationService, IMapper mapper)
         {
             _categoryService = categoryService;
+            _authorizationService = authorizationService;
             _mapper = mapper;
         }
 
@@ -43,6 +45,7 @@ namespace Vinance.Api.Controllers
         [Route("")]
         public async Task<IActionResult> Update(Category category)
         {
+            await _authorizationService.HandleCreateUpdateAsync(category);
             await _categoryService.Update(category);
             var updatedCategory = _categoryService.Get(category.Id);
             var categoryViewmodel = _mapper.Map<CategoryViewmodel>(updatedCategory);
@@ -53,6 +56,7 @@ namespace Vinance.Api.Controllers
         [Route("")]
         public async Task<IActionResult> Delete(int categoryId)
         {
+            await _authorizationService.HandleGetDeleteAsync<Category>(categoryId);
             await _categoryService.Delete(categoryId);
             return NoContent();
         }

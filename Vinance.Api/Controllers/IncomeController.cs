@@ -14,21 +14,21 @@ namespace Vinance.Api.Controllers
     public class IncomeController : ControllerBase
     {
         private readonly IIncomeService _incomeService;
-        private readonly IAccountService _accountService;
+        private readonly IAuthorizationService _authorizationService;
         private readonly IMapper _mapper;
 
-        public IncomeController(IIncomeService incomeService, IMapper mapper, IAccountService accountService)
+        public IncomeController(IIncomeService incomeService, IAuthorizationService authorizationService, IMapper mapper)
         {
             _incomeService = incomeService;
+            _authorizationService = authorizationService;
             _mapper = mapper;
-            _accountService = accountService;
         }
 
         [HttpPost]
         [Route("")]
         public async Task<IActionResult> Create(Income income)
         {
-            await _accountService.CheckOwner(income.ToId);
+            await _authorizationService.HandleCreateUpdateAsync(income);
             var createdIncome = await _incomeService.Create(income);
             var model = _mapper.Map<IncomeViewmodel>(createdIncome);
             return Created(Request.Path, model);
@@ -47,6 +47,7 @@ namespace Vinance.Api.Controllers
         [Route("{incomeId}")]
         public async Task<IActionResult> GetById(int incomeId)
         {
+            await _authorizationService.HandleGetDeleteAsync<Income>(incomeId);
             var income = await _incomeService.GetById(incomeId);
             var model = _mapper.Map<IncomeViewmodel>(income);
             return Ok(model);
@@ -56,7 +57,7 @@ namespace Vinance.Api.Controllers
         [Route("")]
         public async Task<IActionResult> Update(Income income)
         {
-            await _accountService.CheckOwner(income.ToId);
+            await _authorizationService.HandleCreateUpdateAsync(income);
             var updatedIncome = await _incomeService.Update(income);
             var model = _mapper.Map<IncomeViewmodel>(updatedIncome);
             return Ok(model);
@@ -66,6 +67,7 @@ namespace Vinance.Api.Controllers
         [Route("{incomeId}")]
         public async Task<IActionResult> Delete(int incomeId)
         {
+            await _authorizationService.HandleGetDeleteAsync<Income>(incomeId);
             await _incomeService.Delete(incomeId);
             return NoContent();
         }

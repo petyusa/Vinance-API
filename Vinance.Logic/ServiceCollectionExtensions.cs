@@ -17,6 +17,7 @@ namespace Vinance.Logic
             services.AddTransient<IAccountService, AccountService>();
             services.AddTransient<IIncomeService, IncomeService>();
             services.AddTransient<ICategoryService, CategoryService>();
+            services.AddTransient<IAuthorizationService, AuthorizationService>();
             return services;
         }
     }

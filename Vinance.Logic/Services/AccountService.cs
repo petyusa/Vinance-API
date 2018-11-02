@@ -48,7 +48,7 @@ namespace Vinance.Logic.Services
                     .Include(a => a.Incomes)
                     .Include(a => a.TransfersFrom)
                     .Include(a => a.TransfersTo)
-                    .SingleOrDefaultAsync(a => a.Id == accountId && a.UserId == _userId);
+                    .SingleOrDefaultAsync(a => a.Id == accountId);
 
                 if (dataAccount == null)
                 {
@@ -79,7 +79,7 @@ namespace Vinance.Logic.Services
         {
             using (var context = _factory.Create())
             {
-                if (!context.Accounts.Any(a => a.Id == account.Id && a.UserId == _userId))
+                if (!context.Accounts.Any(a => a.Id == account.Id))
                 {
                     throw new AccountNotFoundException($"No account found with id: {account.Id}");
                 }
@@ -105,26 +105,6 @@ namespace Vinance.Logic.Services
 
                 context.Accounts.Remove(dataAccount);
                 return await context.SaveChangesAsync() == 1;
-            }
-        }
-
-        public async Task CheckOwner(params int[] accountIds)
-        {
-            foreach (var accountId in accountIds)
-            {
-                await CheckOwner(accountId);
-            }
-        }
-
-        private async Task CheckOwner(int accountId)
-        {
-            using (var context = _factory.Create())
-            {
-                var dataAccount = await context.Accounts.FindAsync(accountId);
-                if (dataAccount == null || dataAccount.UserId != _userId)
-                {
-                    throw new AccountNotFoundException($"No account found with id: {accountId}");
-                }
             }
         }
     }

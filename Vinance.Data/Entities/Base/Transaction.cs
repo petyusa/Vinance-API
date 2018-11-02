@@ -17,5 +17,11 @@ namespace Vinance.Data.Entities.Base
 
         [Column(TypeName = "NVARCHAR(256)")]
         public string Comment { get; set; }
+
+        [Required]
+        [ForeignKey("Category")]
+        public int CategoryId { get; set; }
+
+        public virtual Category Category { get; set; }
     }
 }
