@@ -1,18 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 
 namespace Vinance.Logic.Services
 {
-    using System.Linq;
     using Contracts.Exceptions.NotFound;
     using Contracts.Extensions;
     using Contracts.Interfaces;
     using Contracts.Models;
     using Data.Contexts;
-    using Identity;
+    using Identity.Interfaces;
 
     public class IncomeService : IIncomeService
     {

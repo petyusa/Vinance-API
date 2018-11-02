@@ -8,7 +8,7 @@ namespace Vinance.Logic.Services
     using Contracts.Interfaces;
     using Contracts.Models;
     using Contracts.Models.BaseModels;
-    using Identity;
+    using Identity.Interfaces;
 
     public class AuthorizationService : IAuthorizationService
     {

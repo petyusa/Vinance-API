@@ -2,10 +2,11 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 
-namespace Vinance.Identity
+namespace Vinance.Identity.Interfaces
 {
     using Contracts.Models.Identity;
     using Contracts.Models.ServiceResults;
+    using Entities;
 
     public interface IIdentityService
     {

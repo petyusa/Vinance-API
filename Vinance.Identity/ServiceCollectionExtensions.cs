@@ -9,6 +9,10 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Vinance.Identity
 {
+    using Entities;
+    using Interfaces;
+    using Services;
+
     public static class ServiceCollectionExtensions
     {
         public static IServiceCollection AddVinanceIdentity(this IServiceCollection services, IConfiguration configuration)

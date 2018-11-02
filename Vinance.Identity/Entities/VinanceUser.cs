@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Identity;
 
-namespace Vinance.Identity
+namespace Vinance.Identity.Entities
 {
     public class VinanceUser : IdentityUser<Guid>
     {

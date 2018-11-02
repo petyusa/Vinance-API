@@ -12,7 +12,7 @@ namespace Vinance.Logic.Services
     using Contracts.Interfaces;
     using Contracts.Models;
     using Data.Contexts;
-    using Identity;
+    using Identity.Interfaces;
 
     public class TransferService : ITransferService
     {
@@ -112,7 +112,7 @@ namespace Vinance.Logic.Services
                 var account = await context.Accounts
                     .Include(a => a.TransfersFrom)
                     .Include(a => a.TransfersTo)
-                    .SingleOrDefaultAsync(a => a.Id == accountId );
+                    .SingleOrDefaultAsync(a => a.Id == accountId);
                 var transfers = account.TransfersFrom.ToList().Concat(account.TransfersTo.ToList());
                 return _mapper.MapAll<Transfer>(transfers);
             }

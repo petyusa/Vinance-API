@@ -12,7 +12,7 @@ namespace Vinance.Logic.Services
     using Contracts.Interfaces;
     using Contracts.Models;
     using Data.Contexts;
-    using Identity;
+    using Identity.Interfaces;
 
     public class AccountService : IAccountService
     {

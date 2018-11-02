@@ -5,6 +5,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Vinance.Identity
 {
+    using Entities;
+
     public class IdentityContext : IdentityDbContext<VinanceUser, IdentityRole<Guid>, Guid>
     {
         public IdentityContext(DbContextOptions options) : base(options)

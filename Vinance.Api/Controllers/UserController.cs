@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Vinance.Api.Controllers
 {
     using Contracts.Models.Identity;
-    using Identity;
+    using Identity.Interfaces;
     using Viewmodels.Identity;
 
     [Route("api/users")]

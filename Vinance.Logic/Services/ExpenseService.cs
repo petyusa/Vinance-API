@@ -12,7 +12,7 @@ namespace Vinance.Logic.Services
     using Contracts.Interfaces;
     using Contracts.Models;
     using Data.Contexts;
-    using Identity;
+    using Identity.Interfaces;
 
     public class ExpenseService : IExpenseService
     {
@@ -90,7 +90,7 @@ namespace Vinance.Logic.Services
                 dataExpense = await context.Expenses
                     .Include(e => e.Category)
                     .Include(e => e.From)
-                    .SingleOrDefaultAsync(e=>e.Id == expense.Id);
+                    .SingleOrDefaultAsync(e => e.Id == expense.Id);
                 return _mapper.Map<Expense>(dataExpense);
             }
         }

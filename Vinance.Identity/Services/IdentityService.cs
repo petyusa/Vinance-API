@@ -10,12 +10,14 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Vinance.Identity
+namespace Vinance.Identity.Services
 {
     using Contracts.Exceptions;
     using Contracts.Exceptions.NotFound;
     using Contracts.Models.Identity;
     using Contracts.Models.ServiceResults;
+    using Entities;
+    using Interfaces;
 
     public class IdentityService : IIdentityService
     {
