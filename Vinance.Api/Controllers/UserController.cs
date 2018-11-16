@@ -104,6 +104,34 @@ namespace Vinance.Api.Controllers
             return BadRequest(result.Errors);
         }
 
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("email-confirmation-token")]
+        public async Task<IActionResult> GetEmailConfirtaionToken(string email)
+        {
+            var token = await _identityService.GetEmailConfirmationToken(email);
+            if (token.Succeeded)
+            {
+                return Ok(token.Token);
+            }
+
+            return BadRequest("There was an error generating the token.");
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("confirm-email")]
+        public async Task<IActionResult> ConfirmEmail(string email, string token)
+        {
+            var result = await _identityService.ConfirmEmail(email, token);
+            if (result)
+            {
+                return NoContent();
+            }
+
+            return BadRequest("There was an error confirming the email");
+        }
+
         [HttpGet]
         [Route("email/{newEmail}")]
         public async Task<IActionResult> ChangeEmailToken(string newEmail)

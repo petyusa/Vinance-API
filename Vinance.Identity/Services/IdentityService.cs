@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using Vinance.Contracts.Exceptions.Base;
 
 namespace Vinance.Identity.Services
 {
@@ -24,13 +25,11 @@ namespace Vinance.Identity.Services
         private readonly UserManager<VinanceUser> _userManager;
         private readonly ClaimsPrincipal _user;
         private readonly IMapper _mapper;
-        private readonly IConfiguration _configuration;
 
-        public IdentityService(UserManager<VinanceUser> userManager, IHttpContextAccessor contextAccessor, IMapper mapper, IConfiguration configuration)
+        public IdentityService(UserManager<VinanceUser> userManager, IHttpContextAccessor contextAccessor, IMapper mapper)
         {
             _userManager = userManager;
             _mapper = mapper;
-            _configuration = configuration;
             _user = contextAccessor.HttpContext.User;
         }
 
@@ -43,6 +42,10 @@ namespace Vinance.Identity.Services
         public async Task<TokenResult> GetAccessToken(LoginModel loginModel)
         {
             var user = await _userManager.FindByNameAsync(loginModel.UserName);
+            if (!user.EmailConfirmed)
+            {
+                throw new VinanceException("Email address not confirmed");
+            }
             var passwordCheckResult = await _userManager.CheckPasswordAsync(user, loginModel.Password);
 
             var result = new TokenResult { Succeeded = false };
@@ -98,6 +101,29 @@ namespace Vinance.Identity.Services
                 Token = token
             };
             return result;
+        }
+
+        public async Task<TokenResult> GetEmailConfirmationToken(string email)
+        {
+            var result = new TokenResult {Succeeded = false};
+            var user = await _userManager.FindByEmailAsync(email);
+            var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            if (string.IsNullOrWhiteSpace(token))
+            {
+                throw new VinanceException("There was an error generating the confirmationToken");
+            }
+
+            result.Succeeded = true;
+            result.Token = token;
+            return result;
+        }
+
+        public async Task<bool> ConfirmEmail(string email, string token)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+
+            var result = await _userManager.ConfirmEmailAsync(user, token);
+            return result.Succeeded;
         }
 
         public async Task<IdentityResult> ChangeEmail(EmailChangeModel emailChangeModel)
