@@ -60,6 +60,10 @@ namespace Vinance.Api.Middlewares
                         break;
                 }
             }
+            else
+            {
+                context.Response.StatusCode = (int) HttpStatusCode.InternalServerError;
+            }
 
             await context.Response.WriteAsync(message);
         }

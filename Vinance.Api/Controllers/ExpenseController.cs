@@ -9,7 +9,7 @@ namespace Vinance.Api.Controllers
     using Contracts.Models;
     using Viewmodels;
 
-    [Route("api/expenses")]
+    [Route("expenses")]
     [ApiController]
     public class ExpenseController : ControllerBase
     {

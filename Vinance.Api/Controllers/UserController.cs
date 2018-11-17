@@ -10,7 +10,7 @@ namespace Vinance.Api.Controllers
     using Identity.Interfaces;
     using Viewmodels.Identity;
 
-    [Route("api/users")]
+    [Route("users")]
     [ApiController]
     public class UserController : ControllerBase
     {

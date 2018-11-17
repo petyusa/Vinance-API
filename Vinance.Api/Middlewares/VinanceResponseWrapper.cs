@@ -56,7 +56,7 @@ namespace Vinance.Api.Middlewares
 
                 if (context.Response.IsUnAuthorizedStatusCode())
                 {
-                    errorMessage = "You are unauthorized to make this request";
+                    errorMessage = "You are not authorized to make this request";
                 }
 
                 if (context.Response.IsServerErrorStatusCode())

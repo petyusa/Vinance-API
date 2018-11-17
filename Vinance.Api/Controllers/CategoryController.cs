@@ -9,7 +9,7 @@ namespace Vinance.Api.Controllers
     using Contracts.Models;
     using Viewmodels;
 
-    [Route("api/categories")]
+    [Route("categories")]
     [ApiController]
     public class CategoryController : ControllerBase
     {

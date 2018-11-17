@@ -41,6 +41,7 @@ namespace Vinance.Api
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            app.UseHttpsRedirection();
             app.UseMiddleware<VinanceResponseWrapper>();
             app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
             app.UseAuthentication();

@@ -10,8 +10,18 @@ namespace Vinance.Api.ActionFilters
     {
         public void OnResourceExecuting(ResourceExecutingContext context)
         {
-            if (!context.HttpContext.Request.Method.Equals("get", StringComparison.OrdinalIgnoreCase) &&
-                !context.HttpContext.Request.ContentType.Contains(Constants.ApplicationJson, StringComparison.OrdinalIgnoreCase))
+            if (context.HttpContext.Request.Method.Equals("get", StringComparison.OrdinalIgnoreCase))
+            {
+                return;
+            }
+
+            if (context.HttpContext.Request.ContentType == null)
+            {
+                throw new Exception();
+            }
+
+            if (context.HttpContext.Request.ContentType.Contains(Constants.ApplicationJson,
+                StringComparison.OrdinalIgnoreCase))
             {
                 throw new HeaderContentTypeException($"Content-type must be {Constants.ApplicationJson}");
             }

@@ -9,7 +9,7 @@ namespace Vinance.Api.Controllers
     using Contracts.Models;
     using Viewmodels;
 
-    [Route("api/transfers")]
+    [Route("transfers")]
     [ApiController]
     public class TransferController : ControllerBase
     {
