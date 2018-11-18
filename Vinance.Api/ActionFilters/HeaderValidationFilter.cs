@@ -15,13 +15,9 @@ namespace Vinance.Api.ActionFilters
                 return;
             }
 
-            if (context.HttpContext.Request.ContentType == null)
-            {
-                throw new Exception();
-            }
-
-            if (context.HttpContext.Request.ContentType.Contains(Constants.ApplicationJson,
-                StringComparison.OrdinalIgnoreCase))
+            if (context.HttpContext.Request.ContentType == null ||
+                !context.HttpContext.Request.ContentType.Contains(Constants.ApplicationJson, StringComparison.OrdinalIgnoreCase)
+                )
             {
                 throw new HeaderContentTypeException($"Content-type must be {Constants.ApplicationJson}");
             }

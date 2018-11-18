@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -28,22 +27,20 @@ namespace Vinance.Api.Controllers
         [Route("register")]
         public async Task<IActionResult> Register(RegisterViewmodel model)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState.Values.SelectMany(x => x.Errors).Select(e => e.ErrorMessage));
-            }
-
             var user = _mapper.Map<RegisterModel>(model);
             var result = await _identityService.Register(user, model.Password);
-
+            var res = result.ToString();
             if (!result.Succeeded)
             {
-                return BadRequest(result.Errors);
+                return BadRequest(res);
             }
 
-            var createdUser = await _identityService.GetUserByName(user.UserName);
-            var viewmodel = _mapper.Map<VinanceUserViewmodel>(createdUser);
-            return Created(Request.Path, viewmodel);
+            var token = await _identityService.GetEmailConfirmationToken(user.Email);
+            if (token.Succeeded)
+            {
+                return Ok(token);
+            }
+            return BadRequest();
         }
 
         [AllowAnonymous]
@@ -106,24 +103,11 @@ namespace Vinance.Api.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        [Route("email-confirmation-token")]
-        public async Task<IActionResult> GetEmailConfirtaionToken(string email)
-        {
-            var token = await _identityService.GetEmailConfirmationToken(email);
-            if (token.Succeeded)
-            {
-                return Ok(token.Token);
-            }
-
-            return BadRequest("There was an error generating the token.");
-        }
-
-        [HttpPost]
-        [AllowAnonymous]
         [Route("confirm-email")]
-        public async Task<IActionResult> ConfirmEmail(string email, string token)
+        public async Task<IActionResult> ConfirmEmail(EmailConfirmationViewModel viewmodel)
         {
-            var result = await _identityService.ConfirmEmail(email, token);
+            var model = _mapper.Map<EmailConfirmationModel>(viewmodel);
+            var result = await _identityService.ConfirmEmail(model);
             if (result)
             {
                 return NoContent();

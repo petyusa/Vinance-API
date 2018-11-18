@@ -16,7 +16,7 @@ namespace Vinance.Identity.Interfaces
         Task<TokenResult> GetPasswordResetToken(string email);
         Task<IdentityResult> ResetPassword(PasswordResetModel resetModel);
         Task<TokenResult> GetEmailConfirmationToken(string email);
-        Task<bool> ConfirmEmail(string email, string token);
+        Task<bool> ConfirmEmail(EmailConfirmationModel model);
         Task<TokenResult> GetEmailChangeToken(string newEmail);
         Task<IdentityResult> ChangeEmail(EmailChangeModel emailChangeModel);
         Task<VinanceUser> GetUserByName(string userName);

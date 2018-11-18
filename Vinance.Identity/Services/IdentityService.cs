@@ -7,13 +7,12 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using Vinance.Contracts.Exceptions.Base;
 
 namespace Vinance.Identity.Services
 {
     using Contracts.Exceptions;
+    using Contracts.Exceptions.Base;
     using Contracts.Exceptions.NotFound;
     using Contracts.Models.Identity;
     using Contracts.Models.ServiceResults;
@@ -36,6 +35,7 @@ namespace Vinance.Identity.Services
         public async Task<IdentityResult> Register(RegisterModel model, string password)
         {
             var user = _mapper.Map<VinanceUser>(model);
+
             return await _userManager.CreateAsync(user, password);
         }
 
@@ -48,15 +48,14 @@ namespace Vinance.Identity.Services
             }
             var passwordCheckResult = await _userManager.CheckPasswordAsync(user, loginModel.Password);
 
-            var result = new TokenResult { Succeeded = false };
+            var result = new TokenResult { Succeeded = passwordCheckResult };
 
-            if (!passwordCheckResult)
+            if (!result.Succeeded)
             {
                 return result;
             }
 
             var token = GenerateToken(user);
-            result.Succeeded = true;
             result.Token = token;
             return result;
         }
@@ -105,24 +104,20 @@ namespace Vinance.Identity.Services
 
         public async Task<TokenResult> GetEmailConfirmationToken(string email)
         {
-            var result = new TokenResult {Succeeded = false};
+            var result = new TokenResult { Succeeded = false };
             var user = await _userManager.FindByEmailAsync(email);
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-            if (string.IsNullOrWhiteSpace(token))
-            {
-                throw new VinanceException("There was an error generating the confirmationToken");
-            }
 
             result.Succeeded = true;
             result.Token = token;
             return result;
         }
 
-        public async Task<bool> ConfirmEmail(string email, string token)
+        public async Task<bool> ConfirmEmail(EmailConfirmationModel model)
         {
-            var user = await _userManager.FindByEmailAsync(email);
+            var user = await _userManager.FindByEmailAsync(model.Email);
 
-            var result = await _userManager.ConfirmEmailAsync(user, token);
+            var result = await _userManager.ConfirmEmailAsync(user, model.Token);
             return result.Succeeded;
         }
 

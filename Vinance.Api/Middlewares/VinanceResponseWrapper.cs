@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
@@ -44,14 +43,7 @@ namespace Vinance.Api.Middlewares
 
                 if (context.Response.IsClientErrorStatusCode())
                 {
-                    try
-                    {
-                        errorMessage = JsonConvert.DeserializeObject<string>(readToEnd);
-                    }
-                    catch (Exception)
-                    {
-                        errorMessage = JsonConvert.DeserializeObject(readToEnd);
-                    }
+                    errorMessage = readToEnd;
                 }
 
                 if (context.Response.IsUnAuthorizedStatusCode())

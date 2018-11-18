@@ -2,6 +2,9 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
+    <Authors>Peter Vincze</Authors>
+    <Company>Vinance</Company>
+    <Description>Model classes for Vinance API</Description>
   </PropertyGroup>
 
   <ItemGroup>

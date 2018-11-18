@@ -11,6 +11,7 @@ namespace Vinance.Api
     {
         public MapperProfile()
         {
+            CreateMissingTypeMaps = true;
             CreateMap<RegisterViewmodel, RegisterModel>();
             CreateMap<LoginViewmodel, LoginModel>();
             CreateMap<PasswordChangeViewmodel, PasswordChangeModel>();

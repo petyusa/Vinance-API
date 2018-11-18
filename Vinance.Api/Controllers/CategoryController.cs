@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Vinance.Contracts.Extensions;
 
 namespace Vinance.Api.Controllers
 {
@@ -29,7 +30,8 @@ namespace Vinance.Api.Controllers
         public async Task<IActionResult> GetAll(CategoryType? type)
         {
             var categories = await _categoryService.GetAll(type);
-            return Ok(categories);
+            var categoryViewmodels = _mapper.MapAll<CategoryViewmodel>(categories);
+            return Ok(categoryViewmodels);
         }
 
         [HttpPost]
@@ -53,7 +55,7 @@ namespace Vinance.Api.Controllers
         }
 
         [HttpDelete]
-        [Route("")]
+        [Route("{categoryId}")]
         public async Task<IActionResult> Delete(int categoryId)
         {
             await _authorizationService.HandleGetDeleteAsync<Category>(categoryId);
