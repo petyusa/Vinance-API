@@ -10,7 +10,8 @@ namespace Vinance.Api.ActionFilters
     {
         public void OnResourceExecuting(ResourceExecutingContext context)
         {
-            if (context.HttpContext.Request.Method.Equals("get", StringComparison.OrdinalIgnoreCase))
+            if (context.HttpContext.Request.Method.Equals("get", StringComparison.OrdinalIgnoreCase) ||
+                context.HttpContext.Request.Method.Equals("delete", StringComparison.OrdinalIgnoreCase))
             {
                 return;
             }
