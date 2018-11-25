@@ -1,11 +1,12 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Vinance.Contracts.Extensions;
 
 namespace Vinance.Api.Controllers
 {
     using Contracts.Enums;
+    using Contracts.Extensions;
     using Contracts.Interfaces;
     using Contracts.Models;
     using Viewmodels;
@@ -27,9 +28,9 @@ namespace Vinance.Api.Controllers
 
         [HttpGet]
         [Route("")]
-        public async Task<IActionResult> GetAll(CategoryType? type)
+        public async Task<IActionResult> GetAll(CategoryType? type, DateTime? from, DateTime? to)
         {
-            var categories = await _categoryService.GetAll(type);
+            var categories = await _categoryService.GetAll(type, from, to);
             var categoryViewmodels = _mapper.MapAll<CategoryViewmodel>(categories);
             return Ok(categoryViewmodels);
         }

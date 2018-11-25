@@ -28,21 +28,70 @@ namespace Vinance.Logic.Services
             _userId = identityService.GetCurrentUserId();
         }
 
-        public async Task<IEnumerable<Category>> GetAll(CategoryType? type)
+        public async Task<IEnumerable<Category>> GetAll(CategoryType? type, DateTime? from, DateTime? to)
         {
             using (var context = _factory.Create())
             {
                 var categories = context.Categories
                     .Where(ic => ic.UserId == _userId);
 
+
+                IEnumerable<Category> mappedCategories;
                 if (type == null)
                 {
-                    return _mapper.MapAll<Category>(await categories.ToListAsync());
+                    mappedCategories = _mapper.MapAll<Category>(await categories.ToListAsync()).ToList();
+                }
+                else
+                {
+                    var dataType = _mapper.Map<Data.Enums.CategoryType>(type);
+                    mappedCategories = _mapper.MapAll<Category>(await categories.Where(c => c.Type == dataType).ToListAsync()).ToList();
                 }
 
-                var dataType = _mapper.Map<Data.Enums.CategoryType>(type);
-                var filteredCategories = await categories.Where(c => c.Type == dataType).ToListAsync();
-                return _mapper.MapAll<Category>(filteredCategories);
+                if (from.HasValue && to.HasValue)
+                {
+                    foreach (var category in mappedCategories)
+                    {
+                        switch (category.Type)
+                        {
+                            case CategoryType.Expense:
+                                category.Balance = context.Expenses
+                                    .Where(e => e.UserId == _userId && e.CategoryId == category.Id && e.Date >= from.Value && e.Date <= to.Value).Sum(e => e.Amount);
+                                break;
+                            case CategoryType.Income:
+                                category.Balance = context.Incomes
+                                    .Where(i => i.UserId == _userId && i.CategoryId == category.Id && i.Date >= from.Value && i.Date <= to.Value).Sum(i => i.Amount);
+                                break;
+                            case CategoryType.Transfer:
+                                break;
+                            default:
+                                throw new ArgumentOutOfRangeException();
+                        }
+                    }
+                }
+                else
+                {
+                    foreach (var category in mappedCategories)
+                    {
+                        switch (category.Type)
+                        {
+                            case CategoryType.Expense:
+                                category.Balance = context.Expenses
+                                    .Where(e => e.UserId == _userId && e.CategoryId == category.Id).Sum(e => e.Amount);
+                                break;
+                            case CategoryType.Income:
+                                category.Balance = context.Incomes
+                                    .Where(i => i.UserId == _userId && i.CategoryId == category.Id).Sum(i => i.Amount);
+                                break;
+                            case CategoryType.Transfer:
+                                break;
+                            default:
+                                throw new ArgumentOutOfRangeException();
+                        }
+                    }
+
+                }
+
+                return mappedCategories;
             }
         }
 

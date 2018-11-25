@@ -1,5 +1,4 @@
-﻿
-namespace Vinance.Contracts.Models
+﻿namespace Vinance.Contracts.Models
 {
     using BaseModels;
     using Enums;
