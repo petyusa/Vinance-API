@@ -4,8 +4,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Vinance.Data.Entities
 {
-    [Table("Log", Schema = "Logging")]
-    public class Log
+    [Table("MVC", Schema = "Logging")]
+    public class MvcLog
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

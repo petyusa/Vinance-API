@@ -30,7 +30,7 @@ namespace Vinance.Logic.Services
         public async Task<IEnumerable<Transfer>> GetAll()
         {
             IEnumerable<Transfer> transfers;
-            using (var context = _factory.Create())
+            using (var context = _factory.CreateDbContext())
             {
                 var dataTransfers = await context.Transfers
                     .Include(p => p.From)
@@ -45,7 +45,7 @@ namespace Vinance.Logic.Services
 
         public async Task<Transfer> Create(Transfer transfer)
         {
-            using (var context = _factory.Create())
+            using (var context = _factory.CreateDbContext())
             {
                 var dataTransfer = _mapper.Map<Data.Entities.Transfer>(transfer);
                 dataTransfer.UserId = _userId;
@@ -57,7 +57,7 @@ namespace Vinance.Logic.Services
 
         public async Task<Transfer> GetById(int transferId)
         {
-            using (var context = _factory.Create())
+            using (var context = _factory.CreateDbContext())
             {
                 var dataTransfer = await context.Transfers
                     .Include(p => p.From)
@@ -74,7 +74,7 @@ namespace Vinance.Logic.Services
 
         public async Task<Transfer> Update(Transfer transfer)
         {
-            using (var context = _factory.Create())
+            using (var context = _factory.CreateDbContext())
             {
                 if (!context.Transfers.Any(t => t.Id == transfer.Id))
                 {
@@ -92,7 +92,7 @@ namespace Vinance.Logic.Services
 
         public async Task Delete(int transferId)
         {
-            using (var context = _factory.Create())
+            using (var context = _factory.CreateDbContext())
             {
                 var dataTransfer = context.Transfers.Find(transferId);
                 if (dataTransfer == null)
@@ -107,7 +107,7 @@ namespace Vinance.Logic.Services
 
         public async Task<IEnumerable<Transfer>> GetByAccountId(int accountId)
         {
-            using (var context = _factory.Create())
+            using (var context = _factory.CreateDbContext())
             {
                 var account = await context.Accounts
                     .Include(a => a.TransfersFrom)
@@ -120,7 +120,7 @@ namespace Vinance.Logic.Services
 
         public async Task<IEnumerable<Transfer>> GetByCategoryId(int categoryId)
         {
-            using (var context = _factory.Create())
+            using (var context = _factory.CreateDbContext())
             {
                 var transfers = await context.Transfers
                     .Where(t => t.CategoryId == categoryId)

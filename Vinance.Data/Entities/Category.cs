@@ -13,6 +13,8 @@ namespace Vinance.Data.Entities
         [Column(TypeName = "NVARCHAR(50)")]
         public string Name { get; set; }
 
+        public int MonthlyLimit { get; set; }
+
         public CategoryType Type { get; set; }
     }
 }

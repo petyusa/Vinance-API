@@ -30,7 +30,7 @@ namespace Vinance.Logic.Services
 
         public async Task<IEnumerable<Category>> GetAll(CategoryType? type, DateTime? from, DateTime? to)
         {
-            using (var context = _factory.Create())
+            using (var context = _factory.CreateDbContext())
             {
                 var categories = context.Categories
                     .Where(ic => ic.UserId == _userId);
@@ -97,7 +97,7 @@ namespace Vinance.Logic.Services
 
         public async Task<Category> Get(int categoryId)
         {
-            using (var context = _factory.Create())
+            using (var context = _factory.CreateDbContext())
             {
                 var category = await context.Categories
                     .SingleOrDefaultAsync(c => c.Id == categoryId && c.UserId == _userId);
@@ -112,7 +112,7 @@ namespace Vinance.Logic.Services
 
         public async Task<Category> Create(Category category)
         {
-            using (var context = _factory.Create())
+            using (var context = _factory.CreateDbContext())
             {
                 var dataCategory = _mapper.Map<Data.Entities.Category>(category);
                 dataCategory.UserId = _userId;
@@ -124,7 +124,7 @@ namespace Vinance.Logic.Services
 
         public async Task<Category> Update(Category category)
         {
-            using (var context = _factory.Create())
+            using (var context = _factory.CreateDbContext())
             {
                 if (!context.Categories.Any(c => c.Id == category.Id && c.UserId == _userId))
                 {
@@ -142,7 +142,7 @@ namespace Vinance.Logic.Services
 
         public async Task Delete(int categoryId)
         {
-            using (var context = _factory.Create())
+            using (var context = _factory.CreateDbContext())
             {
                 var category = await context.Categories
                     .SingleOrDefaultAsync(c => c.Id == categoryId && c.UserId == _userId);

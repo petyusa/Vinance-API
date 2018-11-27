@@ -9,7 +9,6 @@ namespace Vinance.Data.Contexts
     {
         public VinanceContext(DbContextOptions options) : base(options)
         {
-            Database.EnsureCreated();
         }
 
         public DbSet<Account> Accounts { get; set; }
@@ -17,7 +16,8 @@ namespace Vinance.Data.Contexts
         public DbSet<Expense> Expenses { get; set; }
         public DbSet<Transfer> Transfers { get; set; }
         public DbSet<Category> Categories { get; set; }
-        public DbSet<Log> Log { get; set; }
+        public DbSet<ApiLog> ApiLog { get; set; }
+        public DbSet<MvcLog> MvcLog { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

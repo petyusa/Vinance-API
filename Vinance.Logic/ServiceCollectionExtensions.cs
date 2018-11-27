@@ -11,7 +11,7 @@ namespace Vinance.Logic
     {
         public static IServiceCollection AddVinanceServices(this IServiceCollection services)
         {
-            services.AddTransient<IFactory<VinanceContext>, VinanceContextFactory<VinanceContext>>();
+            services.AddTransient<IFactory<VinanceContext>, VinanceContextFactory>();
             services.AddTransient<IExpenseService, ExpenseService>();
             services.AddTransient<ITransferService, TransferService>();
             services.AddTransient<IAccountService, AccountService>();

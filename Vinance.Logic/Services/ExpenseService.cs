@@ -29,7 +29,7 @@ namespace Vinance.Logic.Services
 
         public async Task<Expense> Create(Expense expense)
         {
-            using (var context = _factory.Create())
+            using (var context = _factory.CreateDbContext())
             {
                 var dataExpense = _mapper.Map<Data.Entities.Expense>(expense);
                 dataExpense.UserId = _userId;
@@ -45,7 +45,7 @@ namespace Vinance.Logic.Services
 
         public async Task<IEnumerable<Expense>> GetAll()
         {
-            using (var context = _factory.Create())
+            using (var context = _factory.CreateDbContext())
             {
                 var dataExpenses = await context.Expenses
                     .Where(e => e.UserId == _userId)
@@ -58,7 +58,7 @@ namespace Vinance.Logic.Services
 
         public async Task<Expense> GetById(int expenseId)
         {
-            using (var context = _factory.Create())
+            using (var context = _factory.CreateDbContext())
             {
                 var dataExpense = await context.Expenses
                     .Include(e => e.From)
@@ -76,7 +76,7 @@ namespace Vinance.Logic.Services
 
         public async Task<Expense> Update(Expense expense)
         {
-            using (var context = _factory.Create())
+            using (var context = _factory.CreateDbContext())
             {
                 if (!context.Expenses.Any(e => e.Id == expense.Id))
                 {
@@ -97,7 +97,7 @@ namespace Vinance.Logic.Services
 
         public async Task Delete(int expenseId)
         {
-            using (var context = _factory.Create())
+            using (var context = _factory.CreateDbContext())
             {
                 var dataExpense = await context.Expenses.FindAsync(expenseId);
                 if (dataExpense == null)
@@ -112,7 +112,7 @@ namespace Vinance.Logic.Services
 
         public async Task<IEnumerable<Expense>> GetByAccountId(int accountId)
         {
-            using (var context = _factory.Create())
+            using (var context = _factory.CreateDbContext())
             {
                 var account = await context.Accounts
                     .Include(a => a.Expenses).ThenInclude(e => e.Category)
@@ -128,7 +128,7 @@ namespace Vinance.Logic.Services
 
         public async Task<IEnumerable<Expense>> GetByCategoryId(int categoryId)
         {
-            using (var context = _factory.Create())
+            using (var context = _factory.CreateDbContext())
             {
                 var expenses = await context.Expenses
                     .Where(e => e.CategoryId == categoryId)

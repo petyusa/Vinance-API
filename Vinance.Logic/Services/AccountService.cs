@@ -29,7 +29,7 @@ namespace Vinance.Logic.Services
 
         public async Task<Account> Create(Account account)
         {
-            using (var context = _factory.Create())
+            using (var context = _factory.CreateDbContext())
             {
                 var dataAccount = _mapper.Map<Data.Entities.Account>(account);
                 dataAccount.UserId = _userId;
@@ -41,7 +41,7 @@ namespace Vinance.Logic.Services
 
         public async Task<Account> Get(int accountId)
         {
-            using (var context = _factory.Create())
+            using (var context = _factory.CreateDbContext())
             {
                 var dataAccount = await context.Accounts
                     .Include(a => a.Expenses)
@@ -62,7 +62,7 @@ namespace Vinance.Logic.Services
 
         public async Task<IEnumerable<Account>> GetAll()
         {
-            using (var context = _factory.Create())
+            using (var context = _factory.CreateDbContext())
             {
                 var dataAccounts = await context.Accounts
                     .Where(a => a.UserId == _userId)
@@ -77,7 +77,7 @@ namespace Vinance.Logic.Services
 
         public async Task<Account> Update(Account account)
         {
-            using (var context = _factory.Create())
+            using (var context = _factory.CreateDbContext())
             {
                 if (!context.Accounts.Any(a => a.Id == account.Id))
                 {
@@ -95,7 +95,7 @@ namespace Vinance.Logic.Services
 
         public async Task Delete(int accountId)
         {
-            using (var context = _factory.Create())
+            using (var context = _factory.CreateDbContext())
             {
                 var dataAccount = context.Accounts.Find(accountId);
                 if (dataAccount == null || dataAccount.UserId != _userId)

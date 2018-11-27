@@ -29,7 +29,7 @@ namespace Vinance.Logic.Services
 
         public async Task<IEnumerable<Income>> GetAll()
         {
-            using (var context = _factory.Create())
+            using (var context = _factory.CreateDbContext())
             {
                 var dataIncomes = await context.Incomes
                     .Include(i => i.Category)
@@ -42,7 +42,7 @@ namespace Vinance.Logic.Services
 
         public async Task<Income> Create(Income income)
         {
-            using (var context = _factory.Create())
+            using (var context = _factory.CreateDbContext())
             {
                 var dataIncome = _mapper.Map<Data.Entities.Income>(income);
                 dataIncome.UserId = _userId;
@@ -57,7 +57,7 @@ namespace Vinance.Logic.Services
 
         public async Task<Income> GetById(int incomeId)
         {
-            using (var context = _factory.Create())
+            using (var context = _factory.CreateDbContext())
             {
                 var dataIncome = await context.Incomes
                     .Include(i => i.To)
@@ -74,7 +74,7 @@ namespace Vinance.Logic.Services
 
         public async Task<Income> Update(Income income)
         {
-            using (var context = _factory.Create())
+            using (var context = _factory.CreateDbContext())
             {
                 if (!context.Incomes.Any(i => i.Id == income.Id))
                 {
@@ -92,7 +92,7 @@ namespace Vinance.Logic.Services
 
         public async Task Delete(int incomeId)
         {
-            using (var context = _factory.Create())
+            using (var context = _factory.CreateDbContext())
             {
                 var dataIncome = context.Incomes.Find(incomeId);
                 if (dataIncome == null)
@@ -107,7 +107,7 @@ namespace Vinance.Logic.Services
 
         public async Task<IEnumerable<Income>> GetByAccountId(int accountId)
         {
-            using (var context = _factory.Create())
+            using (var context = _factory.CreateDbContext())
             {
                 var account = await context.Accounts.Include(a => a.Incomes)
                     .SingleOrDefaultAsync(a => a.Id == accountId && a.UserId == _userId);
@@ -121,7 +121,7 @@ namespace Vinance.Logic.Services
 
         public async Task<IEnumerable<Income>> GetByCategoryId(int categoryId)
         {
-            using (var context = _factory.Create())
+            using (var context = _factory.CreateDbContext())
             {
                 var incomes = await context.Incomes.Where(i => i.CategoryId == categoryId && i.UserId == _userId)
                     .ToListAsync();
