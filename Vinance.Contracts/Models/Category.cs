@@ -7,6 +7,7 @@
     {
         public string Name { get; set; }
         public int Balance { get; set; }
+        public int MonthlyLimit { get; set; }
         public CategoryType Type { get; set; }
     }
 }

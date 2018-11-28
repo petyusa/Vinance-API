@@ -37,21 +37,23 @@ namespace Vinance.Api.Controllers
 
         [HttpPost]
         [Route("")]
-        public async Task<IActionResult> Create(Category category)
+        public async Task<IActionResult> Create(CategoryViewmodel categoryViewmodel)
         {
+            var category = _mapper.Map<Category>(categoryViewmodel);
             var createdCategory = await _categoryService.Create(category);
-            var categoryViewmodel = _mapper.Map<CategoryViewmodel>(createdCategory);
+            categoryViewmodel = _mapper.Map<CategoryViewmodel>(createdCategory);
             return Created(Request.Path.Value, categoryViewmodel);
         }
 
         [HttpPut]
         [Route("")]
-        public async Task<IActionResult> Update(Category category)
+        public async Task<IActionResult> Update(CategoryViewmodel categoryViewmodel)
         {
+            var category = _mapper.Map<Category>(categoryViewmodel);
             await _authorizationService.HandleCreateUpdateAsync(category);
             await _categoryService.Update(category);
             var updatedCategory = _categoryService.Get(category.Id);
-            var categoryViewmodel = _mapper.Map<CategoryViewmodel>(updatedCategory);
+            categoryViewmodel = _mapper.Map<CategoryViewmodel>(updatedCategory);
             return Ok(categoryViewmodel);
         }
 
