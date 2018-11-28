@@ -107,17 +107,19 @@ namespace Vinance.Identity.Services
             var result = new TokenResult { Succeeded = false };
             var user = await _userManager.FindByEmailAsync(email);
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-
+            var encodedBytes = Encoding.Unicode.GetBytes(token);
+            var encodedToken = Convert.ToBase64String(encodedBytes);
             result.Succeeded = true;
-            result.Token = token;
+            result.Token = encodedToken;
             return result;
         }
 
         public async Task<bool> ConfirmEmail(EmailConfirmationModel model)
         {
             var user = await _userManager.FindByEmailAsync(model.Email);
-
-            var result = await _userManager.ConfirmEmailAsync(user, model.Token);
+            var decodedBytes = Convert.FromBase64String(model.Token);
+            var token= Encoding.Unicode.GetString(decodedBytes);
+            var result = await _userManager.ConfirmEmailAsync(user, token);
             return result.Succeeded;
         }
 
