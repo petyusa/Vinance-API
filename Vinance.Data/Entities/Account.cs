@@ -33,6 +33,11 @@ namespace Vinance.Data.Entities
             return 0;
         }
 
+        public bool CanBeDeleted => (Incomes == null || !Incomes.Any()) &&
+                                    (Expenses == null || !Expenses.Any()) &&
+                                    (TransfersTo == null || !TransfersTo.Any()) &&
+                                    (TransfersFrom == null || !TransfersFrom.Any());
+
         public virtual IEnumerable<Income> Incomes { get; set; }
 
         public virtual IEnumerable<Expense> Expenses { get; set; }

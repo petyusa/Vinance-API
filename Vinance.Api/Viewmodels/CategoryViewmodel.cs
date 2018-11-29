@@ -10,5 +10,7 @@ namespace Vinance.Api.Viewmodels
         public int Balance { get; set; }
         public int MonthlyLimit { get; set; }
         public CategoryType Type { get; set; }
+        public bool CanBeDeleted { get; set; }
+
     }
 }

@@ -1,9 +1,9 @@
-﻿using System;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using AutoMapper;
-using Microsoft.EntityFrameworkCore;
 
 namespace Vinance.Logic.Services
 {
@@ -47,50 +47,39 @@ namespace Vinance.Logic.Services
                     mappedCategories = _mapper.MapAll<Category>(await categories.Where(c => c.Type == dataType).ToListAsync()).ToList();
                 }
 
-                if (from.HasValue && to.HasValue)
+                foreach (var category in mappedCategories)
                 {
-                    foreach (var category in mappedCategories)
+                    var expenses = context.Expenses
+                        .Where(e => e.UserId == _userId && e.CategoryId == category.Id);
+                    var incomes = context.Incomes
+                        .Where(i => i.UserId == _userId && i.CategoryId == category.Id);
+                    var transfers = context.Transfers
+                        .Where(i => i.UserId == _userId && i.CategoryId == category.Id);
+
+                    category.CanBeDeleted = !expenses.Any() && !incomes.Any() && !transfers.Any();
+
+                    if (from.HasValue && to.HasValue)
                     {
-                        switch (category.Type)
-                        {
-                            case CategoryType.Expense:
-                                category.Balance = context.Expenses
-                                    .Where(e => e.UserId == _userId && e.CategoryId == category.Id && e.Date >= from.Value && e.Date <= to.Value).Sum(e => e.Amount);
-                                break;
-                            case CategoryType.Income:
-                                category.Balance = context.Incomes
-                                    .Where(i => i.UserId == _userId && i.CategoryId == category.Id && i.Date >= from.Value && i.Date <= to.Value).Sum(i => i.Amount);
-                                break;
-                            case CategoryType.Transfer:
-                                break;
-                            default:
-                                throw new ArgumentOutOfRangeException();
-                        }
+                        expenses = expenses.Where(e => e.Date >= from.Value && e.Date <= to.Value);
+                        incomes = incomes.Where(i => i.Date >= from.Value && i.Date <= to.Value);
+
                     }
-                }
-                else
-                {
-                    foreach (var category in mappedCategories)
+
+                    switch (category.Type)
                     {
-                        switch (category.Type)
-                        {
-                            case CategoryType.Expense:
-                                category.Balance = context.Expenses
-                                    .Where(e => e.UserId == _userId && e.CategoryId == category.Id).Sum(e => e.Amount);
-                                break;
-                            case CategoryType.Income:
-                                category.Balance = context.Incomes
-                                    .Where(i => i.UserId == _userId && i.CategoryId == category.Id).Sum(i => i.Amount);
-                                break;
-                            case CategoryType.Transfer:
-                                break;
-                            default:
-                                throw new ArgumentOutOfRangeException();
-                        }
+                        case CategoryType.Expense:
+                            category.Balance = expenses.Sum(e => e.Amount);
+                            break;
+                        case CategoryType.Income:
+                            category.Balance = incomes.Sum(i => i.Amount);
+                            break;
+                        case CategoryType.Transfer:
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
                     }
 
                 }
-
                 return mappedCategories;
             }
         }

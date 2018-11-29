@@ -8,6 +8,8 @@ namespace Vinance.Contracts.Models
 
         public int Balance { get; set; }
 
+        public bool CanBeDeleted { get; set; }
+
         public ICollection<Income> Incomes { get; set; }
 
         public ICollection<Expense> Expenses { get; set; }
