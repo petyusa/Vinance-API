@@ -260,3 +260,6 @@ paket-files/
 __pycache__/
 *.pyc
 internal-log.txt
+Vinance.Api/appsettings.production.json
+Vinance.Api/appsettings.Development.json
+Vinance.Api/appsettings.json
