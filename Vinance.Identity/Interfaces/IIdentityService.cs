@@ -10,7 +10,8 @@ namespace Vinance.Identity.Interfaces
 
     public interface IIdentityService
     {
-        Task<TokenResult> GetAccessToken(LoginModel loginModel);
+        Task<AuthToken> GetToken(LoginModel loginModel);
+        AuthToken RefreshToken(string refreshToken);
         Task<IdentityResult> Register(RegisterModel user, string password);
         Task<IdentityResult> ChangePassword(PasswordChangeModel changeModel);
         Task<TokenResult> GetPasswordResetToken(string email);

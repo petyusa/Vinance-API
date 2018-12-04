@@ -14,11 +14,13 @@ namespace Vinance.Identity
         }
 
         public DbSet<VinanceUser> VinanceUsers { get; set; }
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.HasDefaultSchema("Identity");
             builder.Entity<VinanceUser>().ToTable("AspNetUsers");
+            builder.Entity<RefreshToken>().ToTable("RefreshTokens");
             base.OnModelCreating(builder);
         }
     }

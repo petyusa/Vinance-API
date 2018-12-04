@@ -1,7 +1,7 @@
-﻿using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace Vinance.Api.Controllers
 {
@@ -49,12 +49,17 @@ namespace Vinance.Api.Controllers
         public async Task<IActionResult> Login(LoginViewmodel loginModel)
         {
             var model = _mapper.Map<LoginModel>(loginModel);
-            var result = await _identityService.GetAccessToken(model);
-            if (result.Succeeded)
-            {
-                return Ok(result);
-            }
-            return Forbid();
+            var result = await _identityService.GetToken(model);
+
+            return Ok(result);
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("token/refresh")]
+        public IActionResult RefreshToken(RefreshTokenViewModel refreshToken)
+        {
+            return Ok(_identityService.RefreshToken(refreshToken.Token));
         }
 
         [HttpPut]

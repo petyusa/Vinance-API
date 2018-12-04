@@ -1,14 +1,15 @@
-﻿using System;
-using System.Text;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using System;
+using System.Text;
 
 namespace Vinance.Identity
 {
+    using Contracts.Interfaces;
     using Entities;
     using Interfaces;
     using Services;
@@ -27,20 +28,21 @@ namespace Vinance.Identity
             {
                 opt.TokenValidationParameters = new TokenValidationParameters
                 {
-                    ValidateAudience = false,
-                    ValidateIssuer = false,
-                    ValidateIssuerSigningKey = true,
+                    ValidateIssuer = true,
+                    ValidIssuer = configuration["TokenAuthentication:Issuer"],
+                    ValidateAudience = true,
+                    ValidAudience = configuration["TokenAuthentication:Audience"],
                     ValidateLifetime = true,
-                    ClockSkew = TimeSpan.FromMinutes(5),
-                    IssuerSigningKey =
-                        new SymmetricSecurityKey(
-                            Encoding.UTF8.GetBytes(
-                                "super secret key more than 16 characters"))
+                    ValidateIssuerSigningKey = true,
+                    ClockSkew = TimeSpan.Zero,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(configuration["TokenAuthentication:SecretKey"]))
                 };
             });
 
             services.AddAuthorization();
             services.AddHttpContextAccessor();
+            services.AddTransient<IFactory<IdentityContext>, IdentityContextFactory>();
+            services.AddTransient<ITokenHandler, TokenHandler>();
             services.AddTransient<IIdentityService, IdentityService>();
 
             var builder = services.AddIdentityCore<VinanceUser>(o =>
@@ -49,8 +51,7 @@ namespace Vinance.Identity
                 o.Password.RequireDigit = true;
                 o.Password.RequireLowercase = true;
                 o.Password.RequireUppercase = true;
-                o.Password.RequireNonAlphanumeric = true;
-                o.Password.RequiredLength = 8;
+                o.Password.RequiredLength = 6;
             });
             builder = new IdentityBuilder(builder.UserType, typeof(IdentityRole<Guid>), builder.Services);
             builder.AddEntityFrameworkStores<IdentityContext>().AddDefaultTokenProviders();

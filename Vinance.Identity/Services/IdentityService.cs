@@ -1,19 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using System;
+using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
-using AutoMapper;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.IdentityModel.Tokens;
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace Vinance.Identity.Services
 {
     using Contracts.Exceptions;
     using Contracts.Exceptions.Base;
     using Contracts.Exceptions.NotFound;
+    using Contracts.Interfaces;
     using Contracts.Models.Identity;
     using Contracts.Models.ServiceResults;
     using Entities;
@@ -22,14 +23,18 @@ namespace Vinance.Identity.Services
     public class IdentityService : IIdentityService
     {
         private readonly UserManager<VinanceUser> _userManager;
+        private readonly IFactory<IdentityContext> _factory;
+        private readonly ITokenHandler _tokenHandler;
         private readonly ClaimsPrincipal _user;
         private readonly IMapper _mapper;
 
-        public IdentityService(UserManager<VinanceUser> userManager, IHttpContextAccessor contextAccessor, IMapper mapper)
+        public IdentityService(UserManager<VinanceUser> userManager, IFactory<IdentityContext> factory, IHttpContextAccessor contextAccessor, ITokenHandler tokenHandler, IMapper mapper)
         {
             _userManager = userManager;
-            _mapper = mapper;
+            _factory = factory;
             _user = contextAccessor.HttpContext.User;
+            _tokenHandler = tokenHandler;
+            _mapper = mapper;
         }
 
         public async Task<IdentityResult> Register(RegisterModel model, string password)
@@ -39,7 +44,7 @@ namespace Vinance.Identity.Services
             return await _userManager.CreateAsync(user, password);
         }
 
-        public async Task<TokenResult> GetAccessToken(LoginModel loginModel)
+        public async Task<AuthToken> GetToken(LoginModel loginModel)
         {
             var user = await _userManager.FindByNameAsync(loginModel.UserName);
             if (!user.EmailConfirmed)
@@ -48,16 +53,34 @@ namespace Vinance.Identity.Services
             }
             var passwordCheckResult = await _userManager.CheckPasswordAsync(user, loginModel.Password);
 
-            var result = new TokenResult { Succeeded = passwordCheckResult };
-
-            if (!result.Succeeded)
+            if (!passwordCheckResult)
             {
-                return result;
+                throw new UserException("Invalid username or password");
             }
 
-            var token = GenerateToken(user);
-            result.Token = token;
-            return result;
+            var token = _tokenHandler.GenerateToken(user);
+
+            return token;
+        }
+
+        public AuthToken RefreshToken(string refreshToken)
+        {
+            RefreshToken refreshTokenModel;
+            using (var context = _factory.CreateDbContext())
+            {
+                refreshTokenModel = context.RefreshTokens
+                    .Include(x => x.User)
+                    .SingleOrDefault(i => i.Token == refreshToken);
+            }
+
+            if (refreshTokenModel == null)
+            {
+                throw new UserNotAuthenticatedException();
+            }
+
+            var user = refreshTokenModel.User;
+            var token = _tokenHandler.GenerateToken(user, refreshTokenModel);
+            return token;
         }
 
         public async Task<IdentityResult> ChangePassword(PasswordChangeModel changeModel)
@@ -118,7 +141,7 @@ namespace Vinance.Identity.Services
         {
             var user = await _userManager.FindByEmailAsync(model.Email);
             var decodedBytes = Convert.FromBase64String(model.Token);
-            var token= Encoding.Unicode.GetString(decodedBytes);
+            var token = Encoding.Unicode.GetString(decodedBytes);
             var result = await _userManager.ConfirmEmailAsync(user, token);
             return result.Succeeded;
         }
@@ -160,23 +183,23 @@ namespace Vinance.Identity.Services
             return user;
         }
 
-        private string GenerateToken(VinanceUser user)
-        {
-            var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Name, user.FirstName),
-                new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-                new Claim(JwtRegisteredClaimNames.Nbf, new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds().ToString()),
-                new Claim(JwtRegisteredClaimNames.Exp, new DateTimeOffset(DateTime.Now.AddDays(30)).ToUnixTimeSeconds().ToString()),
-            };
+        //private string GenerateToken(VinanceUser user)
+        //{
+        //    var claims = new List<Claim>
+        //    {
+        //        new Claim(ClaimTypes.Name, user.FirstName),
+        //        new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
+        //        new Claim(JwtRegisteredClaimNames.Nbf, new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds().ToString()),
+        //        new Claim(JwtRegisteredClaimNames.Exp, new DateTimeOffset(DateTime.Now.AddDays(30)).ToUnixTimeSeconds().ToString()),
+        //    };
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("super secret key more than 16 characters"));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            var header = new JwtHeader(creds);
-            var payLoad = new JwtPayload(claims);
-            var token = new JwtSecurityToken(header, payLoad);
+        //    var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("super secret key more than 16 characters"));
+        //    var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+        //    var header = new JwtHeader(creds);
+        //    var payLoad = new JwtPayload(claims);
+        //    var token = new JwtSecurityToken(header, payLoad);
 
-            return new JwtSecurityTokenHandler().WriteToken(token);
-        }
+        //    return new JwtSecurityTokenHandler().WriteToken(token);
+        //}
     }
 }

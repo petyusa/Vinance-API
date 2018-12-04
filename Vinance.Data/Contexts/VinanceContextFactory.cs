@@ -26,8 +26,9 @@ namespace Vinance.Data.Contexts
 
         public VinanceContext CreateDbContext()
         {
+            var connString = _config.GetConnectionString("VinanceConnection");
             var optionsBuilder = new DbContextOptionsBuilder<VinanceContext>();
-            optionsBuilder.UseSqlServer(_config.GetConnectionString("VinanceConnection"));
+            optionsBuilder.UseSqlServer(connString);
 
             var context = new VinanceContext(optionsBuilder.Options);
             return context;
