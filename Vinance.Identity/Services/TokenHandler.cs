@@ -3,17 +3,17 @@ using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Text;
-using Vinance.Contracts.Interfaces;
 
 namespace Vinance.Identity.Services
 {
-    using Vinance.Contracts.Models.Identity;
+    using Contracts.Interfaces;
+    using Contracts.Models.Identity;
     using Entities;
     using Helpers;
     using Interfaces;
-    using System.Linq;
 
     public class TokenHandler : ITokenHandler
     {
@@ -76,7 +76,7 @@ namespace Vinance.Identity.Services
             {
                 AccessToken = encodedJwt,
                 RefreshToken = refreshToken.Token,
-                ExpiresIn = (int)options.Expiration.TotalSeconds,
+                Expires = now.AddSeconds(options.Expiration.TotalSeconds),
                 RefreshTokenExpiresIn = (int)options.RefreshTokenExpiration.TotalSeconds,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
