@@ -35,6 +35,15 @@ namespace Vinance.Api.Controllers
             return Ok(categoryViewmodels);
         }
 
+        [HttpGet]
+        [Route("{categoryId}")]
+        public async Task<IActionResult> GetAll(int categoryId)
+        {
+            var categories = await _categoryService.Get(categoryId);
+            var categoryViewmodel = _mapper.Map<CategoryViewmodel>(categories);
+            return Ok(categoryViewmodel);
+        }
+
         [HttpPost]
         [Route("")]
         public async Task<IActionResult> Create(CategoryViewmodel categoryViewmodel)
