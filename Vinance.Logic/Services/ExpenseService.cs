@@ -83,17 +83,43 @@ namespace Vinance.Logic.Services
             return mappedExpenses;
         }
 
-        public async Task<IEnumerable<Expense>> GetAll()
+        public async Task<IEnumerable<Expense>> GetAll(DateTime? from = null, DateTime? to = null, string order = "date_desc")
         {
             using (var context = _factory.CreateDbContext())
             {
-                var dataExpenses = await context.Expenses
-                    .Where(e => e.UserId == _userId)
+                var dataExpenses = context.Expenses
+                    .Where(e => e.UserId == _userId);
+
+                if (from.HasValue && to.HasValue)
+                {
+                    dataExpenses = dataExpenses.Where(e => e.Date >= from.Value && e.Date <= to.Value);
+                }
+
+                switch (order)
+                {
+                    case "date":
+                        dataExpenses = dataExpenses.OrderBy(e => e.Date);
+                        break;
+                    case "date_desc":
+                        dataExpenses = dataExpenses.OrderByDescending(e => e.Date);
+                        break;
+                    case "amount":
+                        dataExpenses = dataExpenses.OrderBy(e => e.Amount);
+                        break;
+                    case "amount_desc":
+                        dataExpenses = dataExpenses.OrderByDescending(e => e.Amount);
+                        break;
+                    default:
+                        dataExpenses = dataExpenses.OrderByDescending(e => e.Date);
+                        break;
+                }
+
+                var list = await dataExpenses
                     .Include(e => e.Category)
                     .Include(e => e.From)
-                    .OrderByDescending(e => e.Date)
                     .ToListAsync();
-                return _mapper.Map<IEnumerable<Expense>>(dataExpenses);
+
+                return _mapper.Map<IEnumerable<Expense>>(list);
             }
         }
 

@@ -1,13 +1,15 @@
-﻿using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Threading.Tasks;
 
 namespace Vinance.Api.Controllers
 {
     using Contracts.Extensions;
     using Contracts.Interfaces;
     using Contracts.Models;
+    using Logic;
     using Viewmodels;
 
     [Route("expenses")]
@@ -37,11 +39,11 @@ namespace Vinance.Api.Controllers
 
         [HttpGet]
         [Route("")]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll(DateTime? from, DateTime? to, int page = 1, int pageSize = 20, string order = "date_desc")
         {
-            var expenses = await _expenseService.GetAll();
-            var model = _mapper.MapAll<ExpenseViewmodel>(expenses);
-            return Ok(model);
+            var expenses = await _expenseService.GetAll(from, to, order);
+            var list = _mapper.MapAll<ExpenseViewmodel>(expenses).ToPagedList(page, pageSize);
+            return Ok(list);
         }
 
         [HttpGet]

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Vinance.Contracts.Interfaces
@@ -10,7 +11,8 @@ namespace Vinance.Contracts.Interfaces
     {
         Task<Expense> Create(Expense expense);
         Task<IEnumerable<Expense>> Upload(IFormFile file);
-        Task<IEnumerable<Expense>> GetAll();
+
+        Task<IEnumerable<Expense>> GetAll(DateTime? from = null, DateTime? to = null, string order = "date_desc");
         Task<Expense> GetById(int expenseId);
         Task<Expense> Update(Expense expense);
         Task Delete(int expenseId);
