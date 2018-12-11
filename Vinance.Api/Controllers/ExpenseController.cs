@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Vinance.Api.Controllers
@@ -70,6 +71,15 @@ namespace Vinance.Api.Controllers
             await _authorizationService.HandleGetDeleteAsync<Expense>(expenseId);
             await _expenseService.Delete(expenseId);
             return NoContent();
+        }
+
+        [HttpPost]
+        [Route("upload")]
+        public async Task<IActionResult> Upload(IFormFile file)
+        {
+            var expenses = await _expenseService.Upload(file);
+            var viewmodel = _mapper.MapAll<ExpenseViewmodel>(expenses);
+            return Ok(viewmodel);
         }
     }
 }

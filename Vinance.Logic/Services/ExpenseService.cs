@@ -1,9 +1,11 @@
-﻿using System;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
+using NPOI.XSSF.UserModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using AutoMapper;
-using Microsoft.EntityFrameworkCore;
 
 namespace Vinance.Logic.Services
 {
@@ -43,6 +45,44 @@ namespace Vinance.Logic.Services
             }
         }
 
+        public async Task<IEnumerable<Expense>> Upload(IFormFile file)
+        {
+            var expenses = new List<Data.Entities.Expense>();
+            using (var stream = file.OpenReadStream())
+            {
+                var workbook = new XSSFWorkbook(stream);
+                var sheet = workbook.GetSheetAt(0);
+                for (var rownum = 0; rownum <= sheet.LastRowNum; rownum++)
+                {
+                    if (sheet.GetRow(rownum) == null)
+                        continue;
+
+                    var row = sheet.GetRow(rownum);
+                    var expense = new Data.Entities.Expense
+                    {
+                        Date = row.GetCell(0).DateCellValue,
+                        FromId = (int)row.GetCell(1).NumericCellValue,
+                        CategoryId = (int)row.GetCell(2).NumericCellValue,
+                        Amount = (int)row.GetCell(3).NumericCellValue,
+                        Comment = row.GetCell(4).StringCellValue,
+                        UserId = _userId
+                    };
+
+                    expenses.Add(expense);
+                }
+            }
+
+            using (var context = _factory.CreateDbContext())
+            {
+                await context.Expenses.AddRangeAsync(expenses);
+                await context.SaveChangesAsync();
+            }
+
+            var mappedExpenses = _mapper.MapAll<Expense>(expenses);
+
+            return mappedExpenses;
+        }
+
         public async Task<IEnumerable<Expense>> GetAll()
         {
             using (var context = _factory.CreateDbContext())
@@ -51,6 +91,7 @@ namespace Vinance.Logic.Services
                     .Where(e => e.UserId == _userId)
                     .Include(e => e.Category)
                     .Include(e => e.From)
+                    .OrderByDescending(e => e.Date)
                     .ToListAsync();
                 return _mapper.Map<IEnumerable<Expense>>(dataExpenses);
             }
