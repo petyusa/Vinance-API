@@ -33,6 +33,7 @@ namespace Vinance.Identity.Services
 
             var claims = new List<Claim>
             {
+                new Claim(ClaimTypes.Name, user.FirstName),
                 new Claim(JwtRegisteredClaimNames.NameId, user.Id.ToString()),
                 new Claim(JwtRegisteredClaimNames.Iat, new DateTimeOffset(now).ToUniversalTime().ToUnixTimeSeconds().ToString(), ClaimValueTypes.Integer64),
                 new Claim(JwtRegisteredClaimNames.Sub, user.UserName)

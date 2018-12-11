@@ -48,9 +48,6 @@ namespace Vinance.Identity
             var builder = services.AddIdentityCore<VinanceUser>(o =>
             {
                 o.User.RequireUniqueEmail = true;
-                o.Password.RequireDigit = true;
-                o.Password.RequireLowercase = true;
-                o.Password.RequireUppercase = true;
                 o.Password.RequiredLength = 6;
             });
             builder = new IdentityBuilder(builder.UserType, typeof(IdentityRole<Guid>), builder.Services);

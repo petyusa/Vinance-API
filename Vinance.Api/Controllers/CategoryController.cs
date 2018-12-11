@@ -61,7 +61,7 @@ namespace Vinance.Api.Controllers
             var category = _mapper.Map<Category>(categoryViewmodel);
             await _authorizationService.HandleCreateUpdateAsync(category);
             await _categoryService.Update(category);
-            var updatedCategory = _categoryService.Get(category.Id);
+            var updatedCategory = await _categoryService.Get(category.Id);
             categoryViewmodel = _mapper.Map<CategoryViewmodel>(updatedCategory);
             return Ok(categoryViewmodel);
         }
