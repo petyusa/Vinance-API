@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace Vinance.Logic.Services
 {
+    using Contracts.Enums;
     using Contracts.Exceptions.NotFound;
     using Contracts.Extensions;
     using Contracts.Interfaces;
@@ -51,7 +52,7 @@ namespace Vinance.Logic.Services
             using (var stream = file.OpenReadStream())
             {
                 var workbook = new XSSFWorkbook(stream);
-                var sheet = workbook.GetSheetAt(0);
+                var sheet = workbook.GetSheet("Expenses");
                 for (var rownum = 0; rownum <= sheet.LastRowNum; rownum++)
                 {
                     if (sheet.GetRow(rownum) == null)
@@ -64,7 +65,7 @@ namespace Vinance.Logic.Services
                         FromId = (int)row.GetCell(1).NumericCellValue,
                         CategoryId = (int)row.GetCell(2).NumericCellValue,
                         Amount = (int)row.GetCell(3).NumericCellValue,
-                        Comment = row.GetCell(4).StringCellValue,
+                        Comment = row.GetCell(4)?.StringCellValue,
                         UserId = _userId
                     };
 
@@ -83,7 +84,7 @@ namespace Vinance.Logic.Services
             return mappedExpenses;
         }
 
-        public async Task<IEnumerable<Expense>> GetAll(DateTime? from = null, DateTime? to = null, string order = "date_desc")
+        public async Task<IEnumerable<Expense>> GetAll(int? categoryId = null, DateTime? from = null, DateTime? to = null, string order = "date_desc")
         {
             using (var context = _factory.CreateDbContext())
             {
@@ -93,6 +94,11 @@ namespace Vinance.Logic.Services
                 if (from.HasValue && to.HasValue)
                 {
                     dataExpenses = dataExpenses.Where(e => e.Date >= from.Value && e.Date <= to.Value);
+                }
+
+                if (categoryId.HasValue)
+                {
+                    dataExpenses = dataExpenses.Where(e => e.CategoryId == categoryId);
                 }
 
                 switch (order)

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
+using Vinance.Contracts.Enums;
 
 namespace Vinance.Api.Controllers
 {
@@ -39,9 +40,9 @@ namespace Vinance.Api.Controllers
 
         [HttpGet]
         [Route("")]
-        public async Task<IActionResult> GetAll(DateTime? from, DateTime? to, int page = 1, int pageSize = 20, string order = "date_desc")
+        public async Task<IActionResult> GetAll(int? categoryId, DateTime? from, DateTime? to, int page = 1, int pageSize = 20, string order = "date_desc")
         {
-            var expenses = await _expenseService.GetAll(from, to, order);
+            var expenses = await _expenseService.GetAll(categoryId, from, to, order);
             var list = _mapper.MapAll<ExpenseViewmodel>(expenses).ToPagedList(page, pageSize);
             return Ok(list);
         }

@@ -7,6 +7,7 @@ namespace Vinance.Logic
     public class PagedList<T>
     {
         public int Page { get; private set; }
+        public int PageSize { get; private set; }
         public int TotalPages { get; private set; }
         public List<T> Items { get; private set; } = new List<T>();
 
@@ -16,6 +17,7 @@ namespace Vinance.Logic
             Items.AddRange(enumerable.Skip((page - 1) * pageSize).Take(pageSize));
             TotalPages = (int)Math.Ceiling(enumerable.Count() / (double)pageSize);
             Page = page;
+            PageSize = pageSize;
         }
     }
 }
