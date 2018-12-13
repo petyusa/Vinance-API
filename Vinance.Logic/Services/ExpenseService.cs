@@ -1,15 +1,14 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
-using NPOI.XSSF.UserModel;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
+using Microsoft.EntityFrameworkCore;
+using NPOI.XSSF.UserModel;
 
 namespace Vinance.Logic.Services
 {
-    using Contracts.Enums;
     using Contracts.Exceptions.NotFound;
     using Contracts.Extensions;
     using Contracts.Interfaces;
@@ -46,17 +45,19 @@ namespace Vinance.Logic.Services
             }
         }
 
-        public async Task<IEnumerable<Expense>> Upload(IFormFile file)
+        public async Task<IEnumerable<Expense>> Upload(StreamReader file)
         {
             var expenses = new List<Data.Entities.Expense>();
-            using (var stream = file.OpenReadStream())
+            using (file)
             {
-                var workbook = new XSSFWorkbook(stream);
+                var workbook = new XSSFWorkbook(file.BaseStream);
                 var sheet = workbook.GetSheet("Expenses");
                 for (var rownum = 0; rownum <= sheet.LastRowNum; rownum++)
                 {
                     if (sheet.GetRow(rownum) == null)
+                    {
                         continue;
+                    }
 
                     var row = sheet.GetRow(rownum);
                     var expense = new Data.Entities.Expense

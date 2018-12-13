@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace Vinance.Contracts.Interfaces
@@ -11,7 +11,7 @@ namespace Vinance.Contracts.Interfaces
     public interface IExpenseService
     {
         Task<Expense> Create(Expense expense);
-        Task<IEnumerable<Expense>> Upload(IFormFile file);
+        Task<IEnumerable<Expense>> Upload(StreamReader file);
         Task<IEnumerable<Expense>> GetAll(int? categoryId = null, DateTime? from = null, DateTime? to = null, string order = "date_desc");
         Task<Expense> GetById(int expenseId);
         Task<Expense> Update(Expense expense);

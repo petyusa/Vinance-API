@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.IO;
 using System.Threading.Tasks;
 using Vinance.Contracts.Enums;
 
@@ -80,9 +81,12 @@ namespace Vinance.Api.Controllers
         [Route("upload")]
         public async Task<IActionResult> Upload(IFormFile file)
         {
-            var expenses = await _expenseService.Upload(file);
-            var viewmodel = _mapper.MapAll<ExpenseViewmodel>(expenses);
-            return Ok(viewmodel);
+            using (var stream = new StreamReader(file.OpenReadStream()))
+            {
+                var expenses = await _expenseService.Upload(stream);
+                var viewmodel = _mapper.MapAll<ExpenseViewmodel>(expenses);
+                return Ok(viewmodel);
+            }
         }
     }
 }
