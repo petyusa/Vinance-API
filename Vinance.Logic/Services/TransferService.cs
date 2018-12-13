@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using NPOI.XSSF.UserModel;
 
 namespace Vinance.Logic.Services
 {
@@ -27,22 +29,52 @@ namespace Vinance.Logic.Services
             _userId = identityService.GetCurrentUserId();
         }
 
-        public async Task<IEnumerable<Transfer>> GetAll()
+        public async Task<IEnumerable<Transfer>> GetAll(int? categoryId = null, DateTime? @from = null, DateTime? to = null, string order = "date_desc")
         {
-            IEnumerable<Transfer> transfers;
             using (var context = _factory.CreateDbContext())
             {
-                var dataTransfers = await context.Transfers
-                    .Include(p => p.From)
-                    .Include(p => p.To)
-                    .Include(t => t.Category)
-                    .Where(t => t.UserId == _userId)
-                    .ToListAsync();
-                transfers = _mapper.Map<IEnumerable<Transfer>>(dataTransfers);
-            }
-            return transfers;
-        }
+                var dataTransfers = context.Transfers
+                    .Where(t => t.UserId == _userId);
 
+                if (from.HasValue && to.HasValue)
+                {
+                    dataTransfers = dataTransfers.Where(t => t.Date >= from.Value && t.Date <= to.Value);
+                }
+
+                if (categoryId.HasValue)
+                {
+                    dataTransfers = dataTransfers.Where(t => t.CategoryId == categoryId);
+                }
+
+                switch (order)
+                {
+                    case "date":
+                        dataTransfers = dataTransfers.OrderBy(t => t.Date);
+                        break;
+                    case "date_desc":
+                        dataTransfers = dataTransfers.OrderByDescending(t => t.Date);
+                        break;
+                    case "amount":
+                        dataTransfers = dataTransfers.OrderBy(t => t.Amount);
+                        break;
+                    case "amount_desc":
+                        dataTransfers = dataTransfers.OrderByDescending(t => t.Amount);
+                        break;
+                    default:
+                        dataTransfers = dataTransfers.OrderByDescending(t => t.Date);
+                        break;
+                }
+
+                var list = await dataTransfers
+                    .Include(t => t.Category)
+                    .Include(t => t.From)
+                    .Include(t => t.To)
+                    .ToListAsync();
+
+                return _mapper.Map<IEnumerable<Transfer>>(list);
+            }
+        }
+    
         public async Task<Transfer> Create(Transfer transfer)
         {
             using (var context = _factory.CreateDbContext())
@@ -53,6 +85,47 @@ namespace Vinance.Logic.Services
                 await context.SaveChangesAsync();
                 return _mapper.Map<Transfer>(dataTransfer);
             }
+        }
+
+        public async Task<IEnumerable<Transfer>> Upload(StreamReader stream)
+        {
+            var transfers = new List<Data.Entities.Transfer>();
+            using (stream)
+            {
+                var workbook = new XSSFWorkbook(stream.BaseStream);
+                var sheet = workbook.GetSheet("Transfers");
+                for (var rownum = 0; rownum <= sheet.LastRowNum; rownum++)
+                {
+                    if (sheet.GetRow(rownum) == null)
+                    {
+                        continue;
+                    }
+
+                    var row = sheet.GetRow(rownum);
+                    var transfer = new Data.Entities.Transfer
+                    {
+                        Date = row.GetCell(0).DateCellValue,
+                        FromId = (int)row.GetCell(1).NumericCellValue,
+                        ToId = (int)row.GetCell(2).NumericCellValue,
+                        CategoryId = (int)row.GetCell(3).NumericCellValue,
+                        Amount = (int)row.GetCell(4).NumericCellValue,
+                        Comment = row.GetCell(5)?.StringCellValue,
+                        UserId = _userId
+                    };
+
+                    transfers.Add(transfer);
+                }
+            }
+
+            using (var context = _factory.CreateDbContext())
+            {
+                await context.Transfers.AddRangeAsync(transfers);
+                await context.SaveChangesAsync();
+            }
+
+            var mappedExpenses = _mapper.MapAll<Transfer>(transfers);
+
+            return mappedExpenses;
         }
 
         public async Task<Transfer> GetById(int transferId)
@@ -71,6 +144,7 @@ namespace Vinance.Logic.Services
                 return _mapper.Map<Transfer>(dataTransfer);
             }
         }
+
 
         public async Task<Transfer> Update(Transfer transfer)
         {

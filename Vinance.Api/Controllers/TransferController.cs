@@ -1,12 +1,16 @@
-﻿using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace Vinance.Api.Controllers
 {
     using Contracts.Extensions;
     using Contracts.Interfaces;
     using Contracts.Models;
+    using Logic;
     using Viewmodels;
 
     [Route("transfers")]
@@ -26,10 +30,10 @@ namespace Vinance.Api.Controllers
 
         [HttpGet]
         [Route("")]
-        public async Task<ActionResult> GetAll()
+        public async Task<ActionResult> GetAll(int? categoryId, DateTime? from, DateTime? to, int page = 1, int pageSize = 20, string order = "date_desc")
         {
-            var transfers = await _transferService.GetAll();
-            var model = _mapper.MapAll<TransferViewmodel>(transfers);
+            var transfers = await _transferService.GetAll(categoryId, from, to, order);
+            var model = _mapper.MapAll<TransferViewmodel>(transfers).ToPagedList(page, pageSize);
             return Ok(model);
         }
 
@@ -70,6 +74,18 @@ namespace Vinance.Api.Controllers
             await _authorizationService.HandleGetDeleteAsync<Transfer>(transferId);
             await _transferService.Delete(transferId);
             return NoContent();
+        }
+
+        [HttpPost]
+        [Route("upload")]
+        public async Task<IActionResult> Upload(IFormFile file)
+        {
+            using (var stream = new StreamReader(file.OpenReadStream()))
+            {
+                var transfers = await _transferService.Upload(stream);
+                var viewmodel = _mapper.MapAll<TransferViewmodel>(transfers);
+                return Ok(viewmodel);
+            }
         }
     }
 }

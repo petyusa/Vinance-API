@@ -1,12 +1,16 @@
-﻿using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace Vinance.Api.Controllers
 {
     using Contracts.Extensions;
     using Contracts.Interfaces;
     using Contracts.Models;
+    using Logic;
     using Viewmodels;
 
     [Route("incomes")]
@@ -36,10 +40,10 @@ namespace Vinance.Api.Controllers
 
         [HttpGet]
         [Route("")]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll(int? categoryId, DateTime? from, DateTime? to, int page = 1, int pageSize = 20, string order = "date_desc")
         {
-            var incomes = await _incomeService.GetAll();
-            var model = _mapper.MapAll<IncomeViewmodel>(incomes);
+            var incomes = await _incomeService.GetAll(categoryId, from, to, order);
+            var model = _mapper.MapAll<IncomeViewmodel>(incomes).ToPagedList(page, pageSize);
             return Ok(model);
         }
 
@@ -70,6 +74,18 @@ namespace Vinance.Api.Controllers
             await _authorizationService.HandleGetDeleteAsync<Income>(incomeId);
             await _incomeService.Delete(incomeId);
             return NoContent();
+        }
+
+        [HttpPost]
+        [Route("upload")]
+        public async Task<IActionResult> Upload(IFormFile file)
+        {
+            using (var stream = new StreamReader(file.OpenReadStream()))
+            {
+                var incomes = await _incomeService.Upload(stream);
+                var viewmodel = _mapper.MapAll<IncomeViewmodel>(incomes);
+                return Ok(viewmodel);
+            }
         }
     }
 }
