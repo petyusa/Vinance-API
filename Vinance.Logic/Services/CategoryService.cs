@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Vinance.Contracts.Models.Helpers;
 
 namespace Vinance.Logic.Services
 {
@@ -62,7 +63,6 @@ namespace Vinance.Logic.Services
                     {
                         expenses = expenses.Where(e => e.Date >= from.Value && e.Date <= to.Value);
                         incomes = incomes.Where(i => i.Date >= from.Value && i.Date <= to.Value);
-
                     }
 
                     switch (category.Type)
@@ -81,6 +81,35 @@ namespace Vinance.Logic.Services
 
                 }
                 return mappedCategories;
+            }
+        }
+
+        public async Task<IEnumerable<CategoryStatistics>> GetStats(CategoryType? type = null, DateTime? from = null, DateTime? to = null, string by = "year")
+        {
+            using (var context = _factory.CreateDbContext())
+            {
+                var expenses = context.Expenses
+                    .Include(e => e.Category)
+                    .Where(e => e.UserId == _userId);
+
+                if (from.HasValue && to.HasValue)
+                {
+                    expenses = expenses.Where(e => e.Date >= from.Value && e.Date <= to.Value);
+                }
+
+                var list = await expenses.ToListAsync();
+                var groupedExpenses = list.GroupBy(e => new { Date = new DateTime(e.Date.Year, e.Date.Month, 1) });
+
+                var result = groupedExpenses
+                    .Select(g => 
+                        new CategoryStatistics
+                        {
+                            Date = g.Key.Date,
+                            Items = g.GroupBy(e => e.Category)
+                                .Select(ex => new CategoryStatisticsItem { Name = ex.Key.Name, Balance = ex.Sum(t => t.Amount) })
+                        });
+
+                return result.OrderBy(r => r.Date);
             }
         }
 
