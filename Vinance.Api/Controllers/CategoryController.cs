@@ -36,7 +36,7 @@ namespace Vinance.Api.Controllers
         }
 
         [HttpGet]
-        [Route("{categoryId}")]
+        [Route("{categoryId:int}")]
         public async Task<IActionResult> Get(int categoryId)
         {
             var categories = await _categoryService.Get(categoryId);
@@ -67,12 +67,20 @@ namespace Vinance.Api.Controllers
         }
 
         [HttpDelete]
-        [Route("{categoryId}")]
+        [Route("{categoryId:int}")]
         public async Task<IActionResult> Delete(int categoryId)
         {
             await _authorizationService.HandleGetDeleteAsync<Category>(categoryId);
             await _categoryService.Delete(categoryId);
             return NoContent();
+        }
+
+        [HttpGet]
+        [Route("average")]
+        public async Task<IActionResult> GetAverage(CategoryType? type, DateTime? from = null, DateTime? to = null, string by = null)
+        {
+            var result = await _categoryService.GetStats(type, from, to, by);
+            return Ok(result);
         }
     }
 }
