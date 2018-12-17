@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Vinance.Contracts.Models.Helpers;
+using Vinance.Data.Entities.Base;
 
 namespace Vinance.Logic.Services
 {
@@ -88,16 +89,37 @@ namespace Vinance.Logic.Services
         {
             using (var context = _factory.CreateDbContext())
             {
-                var expenses = context.Expenses
-                    .Include(e => e.Category)
-                    .Where(e => e.UserId == _userId);
+                IQueryable<Transaction> transactions;
+
+                switch (type)
+                {
+                    case CategoryType.Expense:
+                        transactions = context.Expenses
+                            .Include(e => e.Category)
+                            .Where(e => e.UserId == _userId);
+                        break;
+                    case CategoryType.Income:
+                        transactions = context.Incomes
+                            .Include(e => e.Category)
+                            .Where(e => e.UserId == _userId);
+                        break;
+                    case CategoryType.Transfer:
+                        throw new NotImplementedException();
+                    case null:
+                        transactions = context.Expenses
+                            .Include(e => e.Category)
+                            .Where(e => e.UserId == _userId);
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(type), type, null);
+                }
 
                 if (from.HasValue && to.HasValue)
                 {
-                    expenses = expenses.Where(e => e.Date >= from.Value && e.Date <= to.Value);
+                    transactions = transactions.Where(e => e.Date >= from.Value && e.Date <= to.Value);
                 }
 
-                var list = await expenses.ToListAsync();
+                var list = await transactions.ToListAsync();
                 var groupedExpenses = list.GroupBy(e => new { Date = new DateTime(e.Date.Year, e.Date.Month, 1) });
 
                 var result = groupedExpenses
