@@ -47,10 +47,12 @@ namespace Vinance.Identity.Services
         public async Task<AuthToken> GetToken(LoginModel loginModel)
         {
             var user = await _userManager.FindByNameAsync(loginModel.UserName);
-            if (!user.EmailConfirmed)
+
+            if (user == null || !user.EmailConfirmed)
             {
-                throw new VinanceException("Email address not confirmed");
+                throw new UserException("Invalid username or password");
             }
+
             var passwordCheckResult = await _userManager.CheckPasswordAsync(user, loginModel.Password);
 
             if (!passwordCheckResult)

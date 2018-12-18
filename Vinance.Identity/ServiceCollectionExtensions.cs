@@ -49,6 +49,9 @@ namespace Vinance.Identity
             {
                 o.User.RequireUniqueEmail = true;
                 o.Password.RequiredLength = 6;
+                o.Password.RequireNonAlphanumeric = false;
+                o.Password.RequireUppercase = false;
+                o.Password.RequireDigit = true;
             });
             builder = new IdentityBuilder(builder.UserType, typeof(IdentityRole<Guid>), builder.Services);
             builder.AddEntityFrameworkStores<IdentityContext>().AddDefaultTokenProviders();

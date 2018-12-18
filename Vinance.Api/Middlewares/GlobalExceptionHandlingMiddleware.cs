@@ -52,6 +52,9 @@ namespace Vinance.Api.Middlewares
                     case UserNotAuthenticatedException ex:
                         context.Response.StatusCode = (int) HttpStatusCode.Unauthorized;
                         break;
+                    case UserException ex:
+                        context.Response.StatusCode = (int) HttpStatusCode.Unauthorized;
+                        break;
                     case NotOwnerException ex:
                         context.Response.StatusCode = (int) HttpStatusCode.Forbidden;
                         break;
