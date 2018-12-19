@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
@@ -75,6 +76,14 @@ namespace Vinance.Api.Controllers
             await _authorizationService.HandleGetDeleteAsync<Account>(accountId);
             await _accountService.Delete(accountId);
             return NoContent();
+        }
+
+        [HttpGet]
+        [Route("daily-balances")]
+        public async Task<IActionResult> GetDailyBalances(DateTime? from = null, DateTime? to = null)
+        {
+            var balances = _accountService.GetDailyBalances(from, to);
+            return Ok(balances);
         }
     }
 }

@@ -11,6 +11,10 @@ namespace Vinance.Api.Viewmodels
 
         public int Balance { get; set; }
 
+        public bool IsActive { get; set; }
+
+        public bool IsSaving { get; set; }
+
         public bool CanBeDeleted { get; set; }
     }
 }
