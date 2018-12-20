@@ -194,6 +194,8 @@ namespace Vinance.Logic.Services
                             balances.Add(date, balance);
                         }
                     }
+
+                    balances = balances.Where(x => x.Key >= from.Value).ToDictionary(x => x.Key, x => x.Value);
                     var dailyBalancesForAccount = new DailyBalanceList{ AccountName = account.Name, DailyBalances = balances};
                     dailyBalances.Add(dailyBalancesForAccount);
                 }
