@@ -3,7 +3,6 @@
     public enum CategoryType
     {
         Expense,
-        Income,
-        Transfer
+        Income
     }
 }

@@ -1,11 +1,11 @@
-﻿using System;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
+using NPOI.XSSF.UserModel;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using AutoMapper;
-using Microsoft.EntityFrameworkCore;
-using NPOI.XSSF.UserModel;
 
 namespace Vinance.Logic.Services
 {
@@ -29,7 +29,7 @@ namespace Vinance.Logic.Services
             _userId = identityService.GetCurrentUserId();
         }
 
-        public async Task<IEnumerable<Transfer>> GetAll(int? categoryId = null, DateTime? @from = null, DateTime? to = null, string order = "date_desc")
+        public async Task<IEnumerable<Transfer>> GetAll(int? accountId = null, DateTime? @from = null, DateTime? to = null, string order = "date_desc")
         {
             using (var context = _factory.CreateDbContext())
             {
@@ -41,9 +41,9 @@ namespace Vinance.Logic.Services
                     dataTransfers = dataTransfers.Where(t => t.Date >= from.Value && t.Date <= to.Value);
                 }
 
-                if (categoryId.HasValue)
+                if (accountId.HasValue)
                 {
-                    dataTransfers = dataTransfers.Where(t => t.CategoryId == categoryId);
+                    dataTransfers = dataTransfers.Where(t => t.FromId == accountId || t.ToId == accountId);
                 }
 
                 switch (order)
@@ -66,7 +66,6 @@ namespace Vinance.Logic.Services
                 }
 
                 var list = await dataTransfers
-                    .Include(t => t.Category)
                     .Include(t => t.From)
                     .Include(t => t.To)
                     .ToListAsync();
@@ -74,7 +73,7 @@ namespace Vinance.Logic.Services
                 return _mapper.Map<IEnumerable<Transfer>>(list);
             }
         }
-    
+
         public async Task<Transfer> Create(Transfer transfer)
         {
             using (var context = _factory.CreateDbContext())
@@ -107,7 +106,6 @@ namespace Vinance.Logic.Services
                         Date = row.GetCell(0).DateCellValue,
                         FromId = (int)row.GetCell(1).NumericCellValue,
                         ToId = (int)row.GetCell(2).NumericCellValue,
-                        CategoryId = (int)row.GetCell(3).NumericCellValue,
                         Amount = (int)row.GetCell(4).NumericCellValue,
                         Comment = row.GetCell(5)?.StringCellValue,
                         UserId = _userId
@@ -135,7 +133,6 @@ namespace Vinance.Logic.Services
                 var dataTransfer = await context.Transfers
                     .Include(p => p.From)
                     .Include(p => p.To)
-                    .Include(t => t.Category)
                     .SingleOrDefaultAsync(t => t.Id == transferId && t.UserId == _userId);
                 if (dataTransfer == null)
                 {
@@ -144,7 +141,6 @@ namespace Vinance.Logic.Services
                 return _mapper.Map<Transfer>(dataTransfer);
             }
         }
-
 
         public async Task<Transfer> Update(Transfer transfer)
         {
@@ -188,17 +184,6 @@ namespace Vinance.Logic.Services
                     .Include(a => a.TransfersTo)
                     .SingleOrDefaultAsync(a => a.Id == accountId);
                 var transfers = account.TransfersFrom.ToList().Concat(account.TransfersTo.ToList());
-                return _mapper.MapAll<Transfer>(transfers);
-            }
-        }
-
-        public async Task<IEnumerable<Transfer>> GetByCategoryId(int categoryId)
-        {
-            using (var context = _factory.CreateDbContext())
-            {
-                var transfers = await context.Transfers
-                    .Where(t => t.CategoryId == categoryId)
-                    .ToListAsync();
                 return _mapper.MapAll<Transfer>(transfers);
             }
         }

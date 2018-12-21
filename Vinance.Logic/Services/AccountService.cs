@@ -109,7 +109,7 @@ namespace Vinance.Logic.Services
             }
         }
 
-        public List<DailyBalanceList> GetDailyBalances(DateTime? from = null, DateTime? to = null)
+        public List<DailyBalanceList> GetDailyBalances(int? accountId = null, DateTime? from = null, DateTime? to = null)
         {
             if (!from.HasValue || !to.HasValue)
             {
@@ -124,7 +124,18 @@ namespace Vinance.Logic.Services
                     .Include(a => a.Incomes)
                     .Include(a => a.TransfersFrom)
                     .Include(a => a.TransfersTo)
-                    .Where(a => a.UserId == _userId && a.IsActive && !a.IsSaving && a.Name != "Tartozás" && a.Name != "Követelés");
+                    .Where(a => a.UserId == _userId);
+
+                if (accountId != null)
+                {
+                    accounts = accounts.Where(a => a.Id == accountId.Value);
+                }
+                else
+                {
+                    accounts = accounts.Where(a =>
+                        a.IsActive && !a.IsSaving && a.Name != "Tartozás" && a.Name != "Követelés");
+                }
+
                 var dailyBalances = new List<DailyBalanceList>();
                 foreach (var account in accounts)
                 {

@@ -9,7 +9,7 @@ namespace Vinance.Contracts.Interfaces
 
     public interface IIncomeService
     {
-        Task<IEnumerable<Income>> GetAll(int? categoryId = null, DateTime? from = null, DateTime? to = null, string order = "date_desc");
+        Task<IEnumerable<Income>> GetAll(int? accountId = null, int? categoryId = null, DateTime? from = null, DateTime? to = null, string order = "date_desc");
         Task<Income> Create(Income account);
         Task<IEnumerable<Income>> Upload(StreamReader stream);
         Task<Income> GetById(int accountId);

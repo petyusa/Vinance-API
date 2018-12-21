@@ -139,9 +139,7 @@ namespace Vinance.Logic.Services
             }
             var accountFrom = await _accountService.Get(transfer.FromId);
             var accountTo = await _accountService.Get(transfer.ToId);
-            var category = await _categoryService.Get(transfer.CategoryId);
-            AuthorizeOwner(accountFrom, accountTo, category);
-            await AuthorizeCategory(transfer, CategoryType.Transfer);
+            AuthorizeOwner(accountFrom, accountTo);
         }
 
         private void AuthorizeOwner(params BaseModel[] resources)

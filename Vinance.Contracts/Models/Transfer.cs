@@ -1,9 +1,14 @@
-﻿namespace Vinance.Contracts.Models
+﻿using System;
+
+namespace Vinance.Contracts.Models
 {
     using BaseModels;
 
-    public class Transfer : Transaction
+    public class Transfer : BaseModel
     {
+        public DateTime Date { get; set; }
+        public int Amount { get; set; }
+        public string Comment { get; set; }
         public Account From { get; set; }
         public int FromId { get; set; }
         public Account To { get; set; }

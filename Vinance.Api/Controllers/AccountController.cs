@@ -80,9 +80,9 @@ namespace Vinance.Api.Controllers
 
         [HttpGet]
         [Route("daily-balances")]
-        public async Task<IActionResult> GetDailyBalances(DateTime? from = null, DateTime? to = null)
+        public async Task<IActionResult> GetDailyBalances(int? accountId = null, DateTime? from = null, DateTime? to = null)
         {
-            var balances = _accountService.GetDailyBalances(from, to);
+            var balances = _accountService.GetDailyBalances(accountId, from, to);
             return Ok(balances);
         }
     }

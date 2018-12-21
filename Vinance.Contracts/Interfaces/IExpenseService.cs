@@ -12,7 +12,7 @@ namespace Vinance.Contracts.Interfaces
     {
         Task<Expense> Create(Expense expense);
         Task<IEnumerable<Expense>> Upload(StreamReader file);
-        Task<IEnumerable<Expense>> GetAll(int? categoryId = null, DateTime? from = null, DateTime? to = null, string order = "date_desc");
+        Task<IEnumerable<Expense>> GetAll(int? accountId = null, int? categoryId = null, DateTime? from = null, DateTime? to = null, string order = "date_desc");
         Task<Expense> GetById(int expenseId);
         Task<Expense> Update(Expense expense);
         Task Delete(int expenseId);

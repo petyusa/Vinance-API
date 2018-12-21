@@ -55,10 +55,8 @@ namespace Vinance.Logic.Services
                         .Where(e => e.UserId == _userId && e.CategoryId == category.Id);
                     var incomes = context.Incomes
                         .Where(i => i.UserId == _userId && i.CategoryId == category.Id);
-                    var transfers = context.Transfers
-                        .Where(i => i.UserId == _userId && i.CategoryId == category.Id);
 
-                    category.CanBeDeleted = !expenses.Any() && !incomes.Any() && !transfers.Any();
+                    category.CanBeDeleted = !expenses.Any() && !incomes.Any();
 
                     if (from.HasValue && to.HasValue)
                     {
@@ -73,8 +71,6 @@ namespace Vinance.Logic.Services
                             break;
                         case CategoryType.Income:
                             category.Balance = incomes.Sum(i => i.Amount);
-                            break;
-                        case CategoryType.Transfer:
                             break;
                         default:
                             throw new ArgumentOutOfRangeException();
@@ -103,8 +99,6 @@ namespace Vinance.Logic.Services
                             .Include(e => e.Category)
                             .Where(e => e.UserId == _userId);
                         break;
-                    case CategoryType.Transfer:
-                        throw new NotImplementedException();
                     case null:
                         transactions = context.Expenses
                             .Include(e => e.Category)

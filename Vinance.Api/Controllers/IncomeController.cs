@@ -40,9 +40,9 @@ namespace Vinance.Api.Controllers
 
         [HttpGet]
         [Route("")]
-        public async Task<IActionResult> GetAll(int? categoryId, DateTime? from, DateTime? to, int page = 1, int pageSize = 20, string order = "date_desc")
+        public async Task<IActionResult> GetAll(int? accountId, int? categoryId, DateTime? from, DateTime? to, int page = 1, int pageSize = 20, string order = "date_desc")
         {
-            var incomes = await _incomeService.GetAll(categoryId, from, to, order);
+            var incomes = await _incomeService.GetAll(accountId, categoryId, from, to, order);
             var model = _mapper.MapAll<IncomeViewmodel>(incomes).ToPagedList(page, pageSize);
             return Ok(model);
         }

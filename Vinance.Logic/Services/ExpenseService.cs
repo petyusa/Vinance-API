@@ -85,16 +85,20 @@ namespace Vinance.Logic.Services
             return mappedExpenses;
         }
 
-        public async Task<IEnumerable<Expense>> GetAll(int? categoryId = null, DateTime? from = null, DateTime? to = null, string order = "date_desc")
+        public async Task<IEnumerable<Expense>> GetAll(int? accountId = null, int? categoryId = null, DateTime? from = null, DateTime? to = null, string order = "date_desc")
         {
             using (var context = _factory.CreateDbContext())
             {
-                var dataExpenses = context.Expenses
-                    .Where(e => e.UserId == _userId);
+                var dataExpenses = context.Expenses.Where(e => e.UserId == _userId);
 
                 if (from.HasValue && to.HasValue)
                 {
                     dataExpenses = dataExpenses.Where(e => e.Date >= from.Value && e.Date <= to.Value);
+                }
+
+                if (accountId.HasValue)
+                {
+                    dataExpenses = dataExpenses.Where(e => e.FromId == accountId);
                 }
 
                 if (categoryId.HasValue)
@@ -126,7 +130,7 @@ namespace Vinance.Logic.Services
                     .Include(e => e.From)
                     .ToListAsync();
 
-                return _mapper.Map<IEnumerable<Expense>>(list);
+                return _mapper.MapAll<Expense>(list);
             }
         }
 

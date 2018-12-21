@@ -1,11 +1,11 @@
-﻿using System;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
+using NPOI.XSSF.UserModel;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using AutoMapper;
-using Microsoft.EntityFrameworkCore;
-using NPOI.XSSF.UserModel;
 
 namespace Vinance.Logic.Services
 {
@@ -29,46 +29,50 @@ namespace Vinance.Logic.Services
             _userId = identityService.GetCurrentUserId();
         }
 
-        public async Task<IEnumerable<Income>> GetAll(int? categoryId = null, DateTime? from = null, DateTime? to = null, string order = "date_desc")
+        public async Task<IEnumerable<Income>> GetAll(int? accountId = null, int? categoryId = null, DateTime? from = null, DateTime? to = null, string order = "date_desc")
         {
             using (var context = _factory.CreateDbContext())
             {
                 var dataIncomes = context.Incomes.Where(i => i.UserId == _userId);
 
-                
-                    if (from.HasValue && to.HasValue)
-                    {
-                        dataIncomes = dataIncomes.Where(e => e.Date >= from.Value && e.Date <= to.Value);
-                    }
+                if (from.HasValue && to.HasValue)
+                {
+                    dataIncomes = dataIncomes.Where(e => e.Date >= from.Value && e.Date <= to.Value);
+                }
 
-                    if (categoryId.HasValue)
-                    {
-                        dataIncomes = dataIncomes.Where(e => e.CategoryId == categoryId);
-                    }
+                if (accountId.HasValue)
+                {
+                    dataIncomes = dataIncomes.Where(e => e.ToId == accountId);
+                }
 
-                    switch (order)
-                    {
-                        case "date":
-                            dataIncomes = dataIncomes.OrderBy(e => e.Date);
-                            break;
-                        case "date_desc":
-                            dataIncomes = dataIncomes.OrderByDescending(e => e.Date);
-                            break;
-                        case "amount":
-                            dataIncomes = dataIncomes.OrderBy(e => e.Amount);
-                            break;
-                        case "amount_desc":
-                            dataIncomes = dataIncomes.OrderByDescending(e => e.Amount);
-                            break;
-                        default:
-                            dataIncomes = dataIncomes.OrderByDescending(e => e.Date);
-                            break;
-                    }
+                if (categoryId.HasValue)
+                {
+                    dataIncomes = dataIncomes.Where(e => e.CategoryId == categoryId);
+                }
 
-                    var list = await dataIncomes
-                        .Include(i => i.Category)
-                        .Include(i => i.To)
-                        .ToListAsync();
+                switch (order)
+                {
+                    case "date":
+                        dataIncomes = dataIncomes.OrderBy(e => e.Date);
+                        break;
+                    case "date_desc":
+                        dataIncomes = dataIncomes.OrderByDescending(e => e.Date);
+                        break;
+                    case "amount":
+                        dataIncomes = dataIncomes.OrderBy(e => e.Amount);
+                        break;
+                    case "amount_desc":
+                        dataIncomes = dataIncomes.OrderByDescending(e => e.Amount);
+                        break;
+                    default:
+                        dataIncomes = dataIncomes.OrderByDescending(e => e.Date);
+                        break;
+                }
+
+                var list = await dataIncomes
+                    .Include(i => i.Category)
+                    .Include(i => i.To)
+                    .ToListAsync();
 
                 return _mapper.MapAll<Income>(list);
             }

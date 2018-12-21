@@ -30,9 +30,9 @@ namespace Vinance.Api.Controllers
 
         [HttpGet]
         [Route("")]
-        public async Task<ActionResult> GetAll(int? categoryId, DateTime? from, DateTime? to, int page = 1, int pageSize = 20, string order = "date_desc")
+        public async Task<ActionResult> GetAll(int? accountId, DateTime? from, DateTime? to, int page = 1, int pageSize = 20, string order = "date_desc")
         {
-            var transfers = await _transferService.GetAll(categoryId, from, to, order);
+            var transfers = await _transferService.GetAll(accountId, from, to, order);
             var model = _mapper.MapAll<TransferViewmodel>(transfers).ToPagedList(page, pageSize);
             return Ok(model);
         }

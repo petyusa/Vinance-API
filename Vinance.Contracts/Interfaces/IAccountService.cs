@@ -14,6 +14,6 @@ namespace Vinance.Contracts.Interfaces
         Task<IEnumerable<Account>> GetAll();
         Task<Account> Update(Account account);
         Task Delete(int account);
-        List<DailyBalanceList> GetDailyBalances(DateTime? from = null, DateTime? to = null);
+        List<DailyBalanceList> GetDailyBalances(int? accountId = null, DateTime? from = null, DateTime? to = null);
     }
 }

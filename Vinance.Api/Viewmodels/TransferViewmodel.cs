@@ -19,9 +19,5 @@ namespace Vinance.Api.Viewmodels
         public int FromId { get; set; }
 
         public string FromName { get; set; }
-
-        public int CategoryId { get; set; }
-
-        public string CategoryName { get; set; }
     }
 }
