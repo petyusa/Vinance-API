@@ -1,14 +1,15 @@
-﻿using AutoMapper;
-using Microsoft.EntityFrameworkCore;
-using NPOI.XSSF.UserModel;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
+using Microsoft.EntityFrameworkCore;
+using NPOI.XSSF.UserModel;
 
 namespace Vinance.Logic.Services
 {
+    using Contracts.Enums;
     using Contracts.Exceptions.NotFound;
     using Contracts.Extensions;
     using Contracts.Interfaces;
@@ -29,7 +30,7 @@ namespace Vinance.Logic.Services
             _userId = identityService.GetCurrentUserId();
         }
 
-        public async Task<IEnumerable<Transfer>> GetAll(int? accountId = null, DateTime? @from = null, DateTime? to = null, string order = "date_desc")
+        public async Task<IEnumerable<Transfer>> GetAll(int? accountId = null, TransferType? transferType = null, DateTime? @from = null, DateTime? to = null, string order = "date_desc")
         {
             using (var context = _factory.CreateDbContext())
             {
@@ -44,6 +45,12 @@ namespace Vinance.Logic.Services
                 if (accountId.HasValue)
                 {
                     dataTransfers = dataTransfers.Where(t => t.FromId == accountId || t.ToId == accountId);
+                }
+
+                if (transferType.HasValue)
+                {
+                    var dataType = _mapper.Map<Data.Enums.TransferType>(transferType.Value);
+                    dataTransfers = dataTransfers.Where(t => t.TransferType == dataType);
                 }
 
                 switch (order)

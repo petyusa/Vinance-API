@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 
 namespace Vinance.Contracts.Interfaces
 {
+    using Enums;
     using Models;
 
     public interface ITransferService
@@ -12,7 +13,7 @@ namespace Vinance.Contracts.Interfaces
         Task<Transfer> Create(Transfer transfer);
         Task<IEnumerable<Transfer>> Upload(StreamReader stream);
         Task<Transfer> GetById(int transferId);
-        Task<IEnumerable<Transfer>> GetAll(int? accountId = null, DateTime? from = null, DateTime? to = null, string order = "date_desc");
+        Task<IEnumerable<Transfer>> GetAll(int? accountId = null, TransferType? transferType = null, DateTime? @from = null, DateTime? to = null, string order = "date_desc");
         Task<Transfer> Update(Transfer transfer);
         Task Delete(int transfer);
     }

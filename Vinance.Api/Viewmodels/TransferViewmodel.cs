@@ -1,4 +1,5 @@
 ﻿using System;
+using Vinance.Contracts.Enums;
 
 namespace Vinance.Api.Viewmodels
 {
@@ -7,6 +8,8 @@ namespace Vinance.Api.Viewmodels
         public int Id { get; set; }
 
         public DateTime Date { get; set; }
+
+        public TransferType TransferType { get; set; }
 
         public int Amount { get; set; }
 

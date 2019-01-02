@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Vinance.Data.Entities
 {
     using Base;
+    using Enums;
 
     [Table("Transfers", Schema = "Vinance")]
     public class Transfer : BaseEntity
@@ -28,6 +29,9 @@ namespace Vinance.Data.Entities
         [Required]
         [ForeignKey("To")]
         public int ToId { get; set; }
+
+        [Required]
+        public TransferType TransferType { get; set; }
 
         public virtual Account From { get; set; }
         public virtual Account To { get; set; }

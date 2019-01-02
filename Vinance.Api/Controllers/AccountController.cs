@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Vinance.Contracts.Enums;
 
 namespace Vinance.Api.Controllers
 {
@@ -27,9 +28,9 @@ namespace Vinance.Api.Controllers
 
         [HttpGet]
         [Route("")]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll(AccountType? accountType = null)
         {
-            var accounts = await _accountService.GetAll();
+            var accounts = await _accountService.GetAll(accountType);
             var model = _mapper.MapAll<AccountViewmodel>(accounts);
 
             return Ok(model);
@@ -80,9 +81,9 @@ namespace Vinance.Api.Controllers
 
         [HttpGet]
         [Route("daily-balances")]
-        public async Task<IActionResult> GetDailyBalances(int? accountId = null, DateTime? from = null, DateTime? to = null)
+        public async Task<IActionResult> GetDailyBalances(int? accountId = null, AccountType? accountType = null, DateTime? from = null, DateTime? to = null)
         {
-            var balances = _accountService.GetDailyBalances(accountId, from, to);
+            var balances = _accountService.GetDailyBalances(accountId, accountType, from, to);
             return Ok(balances);
         }
     }

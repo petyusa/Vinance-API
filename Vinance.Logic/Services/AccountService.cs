@@ -1,17 +1,18 @@
-﻿using AutoMapper;
-using Microsoft.EntityFrameworkCore;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Vinance.Contracts.Models.Helpers;
+using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 
 namespace Vinance.Logic.Services
 {
+    using Contracts.Enums;
     using Contracts.Exceptions.NotFound;
     using Contracts.Extensions;
     using Contracts.Interfaces;
     using Contracts.Models;
+    using Contracts.Models.Helpers;
     using Data.Contexts;
     using Identity.Interfaces;
 
@@ -61,18 +62,24 @@ namespace Vinance.Logic.Services
             }
         }
 
-        public async Task<IEnumerable<Account>> GetAll()
+        public async Task<IEnumerable<Account>> GetAll(AccountType? accountType = null)
         {
             using (var context = _factory.CreateDbContext())
             {
-                var dataAccounts = await context.Accounts
-                    .Where(a => a.UserId == _userId)
+                var dataAccounts = context.Accounts
                     .Include(a => a.Expenses)
                     .Include(a => a.Incomes)
                     .Include(a => a.TransfersFrom)
                     .Include(a => a.TransfersTo)
-                    .ToListAsync();
-                return _mapper.MapAll<Account>(dataAccounts.ToList());
+                    .Where(a => a.UserId == _userId);
+
+                if (accountType.HasValue)
+                {
+                    var dataType = _mapper.Map<Data.Enums.AccountType>(accountType.Value);
+                    dataAccounts = dataAccounts.Where(a => a.AccountType == dataType);
+                }
+
+                return _mapper.MapAll<Account>(await dataAccounts.ToListAsync());
             }
         }
 
@@ -109,7 +116,7 @@ namespace Vinance.Logic.Services
             }
         }
 
-        public List<DailyBalanceList> GetDailyBalances(int? accountId = null, DateTime? from = null, DateTime? to = null)
+        public List<DailyBalanceList> GetDailyBalances(int? accountId = null, AccountType? accountType = null, DateTime? from = null, DateTime? to = null)
         {
             if (!from.HasValue || !to.HasValue)
             {
@@ -132,8 +139,15 @@ namespace Vinance.Logic.Services
                 }
                 else
                 {
-                    accounts = accounts.Where(a =>
-                        a.IsActive && !a.IsSaving && a.Name != "Tartozás" && a.Name != "Követelés");
+                    if (accountType.HasValue)
+                    {
+                        var dataType = _mapper.Map<Data.Enums.AccountType>(accountType.Value);
+                        accounts = accounts.Where(a => a.IsActive && a.AccountType == dataType);
+                    }
+                    else
+                    {
+                        accounts = accounts.Where(a => a.IsActive);
+                    }
                 }
 
                 var dailyBalances = new List<DailyBalanceList>();
@@ -164,7 +178,9 @@ namespace Vinance.Logic.Services
                     }
 
                     if (!firstDates.Any())
+                    {
                         continue;
+                    }
 
                     var firstDate = firstDates.Min(d => d);
                     balances[firstDate.AddDays(-1)] = opening;
@@ -207,7 +223,7 @@ namespace Vinance.Logic.Services
                     }
 
                     balances = balances.Where(x => x.Key >= from.Value).ToDictionary(x => x.Key, x => x.Value);
-                    var dailyBalancesForAccount = new DailyBalanceList{ AccountName = account.Name, DailyBalances = balances};
+                    var dailyBalancesForAccount = new DailyBalanceList { AccountName = account.Name, DailyBalances = balances };
                     dailyBalances.Add(dailyBalancesForAccount);
                 }
 

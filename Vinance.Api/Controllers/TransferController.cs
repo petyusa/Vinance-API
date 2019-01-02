@@ -1,12 +1,13 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using System;
+﻿using System;
 using System.IO;
 using System.Threading.Tasks;
+using AutoMapper;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Vinance.Api.Controllers
 {
+    using Contracts.Enums;
     using Contracts.Extensions;
     using Contracts.Interfaces;
     using Contracts.Models;
@@ -30,9 +31,9 @@ namespace Vinance.Api.Controllers
 
         [HttpGet]
         [Route("")]
-        public async Task<ActionResult> GetAll(int? accountId, DateTime? from, DateTime? to, int page = 1, int pageSize = 20, string order = "date_desc")
+        public async Task<ActionResult> GetAll(int? accountId, TransferType? transferType, DateTime? from, DateTime? to, int page = 1, int pageSize = 20, string order = "date_desc")
         {
-            var transfers = await _transferService.GetAll(accountId, from, to, order);
+            var transfers = await _transferService.GetAll(accountId, transferType, from, to, order);
             var model = _mapper.MapAll<TransferViewmodel>(transfers).ToPagedList(page, pageSize);
             return Ok(model);
         }

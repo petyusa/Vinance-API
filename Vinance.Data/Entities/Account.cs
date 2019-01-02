@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using Vinance.Data.Enums;
 
 namespace Vinance.Data.Entities
 {
@@ -14,9 +15,9 @@ namespace Vinance.Data.Entities
         [Column(TypeName = "NVARCHAR(50)")]
         public string Name { get; set; }
 
-        public bool IsActive { get; set; }
+        public AccountType AccountType { get; set; }
 
-        public bool IsSaving { get; set; }
+        public bool IsActive { get; set; }
 
         public int OpeningBalance { get; set; }
 
