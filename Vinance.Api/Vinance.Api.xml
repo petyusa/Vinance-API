@@ -1,0 +1,214 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Vinance.Api</name>
+    </assembly>
+    <members>
+        <member name="M:Vinance.Api.Controllers.AccountController.GetAll(System.Nullable{Vinance.Contracts.Enums.AccountType})">
+            <summary>
+            Gets the accounts of the user.
+            </summary>
+            <param name="accountType">If specified, returns only accounts of the given type.</param>
+        </member>
+        <member name="M:Vinance.Api.Controllers.AccountController.Create(Vinance.Api.Viewmodels.Account.CreateAccountViewmodel)">
+            <summary>
+            Creates a new account.
+            </summary>
+            <param name="createAccount">The account to be created.</param>
+        </member>
+        <member name="M:Vinance.Api.Controllers.AccountController.Get(System.Int32)">
+            <summary>
+            Gets the account with the specified id.
+            </summary>
+            <param name="accountId">The id of the account to get.</param>
+            <response code="404">Account not found with the specified id.</response>
+        </member>
+        <member name="M:Vinance.Api.Controllers.AccountController.Update(Vinance.Api.Viewmodels.Account.UpdateAccountViewmodel)">
+            <summary>
+            Updates the given account.
+            </summary>
+            <param name="accountToUpdate">The updated account.</param>
+            <response code="404">Account not found with the specified id.</response>
+        </member>
+        <member name="M:Vinance.Api.Controllers.AccountController.Delete(System.Int32)">
+            <summary>
+            Deletes the given account.
+            </summary>
+            <param name="accountId">The id of the account to be deleted.</param>
+            <response code="404">Account not found with the specified id.</response>
+        </member>
+        <member name="M:Vinance.Api.Controllers.AccountController.GetDailyBalances(System.Nullable{System.Int32},System.Nullable{Vinance.Contracts.Enums.AccountType},System.Nullable{System.DateTime},System.Nullable{System.DateTime})">
+            <summary>
+            Gets the daily balance of active accounts for all days between the specified dates.
+            </summary>
+            <param name="accountId">The id of the account (if not specified, all of the accounts daily balances are returned).</param>
+            <param name="accountType">The type of the accounts (if not specified, all of the accounts' daily balances are returned).</param>
+            <param name="from">The starting date (if not specified, the last 30 days' daily balances are returned).</param>
+            <param name="to">The ending date (if not specified, the last 30 days' daily balances are returned).</param>
+        </member>
+        <member name="M:Vinance.Api.Controllers.UserController.Register(Vinance.Api.Viewmodels.Identity.RegisterViewmodel)">
+            <summary>
+            Registers a new user, and sends the email confirmation token.
+            </summary>
+            <param name="registerModel">The user to be registered.</param>
+        </member>
+        <member name="M:Vinance.Api.Controllers.UserController.Login(Vinance.Api.Viewmodels.Identity.LoginViewmodel)">
+            <summary>
+            Returns the token for the user.
+            </summary>
+            <param name="loginModel">The login model of the user.</param>
+        </member>
+        <member name="M:Vinance.Api.Controllers.UserController.RefreshToken(Vinance.Api.Viewmodels.Identity.RefreshTokenViewModel)">
+            <summary>
+            Returns a new auth-token.
+            </summary>
+            <param name="refreshToken">The refresh token.</param>
+        </member>
+        <member name="M:Vinance.Api.Controllers.UserController.ChangePassword(Vinance.Api.Viewmodels.Identity.PasswordChangeViewmodel)">
+            <summary>
+            Changes the password for the user..
+            </summary>
+            <param name="passwordChangeModel">The model for changing the password.</param>
+        </member>
+        <member name="M:Vinance.Api.Controllers.UserController.ResetPassword(System.String)">
+            <summary>
+            Returns a password-change token.
+            </summary>
+            <param name="email">The email of the user.</param>
+        </member>
+        <member name="M:Vinance.Api.Controllers.UserController.ResetPassword(Vinance.Api.Viewmodels.Identity.PasswordResetViewmodel)">
+            <summary>
+            Changes the password of the user.
+            </summary>
+            <param name="passwordResetModel">The model for changing the password.</param>
+        </member>
+        <member name="M:Vinance.Api.Controllers.UserController.ConfirmEmail(Vinance.Api.Viewmodels.Identity.EmailConfirmationViewmodel)">
+            <summary>
+            Confirms the email of the user.
+            </summary>
+            <param name="emailConfirmationModel">The model for email confirmation.</param>
+        </member>
+        <member name="M:Vinance.Api.Controllers.UserController.ChangeEmailToken(System.String)">
+            <summary>
+            Returns the token required for changing the email address.
+            </summary>
+            <param name="newEmail">The new email address.</param>
+        </member>
+        <member name="M:Vinance.Api.Controllers.UserController.ChangeEmail(Vinance.Api.Viewmodels.Identity.EmailChangeViewmodel)">
+            <summary>
+            Changes the email address of the user.
+            </summary>
+            <param name="emailChangeModel">The model for changing the email address.</param>
+        </member>
+        <member name="M:Vinance.Api.Controllers.UserController.Details">
+            <summary>
+            Returns user details.
+            </summary>
+        </member>
+        <member name="T:Vinance.Api.Viewmodels.Account.AccountViewmodel">
+            <summary>
+            The view model of an account.
+            </summary>
+        </member>
+        <member name="P:Vinance.Api.Viewmodels.Account.AccountViewmodel.Id">
+            <summary>
+            The id of the account.
+            </summary>
+        </member>
+        <member name="P:Vinance.Api.Viewmodels.Account.AccountViewmodel.Name">
+            <summary>
+            The name of the account.
+            </summary>
+        </member>
+        <member name="P:Vinance.Api.Viewmodels.Account.AccountViewmodel.AccountType">
+            <summary>
+            The type of the account.
+            </summary>
+        </member>
+        <member name="P:Vinance.Api.Viewmodels.Account.AccountViewmodel.Balance">
+            <summary>
+            The calculated balance of the account.
+            </summary>
+        </member>
+        <member name="P:Vinance.Api.Viewmodels.Account.AccountViewmodel.IsActive">
+            <summary>
+            Shows if the account is active (if not, no transactions can be made from/to the account).
+            </summary>
+        </member>
+        <member name="P:Vinance.Api.Viewmodels.Account.AccountViewmodel.CanBeDeleted">
+            <summary>
+            Shows if the account can be deleted (are there any transactions to/from this account).
+            </summary>
+        </member>
+        <member name="T:Vinance.Api.Viewmodels.Account.CreateAccountViewmodel">
+            <summary>
+            The basic model of an account to be created.
+            </summary>
+        </member>
+        <member name="P:Vinance.Api.Viewmodels.Account.CreateAccountViewmodel.Name">
+            <summary>
+            Name of the account.
+            </summary>
+        </member>
+        <member name="P:Vinance.Api.Viewmodels.Account.CreateAccountViewmodel.AccountType">
+            <summary>
+            Type of the account.
+            </summary>
+        </member>
+        <member name="P:Vinance.Api.Viewmodels.Account.CreateAccountViewmodel.IsActive">
+            <summary>
+            Shows if the account is active or not (if not active, no transactions can be made to/from the account)
+            </summary>
+        </member>
+        <member name="P:Vinance.Api.Viewmodels.Account.CreateAccountViewmodel.OpeningBalance">
+            <summary>
+            Opening balance of the account.
+            </summary>
+        </member>
+        <member name="T:Vinance.Api.Viewmodels.Account.DailyBalanceList">
+            <summary>
+            Daily balance list for an account.
+            </summary>
+        </member>
+        <member name="P:Vinance.Api.Viewmodels.Account.DailyBalanceList.AccountName">
+            <summary>
+            The name of the account.
+            </summary>
+        </member>
+        <member name="P:Vinance.Api.Viewmodels.Account.DailyBalanceList.DailyBalances">
+            <summary>
+            Dictionary of daily balances, the key is the date, the value is the balance.
+            </summary>
+        </member>
+        <member name="T:Vinance.Api.Viewmodels.Account.UpdateAccountViewmodel">
+            <summary>
+            The model of an account to be updated.
+            </summary>
+        </member>
+        <member name="P:Vinance.Api.Viewmodels.Account.UpdateAccountViewmodel.Id">
+            <summary>
+            The id of the account.
+            </summary>
+        </member>
+        <member name="P:Vinance.Api.Viewmodels.Account.UpdateAccountViewmodel.Name">
+            <summary>
+            Name of the account.
+            </summary>
+        </member>
+        <member name="P:Vinance.Api.Viewmodels.Account.UpdateAccountViewmodel.AccountType">
+            <summary>
+            Type of the account.
+            </summary>
+        </member>
+        <member name="P:Vinance.Api.Viewmodels.Account.UpdateAccountViewmodel.IsActive">
+            <summary>
+            Shows if the account is active or not (if not active, no transactions can be made to/from the account)
+            </summary>
+        </member>
+        <member name="P:Vinance.Api.Viewmodels.Account.UpdateAccountViewmodel.OpeningBalance">
+            <summary>
+            Opening balance of the account.
+            </summary>
+        </member>
+    </members>
+</doc>
