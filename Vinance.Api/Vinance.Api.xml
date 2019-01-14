@@ -21,21 +21,18 @@
             Gets the account with the specified id.
             </summary>
             <param name="accountId">The id of the account to get.</param>
-            <response code="404">Account not found with the specified id.</response>
         </member>
         <member name="M:Vinance.Api.Controllers.AccountController.Update(Vinance.Api.Viewmodels.Account.UpdateAccountViewmodel)">
             <summary>
             Updates the given account.
             </summary>
             <param name="accountToUpdate">The updated account.</param>
-            <response code="404">Account not found with the specified id.</response>
         </member>
         <member name="M:Vinance.Api.Controllers.AccountController.Delete(System.Int32)">
             <summary>
             Deletes the given account.
             </summary>
             <param name="accountId">The id of the account to be deleted.</param>
-            <response code="404">Account not found with the specified id.</response>
         </member>
         <member name="M:Vinance.Api.Controllers.AccountController.GetDailyBalances(System.Nullable{System.Int32},System.Nullable{Vinance.Contracts.Enums.AccountType},System.Nullable{System.DateTime},System.Nullable{System.DateTime})">
             <summary>
@@ -45,6 +42,88 @@
             <param name="accountType">The type of the accounts (if not specified, all of the accounts' daily balances are returned).</param>
             <param name="from">The starting date (if not specified, the last 30 days' daily balances are returned).</param>
             <param name="to">The ending date (if not specified, the last 30 days' daily balances are returned).</param>
+        </member>
+        <member name="M:Vinance.Api.Controllers.CategoryController.GetAll(System.Nullable{Vinance.Contracts.Enums.CategoryType},System.Nullable{System.DateTime},System.Nullable{System.DateTime})">
+            <summary>
+            Gets all the categories of the user.
+            </summary>
+            <param name="type">If specified, returns only categories of the given type.</param>
+            <param name="from">The start date for calculating category-balance (if not specified, balance is calculated for all time).</param>
+            <param name="to">The end date for calculating category-balance (if not specified, balance is calculated for all time).</param>
+        </member>
+        <member name="M:Vinance.Api.Controllers.CategoryController.Get(System.Int32)">
+            <summary>
+            Gets the category with the specified id.
+            </summary>
+            <param name="categoryId">The id of the category to be returned.</param>
+        </member>
+        <member name="M:Vinance.Api.Controllers.CategoryController.Create(Vinance.Api.Viewmodels.CategoryViewmodel)">
+            <summary>
+            Creates a new category.
+            </summary>
+            <param name="categoryViewmodel">The category to be created.</param>
+        </member>
+        <member name="M:Vinance.Api.Controllers.CategoryController.Update(Vinance.Api.Viewmodels.CategoryViewmodel)">
+            <summary>
+            Updates the given category.
+            </summary>
+            <param name="categoryViewmodel">The category to be updated.</param>
+        </member>
+        <member name="M:Vinance.Api.Controllers.CategoryController.Delete(System.Int32)">
+            <summary>
+            Deletes the category with the specified id.
+            </summary>
+            <param name="categoryId">The id of the category to be deleted.</param>
+        </member>
+        <member name="M:Vinance.Api.Controllers.CategoryController.GetStats(System.Nullable{Vinance.Contracts.Enums.CategoryType},System.Nullable{System.DateTime},System.Nullable{System.DateTime})">
+            <summary>
+            Gets the balance for each category grouped by month.
+            </summary>
+            <param name="type">The type of the categories to be returned (if not specified, expense-categories are returned).</param>
+            <param name="from">The start date of the query (if not specified, all category-balances are returned).</param>
+            <param name="to">The end date of the query (if not specified, all category-balances are returned).</param>
+        </member>
+        <member name="M:Vinance.Api.Controllers.ExpenseController.Create(Vinance.Api.Viewmodels.Expense.CreateExpenseViewmodel)">
+            <summary>
+            Creates a new expense.
+            </summary>
+            <param name="expenseToCreate">The expense to be created.</param>
+        </member>
+        <member name="M:Vinance.Api.Controllers.ExpenseController.GetAll(System.Nullable{System.Int32},System.Nullable{System.Int32},System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.Int32,System.Int32,System.String)">
+            <summary>
+            Gets the expenses of the user in a paginated format.
+            </summary>
+            <param name="accountId">If specified, only expenses related to this account will be returned.</param>
+            <param name="categoryId">If specified, only expenses related to this category will be returned.</param>
+            <param name="from">If specified, only expenses from this date will be returned.</param>
+            <param name="to">If specified, only expenses to this date will be returned.</param>
+            <param name="pageSize">If specified, the given number of expenses will be returned (if not specified, defaults to 20).</param>
+            <param name="page">If specified, the given page will be returned (if not, defaults to 1).</param>
+            <param name="order">If specified, the expenses will be sorted by the given order (default date_desc).</param>
+        </member>
+        <member name="M:Vinance.Api.Controllers.ExpenseController.GetById(System.Int32)">
+            <summary>
+            Gets the expense with the specified id.
+            </summary>
+            <param name="expenseId">The id of the expense to be returned.</param>
+        </member>
+        <member name="M:Vinance.Api.Controllers.ExpenseController.Update(Vinance.Api.Viewmodels.Expense.UpdateExpenseViewmodel)">
+            <summary>
+            Updates the given expense.
+            </summary>
+            <param name="expenseToUpdate">The expense to be updated.</param>
+        </member>
+        <member name="M:Vinance.Api.Controllers.ExpenseController.Delete(System.Int32)">
+            <summary>
+            Deletes the expense with the specified id.
+            </summary>
+            <param name="expenseId">The id of the expense to be deleted.</param>
+        </member>
+        <member name="M:Vinance.Api.Controllers.ExpenseController.Upload(Microsoft.AspNetCore.Http.IFormFile)">
+            <summary>
+            Uploads multiple expenses from Excel-file.
+            </summary>
+            <param name="file">The excel file containing the expenses.</param>
         </member>
         <member name="M:Vinance.Api.Controllers.UserController.Register(Vinance.Api.Viewmodels.Identity.RegisterViewmodel)">
             <summary>
@@ -208,6 +287,66 @@
         <member name="P:Vinance.Api.Viewmodels.Account.UpdateAccountViewmodel.OpeningBalance">
             <summary>
             Opening balance of the account.
+            </summary>
+        </member>
+        <member name="T:Vinance.Api.Viewmodels.Expense.CreateExpenseViewmodel">
+            <summary>
+            The basic model for an expense to be created.
+            </summary>
+        </member>
+        <member name="P:Vinance.Api.Viewmodels.Expense.CreateExpenseViewmodel.Date">
+            <summary>
+            Date of the expense.
+            </summary>
+        </member>
+        <member name="P:Vinance.Api.Viewmodels.Expense.CreateExpenseViewmodel.Amount">
+            <summary>
+            Amount of the expense.
+            </summary>
+        </member>
+        <member name="P:Vinance.Api.Viewmodels.Expense.CreateExpenseViewmodel.Comment">
+            <summary>
+            Comment for the expense.
+            </summary>
+        </member>
+        <member name="P:Vinance.Api.Viewmodels.Expense.CreateExpenseViewmodel.FromId">
+            <summary>
+            The id of the account from where the amount should be deducted.
+            </summary>
+        </member>
+        <member name="P:Vinance.Api.Viewmodels.Expense.CreateExpenseViewmodel.CategoryId">
+            <summary>
+            The expense-category for the expense.
+            </summary>
+        </member>
+        <member name="P:Vinance.Api.Viewmodels.Expense.UpdateExpenseViewmodel.Id">
+            <summary>
+            The id of the expense.
+            </summary>
+        </member>
+        <member name="P:Vinance.Api.Viewmodels.Expense.UpdateExpenseViewmodel.Date">
+            <summary>
+            Date of the expense.
+            </summary>
+        </member>
+        <member name="P:Vinance.Api.Viewmodels.Expense.UpdateExpenseViewmodel.Amount">
+            <summary>
+            Amount of the expense.
+            </summary>
+        </member>
+        <member name="P:Vinance.Api.Viewmodels.Expense.UpdateExpenseViewmodel.Comment">
+            <summary>
+            Comment for the expense.
+            </summary>
+        </member>
+        <member name="P:Vinance.Api.Viewmodels.Expense.UpdateExpenseViewmodel.FromId">
+            <summary>
+            The id of the account from where the amount should be deducted.
+            </summary>
+        </member>
+        <member name="P:Vinance.Api.Viewmodels.Expense.UpdateExpenseViewmodel.CategoryId">
+            <summary>
+            The expense-category for the expense.
             </summary>
         </member>
     </members>

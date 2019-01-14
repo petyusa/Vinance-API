@@ -85,7 +85,7 @@ namespace Vinance.Logic.Services
             return mappedExpenses;
         }
 
-        public async Task<IEnumerable<Expense>> GetAll(int? accountId = null, int? categoryId = null, DateTime? from = null, DateTime? to = null, string order = "date_desc")
+        public async Task<IEnumerable<Expense>> GetAll(int? accountId = null, int? categoryId = null, DateTime? from = null, DateTime? to = null, string order = null)
         {
             using (var context = _factory.CreateDbContext())
             {

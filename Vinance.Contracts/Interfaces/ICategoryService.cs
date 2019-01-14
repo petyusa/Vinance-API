@@ -11,7 +11,7 @@ namespace Vinance.Contracts.Interfaces
     public interface ICategoryService
     {
         Task<IEnumerable<Category>> GetAll(CategoryType? type, DateTime? from, DateTime? to);
-        Task<IEnumerable<CategoryStatistics>> GetStats(CategoryType? type = null, DateTime? from = null, DateTime? to = null, string by = "year");
+        Task<IEnumerable<CategoryStatistics>> GetStats(CategoryType? type = null, DateTime? from = null, DateTime? to = null);
         Task<Category> Get(int categoryId);
         Task<Category> Create(Category category);
         Task<Category> Update(Category category);

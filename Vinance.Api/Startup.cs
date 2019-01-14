@@ -54,6 +54,7 @@ namespace Vinance.Api
                     Type = "apiKey"
                 });
                 c.OperationFilter<SwaggerAllowAnonymusOperationFilter>();
+                c.OperationFilter<SwaggerContentTypeOperationFilter>();
 
                 var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
                 var commentsFileName = Assembly.GetExecutingAssembly().GetName().Name + ".XML";

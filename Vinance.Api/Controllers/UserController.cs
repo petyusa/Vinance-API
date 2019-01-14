@@ -1,14 +1,13 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 using Swashbuckle.AspNetCore.Annotations;
-using Vinance.Api.Viewmodels.Account;
-using Vinance.Contracts.Models.ServiceResults;
+using System.Threading.Tasks;
 
 namespace Vinance.Api.Controllers
 {
     using Contracts.Models.Identity;
+    using Contracts.Models.ServiceResults;
     using Identity.Interfaces;
     using Viewmodels.Identity;
 

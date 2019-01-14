@@ -1,8 +1,9 @@
 ﻿using System;
-using Vinance.Contracts.Enums;
 
-namespace Vinance.Api.Viewmodels
+namespace Vinance.Api.Viewmodels.Transfer
 {
+    using Contracts.Enums;
+
     public class TransferViewmodel
     {
         public int Id { get; set; }
@@ -15,12 +16,12 @@ namespace Vinance.Api.Viewmodels
 
         public string Comment { get; set; }
 
-        public int ToId { get; set; }
-
-        public string ToName { get; set; }
-
         public int FromId { get; set; }
 
         public string FromName { get; set; }
+
+        public int ToId { get; set; }
+
+        public string ToName { get; set; }
     }
 }

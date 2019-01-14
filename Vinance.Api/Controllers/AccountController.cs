@@ -62,8 +62,8 @@ namespace Vinance.Api.Controllers
         /// Gets the account with the specified id.
         /// </summary>
         /// <param name="accountId">The id of the account to get.</param>
-        /// <response code="404">Account not found with the specified id.</response>
         [SwaggerResponse(200, Type = typeof(AccountViewmodel))]
+        [SwaggerResponse(404, Description = "Account not found with the specified id.")]
         [HttpGet]
         [Route("{accountId}")]
         public async Task<IActionResult> Get(int accountId)
@@ -82,7 +82,7 @@ namespace Vinance.Api.Controllers
         /// Updates the given account.
         /// </summary>
         /// <param name="accountToUpdate">The updated account.</param>
-        /// <response code="404">Account not found with the specified id.</response>
+        [SwaggerResponse(404, Description = "Account not found with the specified id.")]
         [SwaggerResponse(200, Type = typeof(AccountViewmodel))]
         [HttpPut]
         [Route("")]
@@ -100,7 +100,7 @@ namespace Vinance.Api.Controllers
         /// Deletes the given account.
         /// </summary>
         /// <param name="accountId">The id of the account to be deleted.</param>
-        /// <response code="404">Account not found with the specified id.</response>
+        [SwaggerResponse(404, Description = "Account not found with the specified id.")]
         [SwaggerResponse(204)]
         [HttpDelete]
         [Route("{accountId}")]

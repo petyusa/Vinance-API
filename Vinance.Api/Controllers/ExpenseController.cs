@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -11,7 +13,7 @@ namespace Vinance.Api.Controllers
     using Contracts.Interfaces;
     using Contracts.Models;
     using Logic;
-    using Viewmodels;
+    using Viewmodels.Expense;
 
     [Route("expenses")]
     [ApiController]
@@ -28,25 +30,49 @@ namespace Vinance.Api.Controllers
             _mapper = mapper;
         }
 
+        /// <summary>
+        /// Creates a new expense.
+        /// </summary>
+        /// <param name="expenseToCreate">The expense to be created.</param>
+        [SwaggerResponse(201, Type = typeof(ExpenseViewmodel))]
         [HttpPost]
         [Route("")]
-        public async Task<IActionResult> Create(Expense expense)
+        public async Task<IActionResult> Create(CreateExpenseViewmodel expenseToCreate)
         {
+            var expense = _mapper.Map<Expense>(expenseToCreate);
             await _authorizationService.HandleCreateUpdateAsync(expense);
             var createdExpense = await _expenseService.Create(expense);
             var model = _mapper.Map<ExpenseViewmodel>(createdExpense);
             return Created(Request.Path, model);
         }
 
+        /// <summary>
+        /// Gets the expenses of the user in a paginated format.
+        /// </summary>
+        /// <param name="accountId">If specified, only expenses related to this account will be returned.</param>
+        /// <param name="categoryId">If specified, only expenses related to this category will be returned.</param>
+        /// <param name="from">If specified, only expenses from this date will be returned.</param>
+        /// <param name="to">If specified, only expenses to this date will be returned.</param>
+        /// <param name="pageSize">If specified, the given number of expenses will be returned (if not specified, defaults to 20).</param>
+        /// <param name="page">If specified, the given page will be returned (if not, defaults to 1).</param>
+        /// <param name="order">If specified, the expenses will be sorted by the given order (default date_desc).</param>
+        [SwaggerResponse(200, Type = typeof(PagedList<ExpenseViewmodel>))]
         [HttpGet]
         [Route("")]
-        public async Task<IActionResult> GetAll(int? accountId, int? categoryId, DateTime? from, DateTime? to, int page = 1, int pageSize = 20, string order = "date_desc")
+        public async Task<IActionResult> GetAll(int? accountId, int? categoryId, DateTime? from, DateTime? to, int pageSize = 20, int page = 1, string order = null)
         {
             var expenses = await _expenseService.GetAll(accountId, categoryId, from, to, order);
             var list = _mapper.MapAll<ExpenseViewmodel>(expenses).ToPagedList(page, pageSize);
             return Ok(list);
         }
 
+        /// <summary>
+        /// Gets the expense with the specified id.
+        /// </summary>
+        /// <param name="expenseId">The id of the expense to be returned.</param>
+        [SwaggerResponse(200, Type = typeof(ExpenseViewmodel))]
+        [SwaggerResponse(403, Description = "User is not he owner of the expense.")]
+        [SwaggerResponse(404, Description = "No expense found with the given id.")]
         [HttpGet]
         [Route("{expenseId}")]
         public async Task<IActionResult> GetById(int expenseId)
@@ -57,16 +83,31 @@ namespace Vinance.Api.Controllers
             return Ok(model);
         }
 
+        /// <summary>
+        /// Updates the given expense.
+        /// </summary>
+        /// <param name="expenseToUpdate">The expense to be updated.</param>
+        [SwaggerResponse(200, Type = typeof(ExpenseViewmodel))]
+        [SwaggerResponse(403, Description = "User is not he owner of the expense.")]
+        [SwaggerResponse(404, Description = "No expense found with the given id.")]
         [HttpPut]
         [Route("")]
-        public async Task<IActionResult> Update(Expense expense)
+        public async Task<IActionResult> Update(UpdateExpenseViewmodel expenseToUpdate)
         {
+            var expense = _mapper.Map<Expense>(expenseToUpdate);
             await _authorizationService.HandleCreateUpdateAsync(expense);
             var updatedExpense = await _expenseService.Update(expense);
             var model = _mapper.Map<ExpenseViewmodel>(updatedExpense);
             return Ok(model);
         }
 
+        /// <summary>
+        /// Deletes the expense with the specified id.
+        /// </summary>
+        /// <param name="expenseId">The id of the expense to be deleted.</param>
+        [SwaggerResponse(204)]
+        [SwaggerResponse(403, Description = "User is not he owner of the expense.")]
+        [SwaggerResponse(404, Description = "No expense found with the given id.")]
         [HttpDelete]
         [Route("{expenseId}")]
         public async Task<IActionResult> Delete(int expenseId)
@@ -76,6 +117,11 @@ namespace Vinance.Api.Controllers
             return NoContent();
         }
 
+        /// <summary>
+        /// Uploads multiple expenses from Excel-file.
+        /// </summary>
+        /// <param name="file">The excel file containing the expenses.</param>
+        [SwaggerResponse(200, Type = typeof(List<ExpenseViewmodel>))]
         [HttpPost]
         [Route("upload")]
         public async Task<IActionResult> Upload(IFormFile file)

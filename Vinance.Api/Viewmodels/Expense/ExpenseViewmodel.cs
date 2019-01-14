@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Vinance.Api.Viewmodels
+namespace Vinance.Api.Viewmodels.Expense
 {
     public class ExpenseViewmodel
     {

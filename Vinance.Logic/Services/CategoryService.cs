@@ -81,7 +81,7 @@ namespace Vinance.Logic.Services
             }
         }
 
-        public async Task<IEnumerable<CategoryStatistics>> GetStats(CategoryType? type = null, DateTime? from = null, DateTime? to = null, string by = "year")
+        public async Task<IEnumerable<CategoryStatistics>> GetStats(CategoryType? type = null, DateTime? from = null, DateTime? to = null)
         {
             using (var context = _factory.CreateDbContext())
             {

@@ -18,7 +18,7 @@ namespace Vinance.Api.ActionFilters
 
             if (context.HttpContext.Request.ContentType == null ||
                 !(context.HttpContext.Request.ContentType.Contains(Constants.ApplicationJson, StringComparison.OrdinalIgnoreCase) ||
-                context.HttpContext.Request.ContentType.Contains("multipart/form-data", StringComparison.OrdinalIgnoreCase)))
+                context.HttpContext.Request.ContentType.Contains(Constants.MultipartFormData, StringComparison.OrdinalIgnoreCase)))
             {
                 throw new HeaderContentTypeException($"Content-type must be {Constants.ApplicationJson}");
             }

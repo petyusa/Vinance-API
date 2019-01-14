@@ -18,6 +18,7 @@ namespace Vinance.Api.ActionFilters
             {
                 new Dictionary<string, IEnumerable<string>> {{"Bearer", new string[] {}}}
             };
+            operation.Responses.Add("401", new Response { Description = "Unauthorized" });
         }
     }
 }

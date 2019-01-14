@@ -1,5 +1,4 @@
-﻿
-namespace Vinance.Api.Viewmodels
+﻿namespace Vinance.Api.Viewmodels.Category
 {
     using Contracts.Enums;
 
@@ -11,6 +10,5 @@ namespace Vinance.Api.Viewmodels
         public int MonthlyLimit { get; set; }
         public CategoryType Type { get; set; }
         public bool CanBeDeleted { get; set; }
-
     }
 }
