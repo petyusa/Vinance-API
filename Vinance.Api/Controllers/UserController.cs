@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Threading.Tasks;
+using Vinance.Api.Helpers;
 
 namespace Vinance.Api.Controllers
 {
@@ -28,7 +29,7 @@ namespace Vinance.Api.Controllers
         /// Registers a new user, and sends the email confirmation token.
         /// </summary>
         /// <param name="registerModel">The user to be registered.</param>
-        [SwaggerResponse(200, Type = typeof(TokenResult))]
+        [SwaggerResponse(200, Type = typeof(VinanceApiResponseExample<TokenResult>))]
         [AllowAnonymous]
         [HttpPost]
         [Route("register")]
@@ -54,7 +55,7 @@ namespace Vinance.Api.Controllers
         /// Returns the token for the user.
         /// </summary>
         /// <param name="loginModel">The login model of the user.</param>
-        [SwaggerResponse(200, Type = typeof(AuthToken))]
+        [SwaggerResponse(200, Type = typeof(VinanceApiResponseExample<AuthToken>))]
         [AllowAnonymous]
         [HttpPost]
         [Route("token")]
@@ -70,7 +71,7 @@ namespace Vinance.Api.Controllers
         /// Returns a new auth-token.
         /// </summary>
         /// <param name="refreshToken">The refresh token.</param>
-        [SwaggerResponse(200, Type = typeof(AuthToken))]
+        [SwaggerResponse(200, Type = typeof(VinanceApiResponseExample<AuthToken>))]
         [AllowAnonymous]
         [HttpPost]
         [Route("token/refresh")]
@@ -102,7 +103,7 @@ namespace Vinance.Api.Controllers
         /// Returns a password-change token.
         /// </summary>
         /// <param name="email">The email of the user.</param>
-        [SwaggerResponse(200, Type = typeof(TokenResult))]
+        [SwaggerResponse(200, Type = typeof(VinanceApiResponseExample<TokenResult>))]
         [HttpPost]
         [AllowAnonymous]
         [Route("reset-password-token")]
@@ -160,7 +161,7 @@ namespace Vinance.Api.Controllers
         /// Returns the token required for changing the email address.
         /// </summary>
         /// <param name="newEmail">The new email address.</param>
-        [SwaggerResponse(200, Type = typeof(TokenResult))]
+        [SwaggerResponse(200, Type = typeof(VinanceApiResponseExample<TokenResult>))]
         [HttpGet]
         [Route("email/{newEmail}")]
         public async Task<IActionResult> ChangeEmailToken(string newEmail)
@@ -192,7 +193,7 @@ namespace Vinance.Api.Controllers
         /// <summary>
         /// Returns user details.
         /// </summary>
-        [SwaggerResponse(200, Type = typeof(VinanceUserViewmodel))]
+        [SwaggerResponse(200, Type = typeof(VinanceApiResponseExample<VinanceUserViewmodel>))]
         [HttpGet]
         [Route("me")]
         public async Task<IActionResult> Details()

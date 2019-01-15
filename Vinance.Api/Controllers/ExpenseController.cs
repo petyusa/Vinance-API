@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using Vinance.Api.Helpers;
 
 namespace Vinance.Api.Controllers
 {
@@ -34,7 +35,7 @@ namespace Vinance.Api.Controllers
         /// Creates a new expense.
         /// </summary>
         /// <param name="expenseToCreate">The expense to be created.</param>
-        [SwaggerResponse(201, Type = typeof(ExpenseViewmodel))]
+        [SwaggerResponse(201, Type = typeof(VinanceApiResponseExample<ExpenseViewmodel>))]
         [HttpPost]
         [Route("")]
         public async Task<IActionResult> Create(CreateExpenseViewmodel expenseToCreate)
@@ -56,7 +57,7 @@ namespace Vinance.Api.Controllers
         /// <param name="pageSize">If specified, the given number of expenses will be returned (if not specified, defaults to 20).</param>
         /// <param name="page">If specified, the given page will be returned (if not, defaults to 1).</param>
         /// <param name="order">If specified, the expenses will be sorted by the given order (default date_desc).</param>
-        [SwaggerResponse(200, Type = typeof(PagedList<ExpenseViewmodel>))]
+        [SwaggerResponse(200, Type = typeof(VinanceApiResponseExample<PagedList<ExpenseViewmodel>>))]
         [HttpGet]
         [Route("")]
         public async Task<IActionResult> GetAll(int? accountId, int? categoryId, DateTime? from, DateTime? to, int pageSize = 20, int page = 1, string order = null)
@@ -70,7 +71,7 @@ namespace Vinance.Api.Controllers
         /// Gets the expense with the specified id.
         /// </summary>
         /// <param name="expenseId">The id of the expense to be returned.</param>
-        [SwaggerResponse(200, Type = typeof(ExpenseViewmodel))]
+        [SwaggerResponse(200, Type = typeof(VinanceApiResponseExample<ExpenseViewmodel>))]
         [SwaggerResponse(403, Description = "User is not he owner of the expense.")]
         [SwaggerResponse(404, Description = "No expense found with the given id.")]
         [HttpGet]
@@ -87,7 +88,7 @@ namespace Vinance.Api.Controllers
         /// Updates the given expense.
         /// </summary>
         /// <param name="expenseToUpdate">The expense to be updated.</param>
-        [SwaggerResponse(200, Type = typeof(ExpenseViewmodel))]
+        [SwaggerResponse(200, Type = typeof(VinanceApiResponseExample<ExpenseViewmodel>))]
         [SwaggerResponse(403, Description = "User is not he owner of the expense.")]
         [SwaggerResponse(404, Description = "No expense found with the given id.")]
         [HttpPut]
@@ -121,7 +122,7 @@ namespace Vinance.Api.Controllers
         /// Uploads multiple expenses from Excel-file.
         /// </summary>
         /// <param name="file">The excel file containing the expenses.</param>
-        [SwaggerResponse(200, Type = typeof(List<ExpenseViewmodel>))]
+        [SwaggerResponse(200, Type = typeof(VinanceApiResponseExample<List<ExpenseViewmodel>>))]
         [HttpPost]
         [Route("upload")]
         public async Task<IActionResult> Upload(IFormFile file)

@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using Vinance.Api.Helpers;
 
 namespace Vinance.Api.Controllers
 {
@@ -41,7 +42,7 @@ namespace Vinance.Api.Controllers
         /// <param name="pageSize">If specified, the given number of transfers will be returned (if not specified, defaults to 20).</param>
         /// <param name="page">If specified, the given page will be returned (if not, defaults to 1).</param>
         /// <param name="order">If specified, the transfers will be sorted by the given order (default date_desc).</param>
-        [SwaggerResponse(200, Type = typeof(PagedList<TransferViewmodel>))]
+        [SwaggerResponse(200, Type = typeof(VinanceApiResponseExample<PagedList<TransferViewmodel>>))]
         [HttpGet]
         [Route("")]
         public async Task<ActionResult> GetAll(int? accountId, TransferType? transferType, DateTime? from, DateTime? to, int page = 1, int pageSize = 20, string order = null)
@@ -55,7 +56,7 @@ namespace Vinance.Api.Controllers
         /// Creates a new transfer.
         /// </summary>
         /// <param name="transferToCreate">The transfer to be created.</param>
-        [SwaggerResponse(201, Type = typeof(TransferViewmodel))]
+        [SwaggerResponse(201, Type = typeof(VinanceApiResponseExample<TransferViewmodel>))]
         [HttpPost]
         [Route("")]
         public async Task<IActionResult> Create(CreateTransferViewmodel transferToCreate)
@@ -71,7 +72,7 @@ namespace Vinance.Api.Controllers
         /// Gets the transfer with the specified id.
         /// </summary>
         /// <param name="transferId">The id of the transfer to be returned.</param>
-        [SwaggerResponse(200, Type = typeof(TransferViewmodel))]
+        [SwaggerResponse(200, Type = typeof(VinanceApiResponseExample<TransferViewmodel>))]
         [SwaggerResponse(403, Description = "User is not he owner of the transfer.")]
         [SwaggerResponse(404, Description = "No transfer found with the given id.")]
         [HttpGet]
@@ -88,7 +89,7 @@ namespace Vinance.Api.Controllers
         /// Updates the given transfer.
         /// </summary>
         /// <param name="transferToUpdate">The transfer to be updated.</param>
-        [SwaggerResponse(200, Type = typeof(TransferViewmodel))]
+        [SwaggerResponse(200, Type = typeof(VinanceApiResponseExample<TransferViewmodel>))]
         [SwaggerResponse(403, Description = "User is not he owner of the transfer.")]
         [SwaggerResponse(404, Description = "No transfer found with the given id.")]
         [HttpPut]
@@ -122,7 +123,7 @@ namespace Vinance.Api.Controllers
         /// Uploads multiple transfers from Excel-file.
         /// </summary>
         /// <param name="file">The excel file containing the transfers.</param>
-        [SwaggerResponse(200, Type = typeof(List<TransferViewmodel>))]
+        [SwaggerResponse(200, Type = typeof(VinanceApiResponseExample<List<TransferViewmodel>>))]
         [HttpPost]
         [Route("upload")]
         public async Task<IActionResult> Upload(IFormFile file)

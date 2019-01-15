@@ -4,6 +4,7 @@ using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Vinance.Api.Helpers;
 
 namespace Vinance.Api.Controllers
 {
@@ -35,7 +36,7 @@ namespace Vinance.Api.Controllers
         /// <param name="type">If specified, returns only categories of the given type.</param>
         /// <param name="from">The start date for calculating category-balance (if not specified, balance is calculated for all time).</param>
         /// <param name="to">The end date for calculating category-balance (if not specified, balance is calculated for all time).</param>
-        [SwaggerResponse(200, Type = typeof(List<CategoryViewmodel>))]
+        [SwaggerResponse(200, Type = typeof(VinanceApiResponseExample<List<CategoryViewmodel>>))]
         [HttpGet]
         [Route("")]
         public async Task<IActionResult> GetAll(CategoryType? type, DateTime? from, DateTime? to)
@@ -49,7 +50,7 @@ namespace Vinance.Api.Controllers
         /// Gets the category with the specified id.
         /// </summary>
         /// <param name="categoryId">The id of the category to be returned.</param>
-        [SwaggerResponse(200, Type = typeof(CategoryViewmodel))]
+        [SwaggerResponse(200, Type = typeof(VinanceApiResponseExample<CategoryViewmodel>))]
         [SwaggerResponse(404, Description = "Category not found with the specified id.")]
         [HttpGet]
         [Route("{categoryId:int}")]
@@ -64,7 +65,7 @@ namespace Vinance.Api.Controllers
         /// Creates a new category.
         /// </summary>
         /// <param name="categoryToCreate">The category to be created.</param>
-        [SwaggerResponse(201, Type = typeof(CategoryViewmodel))]
+        [SwaggerResponse(201, Type = typeof(VinanceApiResponseExample<CategoryViewmodel>))]
         [HttpPost]
         [Route("")]
         public async Task<IActionResult> Create(CreateCategoryViewmodel categoryToCreate)
@@ -79,7 +80,7 @@ namespace Vinance.Api.Controllers
         /// Updates the given category.
         /// </summary>
         /// <param name="categoryToUpdate">The category to be updated.</param>
-        [SwaggerResponse(200, Type = typeof(CategoryViewmodel))]
+        [SwaggerResponse(200, Type = typeof(VinanceApiResponseExample<CategoryViewmodel>))]
         [SwaggerResponse(404, Description = "Category not found with the specified id.")]
         [HttpPut]
         [Route("")]
@@ -114,7 +115,7 @@ namespace Vinance.Api.Controllers
         /// <param name="type">The type of the categories to be returned (if not specified, expense-categories are returned).</param>
         /// <param name="from">The start date of the query (if not specified, all category-balances are returned).</param>
         /// <param name="to">The end date of the query (if not specified, all category-balances are returned).</param>
-        [SwaggerResponse(200, Type = typeof(List<CategoryStatistics>))]
+        [SwaggerResponse(200, Type = typeof(VinanceApiResponseExample<List<CategoryStatistics>>))]
         [HttpGet]
         [Route("stats")]
         public async Task<IActionResult> GetStats(CategoryType? type, DateTime? from = null, DateTime? to = null)

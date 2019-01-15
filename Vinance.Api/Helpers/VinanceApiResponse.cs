@@ -1,6 +1,6 @@
 ﻿using System.Net;
 
-namespace Vinance.Api.Viewmodels
+namespace Vinance.Api.Helpers
 {
     public class VinanceApiResponse
     {

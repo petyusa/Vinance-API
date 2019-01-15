@@ -57,17 +57,17 @@
             </summary>
             <param name="categoryId">The id of the category to be returned.</param>
         </member>
-        <member name="M:Vinance.Api.Controllers.CategoryController.Create(Vinance.Api.Viewmodels.CategoryViewmodel)">
+        <member name="M:Vinance.Api.Controllers.CategoryController.Create(Vinance.Api.Viewmodels.Category.CreateCategoryViewmodel)">
             <summary>
             Creates a new category.
             </summary>
-            <param name="categoryViewmodel">The category to be created.</param>
+            <param name="categoryToCreate">The category to be created.</param>
         </member>
-        <member name="M:Vinance.Api.Controllers.CategoryController.Update(Vinance.Api.Viewmodels.CategoryViewmodel)">
+        <member name="M:Vinance.Api.Controllers.CategoryController.Update(Vinance.Api.Viewmodels.Category.UpdateCategoryViewmodel)">
             <summary>
             Updates the given category.
             </summary>
-            <param name="categoryViewmodel">The category to be updated.</param>
+            <param name="categoryToUpdate">The category to be updated.</param>
         </member>
         <member name="M:Vinance.Api.Controllers.CategoryController.Delete(System.Int32)">
             <summary>
@@ -124,6 +124,90 @@
             Uploads multiple expenses from Excel-file.
             </summary>
             <param name="file">The excel file containing the expenses.</param>
+        </member>
+        <member name="M:Vinance.Api.Controllers.IncomeController.Create(Vinance.Api.Viewmodels.Income.CreateIncomeViewmodel)">
+            <summary>
+            Creates a new income.
+            </summary>
+            <param name="incomeToCreate">The income to be created.</param>
+        </member>
+        <member name="M:Vinance.Api.Controllers.IncomeController.GetAll(System.Nullable{System.Int32},System.Nullable{System.Int32},System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.Int32,System.Int32,System.String)">
+            <summary>
+            Gets the incomes of the user in a paginated format.
+            </summary>
+            <param name="accountId">If specified, only incomes related to this account will be returned.</param>
+            <param name="categoryId">If specified, only incomes related to this category will be returned.</param>
+            <param name="from">If specified, only incomes from this date will be returned.</param>
+            <param name="to">If specified, only incomes to this date will be returned.</param>
+            <param name="pageSize">If specified, the given number of incomes will be returned (if not specified, defaults to 20).</param>
+            <param name="page">If specified, the given page will be returned (if not, defaults to 1).</param>
+            <param name="order">If specified, the incomes will be sorted by the given order (default date_desc).</param>
+        </member>
+        <member name="M:Vinance.Api.Controllers.IncomeController.GetById(System.Int32)">
+            <summary>
+            Gets the income with the specified id.
+            </summary>
+            <param name="incomeId">The id of the income to be returned.</param>
+        </member>
+        <member name="M:Vinance.Api.Controllers.IncomeController.Update(Vinance.Api.Viewmodels.Income.UpdateIncomeViewmodel)">
+            <summary>
+            Updates the given income.
+            </summary>
+            <param name="incomeToUpdate">The income to be updated.</param>
+        </member>
+        <member name="M:Vinance.Api.Controllers.IncomeController.Delete(System.Int32)">
+            <summary>
+            Deletes the income with the specified id.
+            </summary>
+            <param name="incomeId">The id of the income to be deleted.</param>
+        </member>
+        <member name="M:Vinance.Api.Controllers.IncomeController.Upload(Microsoft.AspNetCore.Http.IFormFile)">
+            <summary>
+            Uploads multiple incomes from Excel-file.
+            </summary>
+            <param name="file">The excel file containing the incomes.</param>
+        </member>
+        <member name="M:Vinance.Api.Controllers.TransferController.GetAll(System.Nullable{System.Int32},System.Nullable{Vinance.Contracts.Enums.TransferType},System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.Int32,System.Int32,System.String)">
+            <summary>
+            Gets the transfers of the user in a paginated format.
+            </summary>
+            <param name="accountId">If specified, only transfers related to this account will be returned.</param>
+            <param name="transferType">If specified, only transfers of this type will be returned.</param>
+            <param name="from">If specified, only transfers from this date will be returned.</param>
+            <param name="to">If specified, only transfers to this date will be returned.</param>
+            <param name="pageSize">If specified, the given number of transfers will be returned (if not specified, defaults to 20).</param>
+            <param name="page">If specified, the given page will be returned (if not, defaults to 1).</param>
+            <param name="order">If specified, the transfers will be sorted by the given order (default date_desc).</param>
+        </member>
+        <member name="M:Vinance.Api.Controllers.TransferController.Create(Vinance.Api.Viewmodels.Transfer.CreateTransferViewmodel)">
+            <summary>
+            Creates a new transfer.
+            </summary>
+            <param name="transferToCreate">The transfer to be created.</param>
+        </member>
+        <member name="M:Vinance.Api.Controllers.TransferController.GetById(System.Int32)">
+            <summary>
+            Gets the transfer with the specified id.
+            </summary>
+            <param name="transferId">The id of the transfer to be returned.</param>
+        </member>
+        <member name="M:Vinance.Api.Controllers.TransferController.Update(Vinance.Api.Viewmodels.Transfer.UpdateTransferViewmodel)">
+            <summary>
+            Updates the given transfer.
+            </summary>
+            <param name="transferToUpdate">The transfer to be updated.</param>
+        </member>
+        <member name="M:Vinance.Api.Controllers.TransferController.Delete(System.Int32)">
+            <summary>
+            Deletes the transfer with the specified id.
+            </summary>
+            <param name="transferId">The id of the transfer to be deleted.</param>
+        </member>
+        <member name="M:Vinance.Api.Controllers.TransferController.Upload(Microsoft.AspNetCore.Http.IFormFile)">
+            <summary>
+            Uploads multiple transfers from Excel-file.
+            </summary>
+            <param name="file">The excel file containing the transfers.</param>
         </member>
         <member name="M:Vinance.Api.Controllers.UserController.Register(Vinance.Api.Viewmodels.Identity.RegisterViewmodel)">
             <summary>
@@ -289,6 +373,51 @@
             Opening balance of the account.
             </summary>
         </member>
+        <member name="T:Vinance.Api.Viewmodels.Category.CreateCategoryViewmodel">
+            <summary>
+            The basic model for creating a category.
+            </summary>
+        </member>
+        <member name="P:Vinance.Api.Viewmodels.Category.CreateCategoryViewmodel.Name">
+            <summary>
+            The name of the category.
+            </summary>
+        </member>
+        <member name="P:Vinance.Api.Viewmodels.Category.CreateCategoryViewmodel.MonthlyLimit">
+            <summary>
+            The monthly-limit for the category.
+            </summary>
+        </member>
+        <member name="P:Vinance.Api.Viewmodels.Category.CreateCategoryViewmodel.Type">
+            <summary>
+            The type of the category.
+            </summary>
+        </member>
+        <member name="T:Vinance.Api.Viewmodels.Category.UpdateCategoryViewmodel">
+            <summary>
+            The basic model for creating a category.
+            </summary>
+        </member>
+        <member name="P:Vinance.Api.Viewmodels.Category.UpdateCategoryViewmodel.Id">
+            <summary>
+            The id of the category.
+            </summary>
+        </member>
+        <member name="P:Vinance.Api.Viewmodels.Category.UpdateCategoryViewmodel.Name">
+            <summary>
+            The name of the category.
+            </summary>
+        </member>
+        <member name="P:Vinance.Api.Viewmodels.Category.UpdateCategoryViewmodel.MonthlyLimit">
+            <summary>
+            The monthly-limit for the category.
+            </summary>
+        </member>
+        <member name="P:Vinance.Api.Viewmodels.Category.UpdateCategoryViewmodel.Type">
+            <summary>
+            The type of the category.
+            </summary>
+        </member>
         <member name="T:Vinance.Api.Viewmodels.Expense.CreateExpenseViewmodel">
             <summary>
             The basic model for an expense to be created.
@@ -347,6 +476,141 @@
         <member name="P:Vinance.Api.Viewmodels.Expense.UpdateExpenseViewmodel.CategoryId">
             <summary>
             The expense-category for the expense.
+            </summary>
+        </member>
+        <member name="T:Vinance.Api.Viewmodels.Income.CreateIncomeViewmodel">
+            <summary>
+            The basic model for creating an income.
+            </summary>
+        </member>
+        <member name="P:Vinance.Api.Viewmodels.Income.CreateIncomeViewmodel.Date">
+            <summary>
+            The date of the income.
+            </summary>
+        </member>
+        <member name="P:Vinance.Api.Viewmodels.Income.CreateIncomeViewmodel.Amount">
+            <summary>
+            The amount of the income.
+            </summary>
+        </member>
+        <member name="P:Vinance.Api.Viewmodels.Income.CreateIncomeViewmodel.Comment">
+            <summary>
+            The comment for the income.
+            </summary>
+        </member>
+        <member name="P:Vinance.Api.Viewmodels.Income.CreateIncomeViewmodel.ToId">
+            <summary>
+            The id of the account where the amount should be added.
+            </summary>
+        </member>
+        <member name="P:Vinance.Api.Viewmodels.Income.CreateIncomeViewmodel.CategoryId">
+            <summary>
+            The income-category of the account.
+            </summary>
+        </member>
+        <member name="T:Vinance.Api.Viewmodels.Income.UpdateIncomeViewmodel">
+            <summary>
+            Basic model for updating an income.
+            </summary>
+        </member>
+        <member name="P:Vinance.Api.Viewmodels.Income.UpdateIncomeViewmodel.Id">
+            <summary>
+            The id of the income.
+            </summary>
+        </member>
+        <member name="P:Vinance.Api.Viewmodels.Income.UpdateIncomeViewmodel.Date">
+            <summary>
+            The date of the income.
+            </summary>
+        </member>
+        <member name="P:Vinance.Api.Viewmodels.Income.UpdateIncomeViewmodel.Amount">
+            <summary>
+            The amount of the income.
+            </summary>
+        </member>
+        <member name="P:Vinance.Api.Viewmodels.Income.UpdateIncomeViewmodel.Comment">
+            <summary>
+            The comment for the income.
+            </summary>
+        </member>
+        <member name="P:Vinance.Api.Viewmodels.Income.UpdateIncomeViewmodel.ToId">
+            <summary>
+            The id of the account where the amount should be added.
+            </summary>
+        </member>
+        <member name="P:Vinance.Api.Viewmodels.Income.UpdateIncomeViewmodel.CategoryId">
+            <summary>
+            The income-category of the account.
+            </summary>
+        </member>
+        <member name="T:Vinance.Api.Viewmodels.Transfer.CreateTransferViewmodel">
+            <summary>
+            The basic model for creating a transfer.
+            </summary>
+        </member>
+        <member name="P:Vinance.Api.Viewmodels.Transfer.CreateTransferViewmodel.Date">
+            <summary>
+            The date of the transfer.
+            </summary>
+        </member>
+        <member name="P:Vinance.Api.Viewmodels.Transfer.CreateTransferViewmodel.TransferType">
+            <summary>
+            The type of the transfer.
+            </summary>
+        </member>
+        <member name="P:Vinance.Api.Viewmodels.Transfer.CreateTransferViewmodel.Amount">
+            <summary>
+            The amount of the transfer.
+            </summary>
+        </member>
+        <member name="P:Vinance.Api.Viewmodels.Transfer.CreateTransferViewmodel.Comment">
+            <summary>
+            The comment for the transfer.
+            </summary>
+        </member>
+        <member name="P:Vinance.Api.Viewmodels.Transfer.CreateTransferViewmodel.FromId">
+            <summary>
+            The id of the account where the amount should be deducted from.
+            </summary>
+        </member>
+        <member name="P:Vinance.Api.Viewmodels.Transfer.CreateTransferViewmodel.ToId">
+            <summary>
+            The id of the account where the amount should be added to.
+            </summary>
+        </member>
+        <member name="P:Vinance.Api.Viewmodels.Transfer.UpdateTransferViewmodel.Id">
+            <summary>
+            The id of the transfer.
+            </summary>
+        </member>
+        <member name="P:Vinance.Api.Viewmodels.Transfer.UpdateTransferViewmodel.Date">
+            <summary>
+            The date of the transfer.
+            </summary>
+        </member>
+        <member name="P:Vinance.Api.Viewmodels.Transfer.UpdateTransferViewmodel.TransferType">
+            <summary>
+            The type of the transfer.
+            </summary>
+        </member>
+        <member name="P:Vinance.Api.Viewmodels.Transfer.UpdateTransferViewmodel.Amount">
+            <summary>
+            The amount of the transfer.
+            </summary>
+        </member>
+        <member name="P:Vinance.Api.Viewmodels.Transfer.UpdateTransferViewmodel.Comment">
+            <summary>
+            The comment for the transfer.
+            </summary>
+        </member>
+        <member name="P:Vinance.Api.Viewmodels.Transfer.UpdateTransferViewmodel.FromId">
+            <summary>
+            The id of the account where the amount should be deducted from.
+            </summary>
+        </member>
+        <member name="P:Vinance.Api.Viewmodels.Transfer.UpdateTransferViewmodel.ToId">
+            <summary>
+            The id of the account where the amount should be added to.
             </summary>
         </member>
     </members>

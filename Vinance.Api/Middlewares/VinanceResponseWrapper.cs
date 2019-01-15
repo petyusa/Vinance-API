@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using System.IO;
 using System.Net;
 using System.Threading.Tasks;
+using Vinance.Api.Helpers;
 
 namespace Vinance.Api.Middlewares
 {
